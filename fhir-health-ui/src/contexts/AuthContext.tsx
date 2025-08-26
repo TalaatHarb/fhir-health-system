@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
-import { AuthContextValue, AuthState, AuthAction, User, LoginCredentials } from '../types';
+import type { AuthContextValue, AuthState, AuthAction, User, LoginCredentials } from '../types';
 
 // Initial state
 const initialState: AuthState = {
@@ -60,7 +60,7 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
+export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   // Load authentication state from localStorage on mount

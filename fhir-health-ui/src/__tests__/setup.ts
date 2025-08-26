@@ -14,24 +14,24 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-})
+});
 
 // Mock ResizeObserver for tests
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
+(globalThis as any).ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}))
+}));
 
 // Mock IntersectionObserver for tests
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+(globalThis as any).IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}))
+}));
 
 // Setup global test utilities
-global.console = {
+(globalThis as any).console = {
   ...console,
   // Suppress console.log in tests unless explicitly needed
   log: vi.fn(),
@@ -39,4 +39,4 @@ global.console = {
   info: vi.fn(),
   warn: console.warn,
   error: console.error,
-}
+};

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LoadingProps } from '../../types';
+import type { LoadingProps } from '../../types';
 import './Loading.css';
 
 export function Loading({ 
@@ -7,7 +7,7 @@ export function Loading({
   text = 'Loading...', 
   className = '',
   children 
-}: LoadingProps): JSX.Element {
+}: LoadingProps): React.JSX.Element {
   return (
     <div className={`loading-container ${size} ${className}`}>
       <div className="loading-spinner">

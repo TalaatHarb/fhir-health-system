@@ -12,7 +12,7 @@ export function ProtectedRoute({
   children, 
   fallback,
   requireAuth = true 
-}: ProtectedRouteProps): JSX.Element {
+}: ProtectedRouteProps): React.JSX.Element {
   const { isAuthenticated, loading } = useAuth();
 
   // Show loading state while checking authentication

@@ -1,6 +1,6 @@
 // Application State TypeScript Interfaces
 
-import { Patient, Organization, Encounter, FHIRResource } from './fhir';
+import type { Patient, Organization, Encounter, FHIRResource } from './fhir';
 
 // User and Authentication Types
 export interface User {

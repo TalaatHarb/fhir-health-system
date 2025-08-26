@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { LoginCredentials } from '../../types';
+import type { LoginCredentials } from '../../types';
 import './LoginPage.css';
 
 interface LoginPageProps {
   onLogin?: () => void;
 }
 
-export function LoginPage({ onLogin }: LoginPageProps): JSX.Element {
+export function LoginPage({ onLogin }: LoginPageProps): React.JSX.Element {
   const { login, loading, error, isAuthenticated } = useAuth();
   const [credentials, setCredentials] = useState<LoginCredentials>({
     username: '',

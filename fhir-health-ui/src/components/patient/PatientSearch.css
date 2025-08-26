@@ -1,0 +1,324 @@
+.patient-search {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.patient-search__header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.patient-search__header h2 {
+  margin: 0 0 0.5rem 0;
+  color: #1f2937;
+  font-size: 1.875rem;
+  font-weight: 700;
+}
+
+.patient-search__header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.patient-search__form {
+  margin-bottom: 1.5rem;
+}
+
+.patient-search__input-group {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.patient-search__input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.patient-search__input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.patient-search__input:disabled {
+  background-color: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.patient-search__search-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.patient-search__search-button:hover:not(:disabled) {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.patient-search__search-button:active {
+  transform: translateY(0);
+}
+
+.patient-search__search-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.patient-search__actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.patient-search__create-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.patient-search__create-button:hover:not(:disabled) {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
+.patient-search__create-button:active {
+  transform: translateY(0);
+}
+
+.patient-search__create-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.patient-search__error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.patient-search__error p {
+  margin: 0 0 0.75rem 0;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.patient-search__retry-button {
+  padding: 0.5rem 1rem;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.patient-search__retry-button:hover {
+  background-color: #b91c1c;
+}
+
+.patient-search__loading {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.patient-search__loading p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.patient-search__results {
+  margin-top: 2rem;
+}
+
+.patient-search__results h3 {
+  margin: 0 0 1rem 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.patient-search__results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.patient-search__result-item {
+  background-color: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.patient-search__result-item:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.patient-search__result-item:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.patient-search__result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.patient-search__result-name {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.patient-search__result-id {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.patient-search__result-details {
+  margin-bottom: 0.75rem;
+}
+
+.patient-search__result-demographics {
+  margin: 0 0 0.25rem 0;
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.patient-search__result-address {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.patient-search__result-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.patient-search__result-action-hint {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.patient-search__result-item:hover .patient-search__result-action-hint {
+  opacity: 1;
+}
+
+.patient-search__no-results {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #6b7280;
+}
+
+.patient-search__no-results p {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.patient-search__no-results p:first-child {
+  font-weight: 500;
+  color: #4b5563;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .patient-search {
+    padding: 1rem;
+  }
+
+  .patient-search__input-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .patient-search__search-button {
+    width: 100%;
+  }
+
+  .patient-search__result-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .patient-search__result-id {
+    align-self: flex-start;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .patient-search__result-item,
+  .patient-search__search-button,
+  .patient-search__create-button,
+  .patient-search__input {
+    transition: none;
+  }
+
+  .patient-search__result-item:hover {
+    transform: none;
+  }
+
+  .patient-search__search-button:hover:not(:disabled),
+  .patient-search__create-button:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .patient-search__result-item {
+    border-width: 3px;
+  }
+
+  .patient-search__result-item:hover,
+  .patient-search__result-item:focus {
+    border-width: 3px;
+  }
+}

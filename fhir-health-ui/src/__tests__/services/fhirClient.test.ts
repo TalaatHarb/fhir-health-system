@@ -4,7 +4,7 @@ import type { Patient, Encounter, Bundle, Organization } from '../../types/fhir'
 
 // Mock fetch globally
 const mockFetch = vi.fn();
-global.fetch = mockFetch;
+(globalThis as any).fetch = mockFetch;
 
 describe('FHIRClient', () => {
   let client: FHIRClient;
@@ -620,7 +620,7 @@ describe('FHIRClient', () => {
         entry: [
           {
             request: { method: 'POST', url: 'Patient' },
-            resource: { resourceType: 'Patient', name: [{ family: 'Test' }] }
+            resource: { resourceType: 'Patient', name: [{ family: 'Test' }] } as any
           }
         ]
       };
@@ -631,7 +631,7 @@ describe('FHIRClient', () => {
         entry: [
           {
             response: { status: '201' },
-            resource: { resourceType: 'Patient', id: '123', name: [{ family: 'Test' }] }
+            resource: { resourceType: 'Patient', id: '123', name: [{ family: 'Test' }] } as any
           }
         ]
       };
@@ -810,7 +810,7 @@ describe('FHIRClient', () => {
       await client.searchPatients({
         name: 'John',
         gender: undefined,
-        birthdate: null,
+        birthdate: undefined,
         _count: 0
       });
 

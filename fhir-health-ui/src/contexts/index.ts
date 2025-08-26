@@ -3,5 +3,5 @@
 
 export { AuthProvider, useAuth } from './AuthContext';
 export { OrganizationProvider, useOrganization } from './OrganizationContext';
-// export { PatientProvider, usePatient } from './PatientContext';
+export { PatientProvider, usePatient } from './PatientContext';
 // export { UIProvider, useUI } from './UIContext';
