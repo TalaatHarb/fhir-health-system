@@ -644,6 +644,7 @@ export interface ResourceSearchQuery {
   status?: string;
   _count?: number;
   _offset?: number;
+  _sort?: string;
 }
 
 // Union type for all FHIR resources
