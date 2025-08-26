@@ -106,7 +106,12 @@
   - Write tests for encounter details and resource viewing
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 9. Create new encounter and resource creation functionality
+- [x] 9. Create new encounter and resource creation functionality
+
+
+
+
+
   - Build new encounter creation form and modal
   - Implement resource creation forms for Observations, Conditions, MedicationRequests
   - Add DiagnosticReport and Procedure creation forms

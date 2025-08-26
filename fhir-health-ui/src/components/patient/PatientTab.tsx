@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import type { Patient, Encounter } from '../../types/fhir';
 import { EncounterTimeline } from '../encounter/EncounterTimeline';
+import { EncounterCreateModal } from '../encounter/EncounterCreateModal';
 import './PatientTab.css';
 
 export interface PatientTabProps {
@@ -10,6 +11,9 @@ export interface PatientTabProps {
 }
 
 export function PatientTab({ patient, isActive, onClose }: PatientTabProps): React.JSX.Element {
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   if (!isActive) {
     return <div className="patient-tab hidden" />;
   }
@@ -21,10 +25,16 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
   };
 
   // Handle create encounter
-  const handleCreateEncounter = () => {
-    // TODO: Implement encounter creation in future task
-    console.log('Create new encounter for patient:', patient.id);
-  };
+  const handleCreateEncounter = useCallback(() => {
+    setShowCreateModal(true);
+  }, []);
+
+  // Handle encounter creation success
+  const handleEncounterCreated = useCallback((encounter: Encounter) => {
+    console.log('Encounter created successfully:', encounter);
+    // Trigger refresh of the encounter timeline
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
 
   // Extract patient information
   const primaryName = patient.name?.[0];
@@ -107,6 +117,7 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
                 patient={patient}
                 onEncounterSelect={handleEncounterSelect}
                 onCreateEncounter={handleCreateEncounter}
+                refreshTrigger={refreshTrigger}
               />
             </div>
           </section>
@@ -123,6 +134,14 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
           </section>
         </div>
       </div>
+
+      {/* Encounter Creation Modal */}
+      <EncounterCreateModal
+        patient={patient}
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleEncounterCreated}
+      />
     </div>
   );
 }

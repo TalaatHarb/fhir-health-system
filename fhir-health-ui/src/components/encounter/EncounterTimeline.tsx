@@ -9,6 +9,7 @@ export interface EncounterTimelineProps {
   patient: Patient;
   onEncounterSelect?: (encounter: Encounter) => void;
   onCreateEncounter?: () => void;
+  refreshTrigger?: number; // Optional prop to trigger refresh
 }
 
 export interface EncounterTimelineState {
@@ -21,7 +22,8 @@ export interface EncounterTimelineState {
 export function EncounterTimeline({ 
   patient, 
   onEncounterSelect, 
-  onCreateEncounter 
+  onCreateEncounter,
+  refreshTrigger 
 }: EncounterTimelineProps): React.JSX.Element {
   const [state, setState] = useState<EncounterTimelineState>({
     encounters: [],
@@ -66,10 +68,10 @@ export function EncounterTimeline({
     }
   }, [patient.id]);
 
-  // Load encounters when component mounts or patient changes
+  // Load encounters when component mounts, patient changes, or refresh is triggered
   useEffect(() => {
     fetchEncounters();
-  }, [fetchEncounters]);
+  }, [fetchEncounters, refreshTrigger]);
 
   // Handle encounter expansion/collapse
   const handleEncounterToggle = useCallback((encounterId: string) => {
