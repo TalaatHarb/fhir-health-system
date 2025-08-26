@@ -92,7 +92,12 @@
   - Write tests for encounter timeline display and interactions
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 8. Implement encounter details and resource viewing
+- [x] 8. Implement encounter details and resource viewing
+
+
+
+
+
   - Create encounter details component with associated resources
   - Build resource viewer components for different FHIR resource types
   - Implement resource detail modal or expanded view
