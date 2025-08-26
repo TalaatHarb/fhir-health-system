@@ -40,3 +40,86 @@
 .read-the-docs {
   color: #888;
 }
+/* Offline Banner Styles */
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #f59e0b;
+  color: white;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 9998;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.offline-banner span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Adjust main content when offline banner is shown */
+body:has(.offline-banner) .main-content {
+  padding-top: 2.5rem;
+}
+
+/* Error handling integration styles */
+.form-field--error {
+  margin-bottom: 1rem;
+}
+
+.form-field--error .form-input,
+.form-field--error .form-textarea,
+.form-field--error .form-select {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.form-field--error .form-input:focus,
+.form-field--error .form-textarea:focus,
+.form-field--error .form-select:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+  outline: none;
+}
+
+.form-field--error .form-label {
+  color: #dc2626;
+}
+
+/* Loading states for error recovery */
+.retry-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.retry-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive offline banner */
+@media (max-width: 640px) {
+  .offline-banner {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+  }
+}

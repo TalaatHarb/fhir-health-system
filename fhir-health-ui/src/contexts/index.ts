@@ -4,4 +4,5 @@
 export { AuthProvider, useAuth } from './AuthContext';
 export { OrganizationProvider, useOrganization } from './OrganizationContext';
 export { PatientProvider, usePatient } from './PatientContext';
+export { NotificationProvider, useNotifications } from './NotificationContext';
 // export { UIProvider, useUI } from './UIContext';

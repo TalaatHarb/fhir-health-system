@@ -28,10 +28,14 @@ export { EncounterTimelineItem } from './encounter/EncounterTimelineItem';
 // Resource components
 // export { ResourceViewer } from './resource/ResourceViewer';
 
+// Error handling components
+export { ErrorBoundary, PatientErrorBoundary, EncounterErrorBoundary } from './common/ErrorBoundary';
+export { Toast, ToastContainer } from './common/Toast';
+export { InlineError, FieldError, ErrorList } from './common/InlineError';
+
 // UI components
 // export { Modal } from './ui/Modal';
 // export { Button } from './ui/Button';
-// export { ErrorBoundary } from './ui/ErrorBoundary';
 
 // Layout components
 // export { Layout } from './common/Layout';

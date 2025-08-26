@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import type { Patient, Encounter, Observation, Condition, MedicationRequest, DiagnosticReport, Procedure } from '../../types/fhir';
 import { fhirClient } from '../../services/fhirClient';
+import { useNotifications } from '../../contexts/NotificationContext';
 import { Loading } from '../common/Loading';
+import { InlineError, ErrorList } from '../common/InlineError';
 import { ObservationForm } from './forms/ObservationForm';
 import { ConditionForm } from './forms/ConditionForm';
 import { MedicationRequestForm } from './forms/MedicationRequestForm';
@@ -39,6 +41,7 @@ export interface ResourceFormData {
 export interface EncounterCreateState {
   loading: boolean;
   error: string | null;
+  validationErrors: string[];
   activeTab: 'encounter' | 'observations' | 'conditions' | 'medications' | 'diagnostics' | 'procedures';
   encounterData: EncounterFormData;
   resourceData: ResourceFormData;
@@ -50,9 +53,11 @@ export function EncounterCreateModal({
   onClose, 
   onSuccess 
 }: EncounterCreateModalProps): React.JSX.Element {
+  const { showSuccess, showError } = useNotifications();
   const [state, setState] = useState<EncounterCreateState>({
     loading: false,
     error: null,
+    validationErrors: [],
     activeTab: 'encounter',
     encounterData: {
       status: 'finished',
@@ -131,11 +136,11 @@ export function EncounterCreateModal({
   const handleSubmit = useCallback(async () => {
     const validationErrors = validateEncounterForm();
     if (validationErrors.length > 0) {
-      setState(prev => ({ ...prev, error: validationErrors.join(', ') }));
+      setState(prev => ({ ...prev, validationErrors, error: null }));
       return;
     }
 
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    setState(prev => ({ ...prev, loading: true, error: null, validationErrors: [] }));
 
     try {
       // Create encounter
@@ -240,11 +245,20 @@ export function EncounterCreateModal({
       await Promise.all(resourcePromises);
 
       setState(prev => ({ ...prev, loading: false }));
+      
+      // Show success notification
+      const resourceCount = getResourceCount();
+      showSuccess(
+        'Encounter Created', 
+        `Encounter created successfully${resourceCount > 0 ? ` with ${resourceCount} associated resource(s)` : ''}.`
+      );
+      
       onSuccess(createdEncounter);
       onClose();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create encounter';
       setState(prev => ({ ...prev, loading: false, error: errorMessage }));
+      showError('Failed to Create Encounter', errorMessage);
     }
   }, [patient, state.encounterData, state.resourceData, onSuccess, onClose]);
 
@@ -530,9 +544,17 @@ export function EncounterCreateModal({
           </div>
         </div>
 
+        {state.validationErrors.length > 0 && (
+          <ErrorList 
+            errors={state.validationErrors}
+            title="Please fix the following errors before submitting:"
+            maxErrors={5}
+          />
+        )}
+
         {state.error && (
           <div className="modal-error">
-            <p>{state.error}</p>
+            <InlineError error={state.error} size="large" />
           </div>
         )}
 

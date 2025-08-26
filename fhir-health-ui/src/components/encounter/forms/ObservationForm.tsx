@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import type { Observation, CodeableConcept, Quantity } from '../../../types/fhir';
+import { InlineError, ErrorList } from '../../common/InlineError';
 import './ResourceForm.css';
 
 export interface ObservationFormProps {
@@ -82,6 +83,7 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
   });
 
   const [showForm, setShowForm] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Handle form field changes
   const handleChange = useCallback((field: keyof ObservationFormData, value: any) => {
@@ -142,9 +144,11 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
   const handleAdd = useCallback(() => {
     const errors = validateForm();
     if (errors.length > 0) {
-      alert(errors.join('\n'));
+      setValidationErrors(errors);
       return;
     }
+
+    setValidationErrors([]);
 
     const categoryObj = OBSERVATION_CATEGORIES.find(cat => cat.code === formData.category);
     
@@ -217,6 +221,7 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
       valueType: 'quantity',
       effectiveDateTime: new Date().toISOString().slice(0, 16)
     });
+    setValidationErrors([]);
     setShowForm(false);
   }, [formData, onAdd]);
 
@@ -504,6 +509,14 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
                 rows={3}
               />
             </div>
+
+            {validationErrors.length > 0 && (
+              <ErrorList 
+                errors={validationErrors}
+                title="Please fix the following errors:"
+                maxErrors={5}
+              />
+            )}
 
             <div className="form-actions">
               <button

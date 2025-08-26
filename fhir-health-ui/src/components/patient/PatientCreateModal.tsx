@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { usePatient } from '../../contexts/PatientContext';
+import { useNotifications } from '../../contexts/NotificationContext';
+import { InlineError, ErrorList } from '../common/InlineError';
 import type { Patient, HumanName, Address, ContactPoint } from '../../types/fhir';
 import './PatientCreateModal.css';
 
@@ -39,12 +41,17 @@ const initialFormData: PatientFormData = {
 
 export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: PatientCreateModalProps) {
   const { state, createPatient, closeCreateModal } = usePatient();
+  const { showSuccess, showError } = useNotifications();
   const [formData, setFormData] = useState<PatientFormData>(initialFormData);
   const [validationErrors, setValidationErrors] = useState<Partial<PatientFormData>>({});
+  const [touched, setTouched] = useState<Partial<Record<keyof PatientFormData, boolean>>>({});
 
   // Handle form field changes
   const handleFieldChange = useCallback((field: keyof PatientFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Mark field as touched
+    setTouched(prev => ({ ...prev, [field]: true }));
     
     // Clear validation error for this field
     if (validationErrors[field]) {
@@ -186,9 +193,13 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
       const patientData = convertToFHIRPatient();
       await createPatient(patientData);
       
+      // Show success notification
+      showSuccess('Patient Created', `Patient ${formData.givenName} ${formData.familyName} has been created successfully.`);
+      
       // Reset form
       setFormData(initialFormData);
       setValidationErrors({});
+      setTouched({});
       
       // Close modal
       handleClose();
@@ -200,8 +211,8 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
         onPatientCreated(newestPatient);
       }
     } catch (error) {
-      // Error is handled by the context
-      console.error('Failed to create patient:', error);
+      // Show error notification
+      showError('Failed to Create Patient', error instanceof Error ? error.message : 'An unexpected error occurred');
     }
   }, [validateForm, convertToFHIRPatient, createPatient, onPatientCreated, state.openPatients]);
 
@@ -216,6 +227,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
     // Reset form when closing
     setFormData(initialFormData);
     setValidationErrors({});
+    setTouched({});
   }, [onClose, closeCreateModal]);
 
   // Don't render if not open
@@ -257,9 +269,10 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                   disabled={state.createLoading}
                   required
                 />
-                {validationErrors.givenName && (
-                  <span className="patient-create-modal__error">{validationErrors.givenName}</span>
-                )}
+                <InlineError 
+                  error={validationErrors.givenName} 
+                  show={touched.givenName && !!validationErrors.givenName}
+                />
               </div>
 
               <div className="patient-create-modal__form-group">
@@ -275,9 +288,10 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                   disabled={state.createLoading}
                   required
                 />
-                {validationErrors.familyName && (
-                  <span className="patient-create-modal__error">{validationErrors.familyName}</span>
-                )}
+                <InlineError 
+                  error={validationErrors.familyName} 
+                  show={touched.familyName && !!validationErrors.familyName}
+                />
               </div>
             </div>
 
@@ -300,9 +314,10 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                   <option value="other">Other</option>
                   <option value="unknown">Unknown</option>
                 </select>
-                {validationErrors.gender && (
-                  <span className="patient-create-modal__error">{validationErrors.gender}</span>
-                )}
+                <InlineError 
+                  error={validationErrors.gender} 
+                  show={touched.gender && !!validationErrors.gender}
+                />
               </div>
 
               <div className="patient-create-modal__form-group">
@@ -319,9 +334,10 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                   max={new Date().toISOString().split('T')[0]}
                   required
                 />
-                {validationErrors.birthDate && (
-                  <span className="patient-create-modal__error">{validationErrors.birthDate}</span>
-                )}
+                <InlineError 
+                  error={validationErrors.birthDate} 
+                  show={touched.birthDate && !!validationErrors.birthDate}
+                />
               </div>
             </div>
           </fieldset>
@@ -343,9 +359,10 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                   onChange={(e) => handleFieldChange('email', e.target.value)}
                   disabled={state.createLoading}
                 />
-                {validationErrors.email && (
-                  <span className="patient-create-modal__error">{validationErrors.email}</span>
-                )}
+                <InlineError 
+                  error={validationErrors.email} 
+                  show={touched.email && !!validationErrors.email}
+                />
               </div>
 
               <div className="patient-create-modal__form-group">
@@ -360,9 +377,10 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                   onChange={(e) => handleFieldChange('phone', e.target.value)}
                   disabled={state.createLoading}
                 />
-                {validationErrors.phone && (
-                  <span className="patient-create-modal__error">{validationErrors.phone}</span>
-                )}
+                <InlineError 
+                  error={validationErrors.phone} 
+                  show={touched.phone && !!validationErrors.phone}
+                />
               </div>
             </div>
           </fieldset>
@@ -447,10 +465,12 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
           </fieldset>
 
           {/* Error Display */}
-          {state.createError && (
-            <div className="patient-create-modal__error-banner">
-              <p>Error creating patient: {state.createError}</p>
-            </div>
+          {Object.keys(validationErrors).length > 0 && (
+            <ErrorList 
+              errors={validationErrors}
+              title="Please fix the following errors before submitting:"
+              maxErrors={5}
+            />
           )}
 
           {/* Form Actions */}
