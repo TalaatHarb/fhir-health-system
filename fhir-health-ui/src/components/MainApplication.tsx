@@ -84,7 +84,7 @@ export function MainApplication(): React.JSX.Element {
       </header>
 
       {/* Main Content */}
-      <main style={{ padding: '2rem' }}>
+      <main id="main-content" style={{ padding: '2rem' }} role="main">
         {currentOrganization ? (
           <TabManager />
         ) : (

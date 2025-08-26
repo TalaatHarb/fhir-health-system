@@ -1,4 +1,5 @@
 import React from 'react';
+import { LoadingSpinner } from './LoadingSpinner';
 import type { LoadingProps } from '../../types';
 import './Loading.css';
 
@@ -9,12 +10,13 @@ export function Loading({
   children 
 }: LoadingProps): React.JSX.Element {
   return (
-    <div className={`loading-container ${size} ${className}`}>
-      <div className="loading-spinner">
-        <div className="spinner"></div>
-        {text && <p className="loading-text">{text}</p>}
-        {children}
-      </div>
+    <div className={`loading-container loading-container--${size} ${className}`} role="status">
+      <LoadingSpinner 
+        size={size} 
+        text={text}
+        aria-label={text}
+      />
+      {children}
     </div>
   );
 }

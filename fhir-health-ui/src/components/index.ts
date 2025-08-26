@@ -7,6 +7,7 @@ export { ProtectedRoute, withProtectedRoute } from './auth/ProtectedRoute';
 
 // Common components
 export { Loading } from './common/Loading';
+export { LoadingSpinner, LoadingOverlay, ProgressBar, Skeleton } from './common/LoadingSpinner';
 
 // Main Application
 export { MainApplication } from './MainApplication';

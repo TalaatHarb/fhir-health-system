@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, OrganizationProvider, PatientProvider } from './contexts';
 import { NotificationProvider } from './contexts/NotificationContext';
-import { ProtectedRoute, MainApplication } from './components';
-import { LoginPage } from './components/auth/LoginPage';
+import { ProtectedRoute } from './components';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { ToastContainer } from './components/common/Toast';
+import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { useNotifications } from './contexts/NotificationContext';
 import { useOfflineDetection } from './hooks/useOfflineDetection';
 import { enhancedFhirClient } from './services/enhancedFhirClient';
 import './App.css';
+
+// Lazy load components for better performance
+const LoginPage = React.lazy(() => import('./components/auth/LoginPage').then(module => ({ default: module.LoginPage })));
+const MainApplication = React.lazy(() => import('./components/MainApplication').then(module => ({ default: module.MainApplication })));
 
 // Component to handle notifications and offline status
 function AppNotifications(): React.JSX.Element {
@@ -79,24 +83,38 @@ function App(): React.JSX.Element {
         }
       }}
     >
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <BrowserRouter>
         <NotificationProvider>
           <AuthProvider>
             <OrganizationProvider>
               <PatientProvider>
-                <Routes>
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route 
-                    path="/app/*" 
-                    element={
-                      <ProtectedRoute>
-                        <MainApplication />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route path="/" element={<Navigate to="/app" replace />} />
-                  <Route path="*" element={<Navigate to="/app" replace />} />
-                </Routes>
+                <Suspense fallback={
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    minHeight: '100vh' 
+                  }}>
+                    <LoadingSpinner size="large" text="Loading application..." />
+                  </div>
+                }>
+                  <Routes>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route 
+                      path="/app/*" 
+                      element={
+                        <ProtectedRoute>
+                          <MainApplication />
+                        </ProtectedRoute>
+                      } 
+                    />
+                    <Route path="/" element={<Navigate to="/app" replace />} />
+                    <Route path="*" element={<Navigate to="/app" replace />} />
+                  </Routes>
+                </Suspense>
                 <AppNotifications />
               </PatientProvider>
             </OrganizationProvider>
