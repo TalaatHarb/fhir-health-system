@@ -1,0 +1,17 @@
+{
+  "name": "mock-fhir-server",
+  "version": "1.0.0",
+  "description": "A mock server that responsd with mock responses similar to that of typical open implementations of FHIR server",
+  "keywords": [
+    "FHIR",
+    "server",
+    "mock"
+  ],
+  "license": "ISC",
+  "author": "mharb",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
