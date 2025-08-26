@@ -6,9 +6,10 @@ import './PatientSearch.css';
 export interface PatientSearchProps {
   onPatientSelect?: (patient: Patient) => void;
   onCreatePatient?: () => void;
+  showAsButton?: boolean;
 }
 
-export function PatientSearch({ onPatientSelect, onCreatePatient }: PatientSearchProps) {
+export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton = false }: PatientSearchProps) {
   const {
     state,
     searchPatients,
@@ -130,6 +131,20 @@ export function PatientSearch({ onPatientSelect, onCreatePatient }: PatientSearc
 
     return parts.join(', ');
   };
+
+  // If showing as button, render compact button version
+  if (showAsButton) {
+    return (
+      <button
+        className="patient-search__add-button"
+        onClick={handleCreatePatient}
+        disabled={state.createLoading}
+        title="Search or create new patient"
+      >
+        + Add Patient
+      </button>
+    );
+  }
 
   return (
     <div className="patient-search">

@@ -17,7 +17,8 @@ export { OrganizationModal } from './organization/OrganizationModal';
 // Patient components
 export { PatientSearch } from './patient/PatientSearch';
 export { PatientCreateModal } from './patient/PatientCreateModal';
-// export { PatientTab } from './patient/PatientTab';
+export { PatientTab } from './patient/PatientTab';
+export { TabManager } from './patient/TabManager';
 
 // Encounter components
 // export { EncounterTimeline } from './encounter/EncounterTimeline';

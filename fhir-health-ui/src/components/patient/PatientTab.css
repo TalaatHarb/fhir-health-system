@@ -1,0 +1,216 @@
+.patient-tab {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-tab.hidden {
+  display: none;
+}
+
+.patient-tab.active {
+  display: flex;
+}
+
+.patient-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.patient-info {
+  flex: 1;
+}
+
+.patient-name {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.patient-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.patient-detail {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.patient-detail strong {
+  color: #374151;
+  margin-right: 0.25rem;
+}
+
+.close-tab-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.close-tab-button:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.patient-tab-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.patient-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.patient-section {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.section-title {
+  margin: 0;
+  padding: 1rem 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section-content {
+  padding: 1.5rem;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.contact-item:last-child {
+  margin-bottom: 0;
+}
+
+.contact-item strong {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.contact-item span {
+  font-size: 0.875rem;
+  color: #6b7280;
+  padding-left: 0.5rem;
+}
+
+.placeholder-content {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.placeholder-content p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+}
+
+.placeholder-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .patient-tab-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .close-tab-button {
+    align-self: flex-end;
+    margin-left: 0;
+  }
+  
+  .patient-details {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .patient-tab-content {
+    padding: 1rem;
+  }
+  
+  .section-content {
+    padding: 1rem;
+  }
+  
+  .contact-item {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  
+  .contact-item strong {
+    min-width: 80px;
+  }
+}
+
+/* Loading states */
+.patient-tab-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Error states */
+.patient-tab-error {
+  padding: 2rem;
+  text-align: center;
+  color: #dc2626;
+}
+
+.patient-tab-error h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.patient-tab-error p {
+  margin: 0;
+  font-size: 0.875rem;
+}

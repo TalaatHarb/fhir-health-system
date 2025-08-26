@@ -321,4 +321,26 @@
   .patient-search__result-item:focus {
     border-width: 3px;
   }
+}/
+* Add Patient Button for Tab Manager */
+.patient-search__add-button {
+  padding: 0.5rem 1rem;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.patient-search__add-button:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.patient-search__add-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
 }

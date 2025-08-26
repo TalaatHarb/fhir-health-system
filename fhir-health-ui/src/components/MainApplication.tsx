@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth, useOrganization, usePatient } from '../contexts';
 import { OrganizationModal } from './organization/OrganizationModal';
-import { PatientSearch } from './patient/PatientSearch';
+import { TabManager } from './patient/TabManager';
 import { PatientCreateModal } from './patient/PatientCreateModal';
 
 export function MainApplication(): React.JSX.Element {
@@ -15,7 +15,7 @@ export function MainApplication(): React.JSX.Element {
     loading,
     error
   } = useOrganization();
-  const { state: patientState } = usePatient();
+  const { state: patientState, closeCreateModal } = usePatient();
 
   // Check if organization modal should be shown
   const isModalOpen = !currentOrganization || organizations.length > 0 && !currentOrganization;
@@ -86,7 +86,7 @@ export function MainApplication(): React.JSX.Element {
       {/* Main Content */}
       <main style={{ padding: '2rem' }}>
         {currentOrganization ? (
-          <PatientSearch />
+          <TabManager />
         ) : (
           <div style={{ 
             textAlign: 'center', 
@@ -132,7 +132,7 @@ export function MainApplication(): React.JSX.Element {
       {/* Patient Creation Modal */}
       <PatientCreateModal
         isOpen={patientState.createModalOpen}
-        onClose={() => {}}
+        onClose={closeCreateModal}
       />
     </div>
   );
