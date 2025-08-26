@@ -1,0 +1,365 @@
+/* Encounter Timeline Item Styles */
+.encounter-timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.encounter-timeline-item.last {
+  margin-bottom: 0;
+}
+
+/* Timeline Marker */
+.timeline-marker {
+  position: absolute;
+  left: -2rem;
+  top: 1rem;
+  z-index: 2;
+}
+
+.timeline-dot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px #e5e7eb;
+}
+
+/* Status-specific dot colors */
+.timeline-dot.status-planned {
+  background-color: #8b5cf6;
+}
+
+.timeline-dot.status-arrived {
+  background-color: #06b6d4;
+}
+
+.timeline-dot.status-triaged {
+  background-color: #0ea5e9;
+}
+
+.timeline-dot.status-in-progress {
+  background-color: #f59e0b;
+}
+
+.timeline-dot.status-onleave {
+  background-color: #84cc16;
+}
+
+.timeline-dot.status-finished {
+  background-color: #10b981;
+}
+
+.timeline-dot.status-cancelled {
+  background-color: #ef4444;
+}
+
+.timeline-dot.status-error {
+  background-color: #dc2626;
+}
+
+.timeline-dot.status-entered-in-error {
+  background-color: #dc2626;
+}
+
+.timeline-dot.status-unknown {
+  background-color: #6b7280;
+}
+
+/* Encounter Card */
+.encounter-card {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.encounter-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+/* Encounter Header */
+.encounter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.encounter-main-info {
+  flex: 1;
+}
+
+.encounter-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.encounter-type {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.encounter-class {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.encounter-date {
+  font-size: 0.875rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.encounter-duration {
+  color: #9ca3af;
+}
+
+/* Status and Expand Button */
+.encounter-status-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.encounter-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Status-specific colors */
+.encounter-status.status-planned {
+  background-color: #ede9fe;
+  color: #7c3aed;
+}
+
+.encounter-status.status-arrived {
+  background-color: #cffafe;
+  color: #0891b2;
+}
+
+.encounter-status.status-triaged {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.encounter-status.status-in-progress {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.encounter-status.status-onleave {
+  background-color: #ecfccb;
+  color: #65a30d;
+}
+
+.encounter-status.status-finished {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.encounter-status.status-cancelled {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.encounter-status.status-error {
+  background-color: #fecaca;
+  color: #b91c1c;
+}
+
+.encounter-status.status-entered-in-error {
+  background-color: #fecaca;
+  color: #b91c1c;
+}
+
+.encounter-status.status-unknown {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expand-button:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.expand-button.expanded {
+  transform: rotate(180deg);
+}
+
+.expand-button svg {
+  transition: transform 0.2s ease;
+}
+
+/* Encounter Details */
+.encounter-details {
+  border-top: 1px solid #f3f4f6;
+  padding: 1.25rem;
+  background-color: #fafafa;
+}
+
+.encounter-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-section {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.detail-section-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.detail-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+.detail-value {
+  font-size: 0.875rem;
+  color: #1f2937;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Encounter Actions */
+.encounter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.view-details-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.view-details-button:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .timeline-marker {
+    left: -1.5rem;
+  }
+  
+  .encounter-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .encounter-status-info {
+    justify-content: space-between;
+  }
+  
+  .encounter-details-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .detail-value {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .encounter-header {
+    padding: 1rem;
+  }
+  
+  .encounter-details {
+    padding: 1rem;
+  }
+  
+  .encounter-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .encounter-type {
+    font-size: 1rem;
+  }
+  
+  .detail-section {
+    padding: 0.75rem;
+  }
+  
+  .encounter-actions {
+    justify-content: stretch;
+  }
+  
+  .view-details-button {
+    flex: 1;
+  }
+}

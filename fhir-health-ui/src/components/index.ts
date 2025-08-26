@@ -21,7 +21,8 @@ export { PatientTab } from './patient/PatientTab';
 export { TabManager } from './patient/TabManager';
 
 // Encounter components
-// export { EncounterTimeline } from './encounter/EncounterTimeline';
+export { EncounterTimeline } from './encounter/EncounterTimeline';
+export { EncounterTimelineItem } from './encounter/EncounterTimelineItem';
 // export { EncounterDetails } from './encounter/EncounterDetails';
 
 // Resource components

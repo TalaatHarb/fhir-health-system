@@ -1,5 +1,6 @@
 import React from 'react';
-import type { Patient } from '../../types/fhir';
+import type { Patient, Encounter } from '../../types/fhir';
+import { EncounterTimeline } from '../encounter/EncounterTimeline';
 import './PatientTab.css';
 
 export interface PatientTabProps {
@@ -12,6 +13,18 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
   if (!isActive) {
     return <div className="patient-tab hidden" />;
   }
+
+  // Handle encounter selection
+  const handleEncounterSelect = (encounter: Encounter) => {
+    // TODO: Implement encounter details view in future task
+    console.log('Selected encounter:', encounter);
+  };
+
+  // Handle create encounter
+  const handleCreateEncounter = () => {
+    // TODO: Implement encounter creation in future task
+    console.log('Create new encounter for patient:', patient.id);
+  };
 
   // Extract patient information
   const primaryName = patient.name?.[0];
@@ -87,14 +100,14 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
             </div>
           </section>
 
-          {/* Encounters Section - Placeholder for future implementation */}
+          {/* Encounters Section */}
           <section className="patient-section">
-            <h3 className="section-title">Encounters</h3>
             <div className="section-content">
-              <div className="placeholder-content">
-                <p>Encounter timeline will be implemented in a future task.</p>
-                <p>This section will show the patient's encounter history and allow creation of new encounters.</p>
-              </div>
+              <EncounterTimeline
+                patient={patient}
+                onEncounterSelect={handleEncounterSelect}
+                onCreateEncounter={handleCreateEncounter}
+              />
             </div>
           </section>
 
