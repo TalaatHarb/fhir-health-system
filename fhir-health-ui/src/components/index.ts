@@ -12,7 +12,7 @@ export { Loading } from './common/Loading';
 export { MainApplication } from './MainApplication';
 
 // Organization components  
-// export { OrganizationModal } from './organization/OrganizationModal';
+export { OrganizationModal } from './organization/OrganizationModal';
 
 // Patient components
 // export { PatientSearch } from './patient/PatientSearch';

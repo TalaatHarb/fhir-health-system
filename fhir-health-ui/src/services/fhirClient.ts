@@ -516,6 +516,16 @@ export class FHIRClient {
   // Organization Operations
 
   /**
+   * Search for organizations based on query parameters
+   */
+  async searchOrganizations(query: Record<string, any> = {}): Promise<Bundle<Organization>> {
+    const queryString = this.buildQueryString(query);
+    const endpoint = `Organization${queryString ? `?${queryString}` : ''}`;
+    const response = await this.makeRequest<Bundle<Organization>>(endpoint);
+    return response.data;
+  }
+
+  /**
    * Get available organizations
    */
   async getOrganizations(): Promise<Bundle<Organization>> {
@@ -529,6 +539,20 @@ export class FHIRClient {
   async getOrganization(id: string): Promise<Organization> {
     const response = await this.makeRequest<Organization>(`Organization/${id}`);
     return response.data;
+  }
+
+  /**
+   * Set the current organization for this client instance
+   */
+  setOrganization(organizationId: string): void {
+    this.config.organizationId = organizationId;
+  }
+
+  /**
+   * Get the current organization ID
+   */
+  getCurrentOrganizationId(): string | undefined {
+    return this.config.organizationId;
   }
 
   // Batch Operations
@@ -589,3 +613,13 @@ export class FHIRClient {
 export const createFHIRClient = (config: FHIRClientConfig): FHIRClient => {
   return new FHIRClient(config);
 };
+
+// Default FHIR client instance
+// This will be configured with the mock server URL for development
+export const fhirClient = createFHIRClient({
+  baseUrl: 'http://localhost:3001/fhir',
+  headers: {
+    'Content-Type': 'application/fhir+json',
+    'Accept': 'application/fhir+json'
+  }
+});

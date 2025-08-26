@@ -1,14 +1,16 @@
 import React from 'react';
-import { AuthProvider } from './contexts';
+import { AuthProvider, OrganizationProvider } from './contexts';
 import { ProtectedRoute, MainApplication } from './components';
 import './App.css';
 
 function App(): JSX.Element {
   return (
     <AuthProvider>
-      <ProtectedRoute>
-        <MainApplication />
-      </ProtectedRoute>
+      <OrganizationProvider>
+        <ProtectedRoute>
+          <MainApplication />
+        </ProtectedRoute>
+      </OrganizationProvider>
     </AuthProvider>
   );
 }
