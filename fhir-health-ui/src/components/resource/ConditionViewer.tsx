@@ -85,7 +85,7 @@ export function ConditionViewer({
     };
   };
 
-  // Get severity info
+  // Get severity info with enhanced visualization
   const getSeverityInfo = () => {
     if (!condition.severity) return null;
 
@@ -101,10 +101,41 @@ export function ConditionViewer({
       'fatal': 'severity-fatal',
     };
 
+    const severityIcons = {
+      'mild': '●',
+      'moderate': '●●',
+      'severe': '●●●',
+      'fatal': '⚠',
+    };
+
     return {
       text: display.charAt(0).toUpperCase() + display.slice(1),
       className: severityClasses[severity] || 'severity-unknown',
+      icon: severityIcons[severity] || '●',
+      level: severity,
     };
+  };
+
+  // Render enhanced severity indicator
+  const renderSeverityIndicator = () => {
+    const severityInfo = getSeverityInfo();
+    if (!severityInfo) return null;
+
+    return (
+      <div className={`condition-severity-indicator ${severityInfo.level}`}>
+        <div className="severity-icon">
+          {severityInfo.icon}
+        </div>
+        <div className="severity-text">
+          {severityInfo.text} Severity
+        </div>
+        {severityInfo.level === 'fatal' && (
+          <div className="severity-warning">
+            Requires immediate attention
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Get onset information
@@ -246,6 +277,9 @@ export function ConditionViewer({
               )}
             </div>
           </div>
+
+          {/* Enhanced Severity Visualization */}
+          {renderSeverityIndicator()}
 
           <div className="detail-section">
             <h5>Timeline</h5>

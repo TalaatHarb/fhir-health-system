@@ -11,12 +11,14 @@ export interface ResourceViewerProps {
   resource: AnyFHIRResource;
   viewMode?: 'summary' | 'detailed';
   onSelect?: () => void;
+  relatedResources?: AnyFHIRResource[]; // For trend analysis and related data
 }
 
 export function ResourceViewer({ 
   resource, 
   viewMode = 'summary', 
-  onSelect 
+  onSelect,
+  relatedResources = []
 }: ResourceViewerProps): React.JSX.Element {
   
   // Format resource date for display
@@ -87,11 +89,22 @@ export function ResourceViewer({
   const renderResourceViewer = (): React.JSX.Element => {
     switch (resource.resourceType) {
       case 'Observation':
+        // Filter related observations of the same type for trend analysis
+        const relatedObservations = relatedResources
+          .filter(r => r.resourceType === 'Observation')
+          .filter(obs => {
+            const obsCode = obs.code?.coding?.[0]?.code;
+            const currentCode = resource.code?.coding?.[0]?.code;
+            return obsCode && currentCode && obsCode === currentCode && obs.id !== resource.id;
+          })
+          .slice(0, 10); // Limit to 10 most recent related observations
+        
         return (
           <ObservationViewer 
             observation={resource} 
             viewMode={viewMode}
             onSelect={onSelect}
+            relatedObservations={relatedObservations}
           />
         );
       case 'Condition':

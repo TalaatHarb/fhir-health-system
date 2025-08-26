@@ -1,17 +1,20 @@
 import React from 'react';
 import type { Observation } from '../../types/fhir';
+import { TrendChart } from './charts/TrendChart';
 import './ResourceViewer.css';
 
 export interface ObservationViewerProps {
   observation: Observation;
   viewMode?: 'summary' | 'detailed';
   onSelect?: () => void;
+  relatedObservations?: Observation[]; // For trend analysis
 }
 
 export function ObservationViewer({ 
   observation, 
   viewMode = 'summary', 
-  onSelect 
+  onSelect,
+  relatedObservations = []
 }: ObservationViewerProps): React.JSX.Element {
 
   // Format date for display
@@ -51,13 +54,57 @@ export function ObservationViewer({
            'General';
   };
 
-  // Get observation value display
+  // Get observation value display with enhanced visualization
   const getValueDisplay = (): React.JSX.Element => {
     if (observation.valueQuantity) {
+      const value = observation.valueQuantity.value!;
+      const unit = observation.valueQuantity.unit || observation.valueQuantity.code;
+      const referenceRange = observation.referenceRange?.[0];
+      const interpretation = observation.interpretation?.[0];
+      
+      // Determine if value is within normal range
+      let rangeStatus = 'normal';
+      if (referenceRange) {
+        if (referenceRange.low?.value !== undefined && value < referenceRange.low.value) {
+          rangeStatus = 'low';
+        } else if (referenceRange.high?.value !== undefined && value > referenceRange.high.value) {
+          rangeStatus = 'high';
+        }
+      }
+      
+      // Override with interpretation if available
+      if (interpretation?.coding?.[0]?.code) {
+        const code = interpretation.coding[0].code.toLowerCase();
+        if (code.includes('high') || code === 'h') rangeStatus = 'high';
+        else if (code.includes('low') || code === 'l') rangeStatus = 'low';
+        else if (code.includes('critical') || code.includes('panic')) rangeStatus = 'critical';
+      }
+
       return (
-        <div className="value-display">
-          <span className="value-number">{observation.valueQuantity.value}</span>
-          <span className="value-unit">{observation.valueQuantity.unit || observation.valueQuantity.code}</span>
+        <div className="value-display enhanced">
+          <div className="value-main">
+            <span className={`value-number ${rangeStatus}`}>{value}</span>
+            <span className="value-unit">{unit}</span>
+          </div>
+          {referenceRange && (
+            <div className="value-range-indicator">
+              <div className="range-bar">
+                <div className="range-normal-zone" 
+                     style={{
+                       left: referenceRange.low?.value ? '20%' : '0%',
+                       right: referenceRange.high?.value ? '20%' : '0%'
+                     }}>
+                </div>
+                <div className={`range-marker ${rangeStatus}`}
+                     style={{
+                       left: referenceRange.low?.value && referenceRange.high?.value ? 
+                         `${20 + ((value - referenceRange.low.value) / (referenceRange.high.value - referenceRange.low.value)) * 60}%` :
+                         '50%'
+                     }}>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       );
     }
@@ -364,6 +411,18 @@ export function ObservationViewer({
           )}
 
           {renderComponents()}
+
+          {/* Trend Chart for numeric observations */}
+          {observation.valueQuantity && relatedObservations.length > 0 && (
+            <div className="detail-section">
+              <TrendChart 
+                observations={[observation, ...relatedObservations]}
+                title={`${observationName} Trend`}
+                height={250}
+                showReferenceRange={true}
+              />
+            </div>
+          )}
 
           {observation.performer && observation.performer.length > 0 && (
             <div className="detail-section">

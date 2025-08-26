@@ -200,6 +200,82 @@ export function DiagnosticReportViewer({
 
       <div className="resource-content">
         <div className="diagnostic-report-details">
+          {/* Enhanced Structured Display */}
+          <div className="diagnostic-report-structure">
+            <div className="report-metadata">
+              <div className={`report-status-card ${diagnosticReport.status}`}>
+                <h6>Report Status</h6>
+                <div className={`status-indicator ${statusInfo.className}`}>
+                  {statusInfo.text}
+                </div>
+                <div className="status-details">
+                  <div>Effective: {effectiveDate}</div>
+                  <div>Issued: {issuedDate}</div>
+                </div>
+              </div>
+              
+              {performers.length > 0 && (
+                <div className="report-performers-card">
+                  <h6>Performed By</h6>
+                  <div className="performer-list">
+                    {performers.map((performer, index) => (
+                      <div key={index} className="performer-item">
+                        {performer}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {resultCount > 0 && (
+                <div className="report-results-summary">
+                  <h6>Results Summary</h6>
+                  <div className="results-count">
+                    {resultCount} result{resultCount > 1 ? 's' : ''} available
+                  </div>
+                  {mediaCount > 0 && (
+                    <div className="media-count">
+                      {mediaCount} media item{mediaCount > 1 ? 's' : ''}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            <div className="report-content">
+              {diagnosticReport.conclusion && (
+                <div className="report-conclusion-highlight">
+                  <div className="conclusion-highlight-title">Clinical Conclusion</div>
+                  <div className="conclusion-highlight-text">
+                    {diagnosticReport.conclusion}
+                  </div>
+                </div>
+              )}
+              
+              {diagnosticReport.conclusionCode && diagnosticReport.conclusionCode.length > 0 && (
+                <div className="conclusion-codes-section">
+                  <h6>Conclusion Codes</h6>
+                  <div className="conclusion-code-list">
+                    {diagnosticReport.conclusionCode.map((code, index) => (
+                      <div key={index} className="conclusion-code-item">
+                        <div className="code-display">
+                          <span className="code-text">
+                            {code.text || code.coding?.[0]?.display || code.coding?.[0]?.code}
+                          </span>
+                          {code.coding?.[0]?.system && (
+                            <span className="code-coding">
+                              {code.coding[0].system}#{code.coding[0].code}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="detail-section">
             <h5>Basic Information</h5>
             <div className="detail-grid">

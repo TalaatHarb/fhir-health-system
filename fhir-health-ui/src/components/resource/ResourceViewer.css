@@ -760,4 +760,437 @@ tional Resource-Specific Styles */
   .evidence-details {
     flex-direction: column;
   }
+}/* Enhanced
+ Observation Value Display */
+.value-display.enhanced {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.value-main {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.value-number.normal {
+  color: #059669;
+}
+
+.value-number.high {
+  color: #dc2626;
+}
+
+.value-number.low {
+  color: #2563eb;
+}
+
+.value-number.critical {
+  color: #dc2626;
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.value-range-indicator {
+  width: 100%;
+  max-width: 200px;
+}
+
+.range-bar {
+  position: relative;
+  height: 6px;
+  background: #f3f4f6;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.range-normal-zone {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: #d1fae5;
+  border-radius: 3px;
+}
+
+.range-marker {
+  position: absolute;
+  top: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  transform: translateX(-50%);
+}
+
+.range-marker.normal {
+  background: #059669;
+}
+
+.range-marker.high {
+  background: #dc2626;
+}
+
+.range-marker.low {
+  background: #2563eb;
+}
+
+.range-marker.critical {
+  background: #dc2626;
+  animation: pulse 2s infinite;
+}
+
+/* Enhanced Condition Severity Visualization */
+.condition-severity-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+.condition-severity-indicator.mild {
+  background: #d1fae5;
+  border-left: 4px solid #059669;
+}
+
+.condition-severity-indicator.moderate {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+}
+
+.condition-severity-indicator.severe {
+  background: #fed7aa;
+  border-left: 4px solid #ea580c;
+}
+
+.condition-severity-indicator.fatal {
+  background: #fee2e2;
+  border-left: 4px solid #dc2626;
+}
+
+.severity-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.severity-text {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Enhanced Medication Dosage Visualization */
+.medication-dosage-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.dosage-schedule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dosage-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: #ffffff;
+  border: 2px solid #3b82f6;
+  border-radius: 8px;
+  min-width: 80px;
+}
+
+.dosage-amount-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.dosage-amount-unit {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.dosage-frequency {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.frequency-text {
+  font-weight: 600;
+  color: #111827;
+}
+
+.frequency-details {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.dosage-route {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: #e0e7ff;
+  color: #3730a3;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Enhanced Diagnostic Report Structure */
+.diagnostic-report-structure {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  margin: 16px 0;
+}
+
+.report-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.report-status-card {
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.report-status-card.final {
+  border-left: 4px solid #059669;
+  background: #f0fdf4;
+}
+
+.report-status-card.preliminary {
+  border-left: 4px solid #f59e0b;
+  background: #fffbeb;
+}
+
+.report-status-card.cancelled {
+  border-left: 4px solid #dc2626;
+  background: #fef2f2;
+}
+
+.report-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.report-conclusion-highlight {
+  padding: 20px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  border-left: 6px solid #059669;
+}
+
+.conclusion-highlight-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #065f46;
+  margin-bottom: 8px;
+}
+
+.conclusion-highlight-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #047857;
+}
+
+/* Enhanced Procedure Visualization */
+.procedure-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.procedure-phase {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  position: relative;
+}
+
+.procedure-phase.completed {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.procedure-phase.in-progress {
+  background: #fffbeb;
+  border-color: #fed7aa;
+}
+
+.procedure-phase.preparation {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.phase-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.phase-indicator.completed {
+  background: #059669;
+  color: #ffffff;
+}
+
+.phase-indicator.in-progress {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+.phase-indicator.preparation {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.phase-content {
+  flex: 1;
+}
+
+.phase-title {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.phase-description {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.procedure-outcome-card {
+  padding: 20px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.outcome-success {
+  border-color: #bbf7d0;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+}
+
+.outcome-complications {
+  border-color: #fecaca;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.outcome-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.outcome-success .outcome-title {
+  color: #065f46;
+}
+
+.outcome-complications .outcome-title {
+  color: #991b1b;
+}
+
+.outcome-description {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.outcome-success .outcome-description {
+  color: #047857;
+}
+
+.outcome-complications .outcome-description {
+  color: #7f1d1d;
+}
+
+/* Responsive Design for Enhanced Features */
+@media (max-width: 768px) {
+  .diagnostic-report-structure {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .medication-dosage-visual {
+    padding: 12px;
+  }
+
+  .dosage-schedule {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .procedure-phase {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .phase-indicator {
+    align-self: center;
+  }
+
+  .value-range-indicator {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .condition-severity-indicator {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .report-conclusion-highlight,
+  .procedure-outcome-card {
+    padding: 16px;
+  }
+
+  .dosage-amount {
+    min-width: 60px;
+    padding: 8px;
+  }
+
+  .dosage-amount-value {
+    font-size: 16px;
+  }
 }

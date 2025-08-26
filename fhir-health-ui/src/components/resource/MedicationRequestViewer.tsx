@@ -112,7 +112,7 @@ export function MedicationRequestViewer({
            'General';
   };
 
-  // Get dosage instructions
+  // Get enhanced dosage instructions with visual representation
   const getDosageInstructions = (): React.JSX.Element[] => {
     if (!medicationRequest.dosageInstruction || medicationRequest.dosageInstruction.length === 0) {
       return [];
@@ -124,16 +124,68 @@ export function MedicationRequestViewer({
           <div className="dosage-text">{dosage.text}</div>
         )}
         
-        <div className="dosage-details">
-          {dosage.route && (
-            <div className="dosage-detail">
-              <span className="dosage-label">Route:</span>
-              <span className="dosage-value">
-                {dosage.route.text || dosage.route.coding?.[0]?.display || 'Unknown'}
-              </span>
+        {/* Enhanced Visual Dosage Display */}
+        <div className="medication-dosage-visual">
+          <div className="dosage-schedule">
+            {dosage.doseAndRate && dosage.doseAndRate.length > 0 && (
+              <div className="dosage-amount">
+                <div className="dosage-amount-value">
+                  {dosage.doseAndRate.map((doseRate, drIndex) => {
+                    if (doseRate.doseQuantity) {
+                      return doseRate.doseQuantity.value;
+                    }
+                    if (doseRate.doseRange) {
+                      const low = doseRate.doseRange.low?.value || 0;
+                      const high = doseRate.doseRange.high?.value || 0;
+                      return `${low}-${high}`;
+                    }
+                    return '?';
+                  }).join(', ')}
+                </div>
+                <div className="dosage-amount-unit">
+                  {dosage.doseAndRate[0]?.doseQuantity?.unit || 
+                   dosage.doseAndRate[0]?.doseQuantity?.code || 
+                   dosage.doseAndRate[0]?.doseRange?.low?.unit ||
+                   'units'}
+                </div>
+              </div>
+            )}
+            
+            {dosage.timing && (
+              <div className="dosage-frequency">
+                <div className="frequency-text">
+                  {dosage.timing.code?.text || 
+                   dosage.timing.code?.coding?.[0]?.display ||
+                   (dosage.timing.repeat?.frequency ? 
+                     `${dosage.timing.repeat.frequency}x per ${dosage.timing.repeat.periodUnit || 'day'}` : 
+                     'As directed')}
+                </div>
+                {dosage.timing.repeat && (
+                  <div className="frequency-details">
+                    {dosage.timing.repeat.period && dosage.timing.repeat.periodUnit && 
+                      `Every ${dosage.timing.repeat.period} ${dosage.timing.repeat.periodUnit}${dosage.timing.repeat.period > 1 ? 's' : ''}`}
+                    {dosage.timing.repeat.duration && dosage.timing.repeat.durationUnit &&
+                      ` for ${dosage.timing.repeat.duration} ${dosage.timing.repeat.durationUnit}${dosage.timing.repeat.duration > 1 ? 's' : ''}`}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {dosage.route && (
+              <div className="dosage-route">
+                {dosage.route.text || dosage.route.coding?.[0]?.display || 'Unknown route'}
+              </div>
+            )}
+          </div>
+          
+          {dosage.patientInstruction && (
+            <div className="patient-instructions">
+              <strong>Instructions:</strong> {dosage.patientInstruction}
             </div>
           )}
-          
+        </div>
+        
+        <div className="dosage-details">
           {dosage.method && (
             <div className="dosage-detail">
               <span className="dosage-label">Method:</span>
@@ -143,42 +195,23 @@ export function MedicationRequestViewer({
             </div>
           )}
           
-          {dosage.doseAndRate && dosage.doseAndRate.length > 0 && (
+          {dosage.asNeededBoolean !== undefined && (
             <div className="dosage-detail">
-              <span className="dosage-label">Dose:</span>
+              <span className="dosage-label">As Needed:</span>
               <span className="dosage-value">
-                {dosage.doseAndRate.map((doseRate, drIndex) => {
-                  if (doseRate.doseQuantity) {
-                    return `${doseRate.doseQuantity.value} ${doseRate.doseQuantity.unit || doseRate.doseQuantity.code || ''}`;
-                  }
-                  if (doseRate.doseRange) {
-                    const low = doseRate.doseRange.low ? `${doseRate.doseRange.low.value} ${doseRate.doseRange.low.unit || ''}` : '';
-                    const high = doseRate.doseRange.high ? `${doseRate.doseRange.high.value} ${doseRate.doseRange.high.unit || ''}` : '';
-                    return `${low} - ${high}`;
-                  }
-                  return 'Unknown dose';
-                }).join(', ')}
+                {dosage.asNeededBoolean ? 'Yes' : 'No'}
               </span>
             </div>
           )}
           
-          {dosage.timing && (
+          {dosage.asNeededCodeableConcept && (
             <div className="dosage-detail">
-              <span className="dosage-label">Timing:</span>
+              <span className="dosage-label">As Needed For:</span>
               <span className="dosage-value">
-                {dosage.timing.code?.text || 
-                 dosage.timing.code?.coding?.[0]?.display ||
-                 (dosage.timing.repeat?.frequency ? 
-                   `${dosage.timing.repeat.frequency} times per ${dosage.timing.repeat.period} ${dosage.timing.repeat.periodUnit || 'day'}` : 
-                   'As directed')}
+                {dosage.asNeededCodeableConcept.text || 
+                 dosage.asNeededCodeableConcept.coding?.[0]?.display ||
+                 'Unknown condition'}
               </span>
-            </div>
-          )}
-          
-          {dosage.patientInstruction && (
-            <div className="dosage-detail">
-              <span className="dosage-label">Instructions:</span>
-              <span className="dosage-value">{dosage.patientInstruction}</span>
             </div>
           )}
         </div>

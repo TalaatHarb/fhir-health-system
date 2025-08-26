@@ -224,6 +224,48 @@ export function ProcedureViewer({
 
       <div className="resource-content">
         <div className="procedure-details">
+          {/* Enhanced Procedure Timeline */}
+          <div className="procedure-timeline">
+            <div className={`procedure-phase ${procedure.status}`}>
+              <div className={`phase-indicator ${procedure.status}`}>
+                {procedure.status === 'completed' ? '✓' : 
+                 procedure.status === 'in-progress' ? '⟳' :
+                 procedure.status === 'preparation' ? '◐' : '●'}
+              </div>
+              <div className="phase-content">
+                <div className="phase-title">{procedureName}</div>
+                <div className="phase-description">
+                  Status: {statusInfo.text} • {performedInfo}
+                  {procedure.location?.display && ` • ${procedure.location.display}`}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Enhanced Outcome Display */}
+          {(outcome || complications.length > 0) && (
+            <div className={`procedure-outcome-card ${complications.length > 0 ? 'outcome-complications' : 'outcome-success'}`}>
+              <div className="outcome-title">
+                {complications.length > 0 ? 'Procedure Outcome with Complications' : 'Procedure Outcome'}
+              </div>
+              {outcome && (
+                <div className="outcome-description">
+                  <strong>Result:</strong> {outcome}
+                </div>
+              )}
+              {complications.length > 0 && (
+                <div className="outcome-description">
+                  <strong>Complications:</strong>
+                  <ul>
+                    {complications.map((complication, index) => (
+                      <li key={index}>{complication}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="detail-section">
             <h5>Basic Information</h5>
             <div className="detail-grid">
