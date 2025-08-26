@@ -1,7 +1,9 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, OrganizationProvider, PatientProvider } from './contexts';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ProtectedRoute, MainApplication } from './components';
+import { LoginPage } from './components/auth/LoginPage';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { ToastContainer } from './components/common/Toast';
 import { useNotifications } from './contexts/NotificationContext';
@@ -77,18 +79,30 @@ function App(): React.JSX.Element {
         }
       }}
     >
-      <NotificationProvider>
-        <AuthProvider>
-          <OrganizationProvider>
-            <PatientProvider>
-              <ProtectedRoute>
-                <MainApplication />
-              </ProtectedRoute>
-              <AppNotifications />
-            </PatientProvider>
-          </OrganizationProvider>
-        </AuthProvider>
-      </NotificationProvider>
+      <BrowserRouter>
+        <NotificationProvider>
+          <AuthProvider>
+            <OrganizationProvider>
+              <PatientProvider>
+                <Routes>
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route 
+                    path="/app/*" 
+                    element={
+                      <ProtectedRoute>
+                        <MainApplication />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route path="/" element={<Navigate to="/app" replace />} />
+                  <Route path="*" element={<Navigate to="/app" replace />} />
+                </Routes>
+                <AppNotifications />
+              </PatientProvider>
+            </OrganizationProvider>
+          </AuthProvider>
+        </NotificationProvider>
+      </BrowserRouter>
     </ErrorBoundary>
   );
 }

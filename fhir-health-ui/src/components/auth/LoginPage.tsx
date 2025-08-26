@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import type { LoginCredentials } from '../../types';
 import './LoginPage.css';
@@ -9,18 +10,27 @@ interface LoginPageProps {
 
 export function LoginPage({ onLogin }: LoginPageProps): React.JSX.Element {
   const { login, loading, error, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [credentials, setCredentials] = useState<LoginCredentials>({
     username: '',
     password: '',
   });
   const [formError, setFormError] = useState<string>('');
 
+  // Get the intended destination from location state
+  const from = (location.state as any)?.from?.pathname || '/app';
+
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated && onLogin) {
-      onLogin();
+    if (isAuthenticated) {
+      if (onLogin) {
+        onLogin();
+      } else {
+        navigate(from, { replace: true });
+      }
     }
-  }, [isAuthenticated, onLogin]);
+  }, [isAuthenticated, onLogin, navigate, from]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -52,6 +62,7 @@ export function LoginPage({ onLogin }: LoginPageProps): React.JSX.Element {
         username: 'demo-user',
         password: 'demo-password',
       });
+      // Navigation will be handled by useEffect
     } catch (err) {
       setFormError('Login failed. Please try again.');
     }
@@ -68,6 +79,7 @@ export function LoginPage({ onLogin }: LoginPageProps): React.JSX.Element {
         username: 'demo-user',
         password: 'demo-password',
       });
+      // Navigation will be handled by useEffect
     } catch (err) {
       setFormError('Demo login failed. Please try again.');
     }
