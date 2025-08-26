@@ -170,7 +170,14 @@
   - Add accessibility features and ARIA labels
   - _Requirements: All requirements integration testing_
 
-- [ ] 13. Create mock FHIR server for development and testing
+- [x] 13. Create mock FHIR server for development and testing
+
+
+
+
+
+
+
   - Set up Express.js server in mock-fhir-server folder
   - Implement FHIR-compliant REST endpoints for Organizations, Patients, Encounters
   - Create mock data generators for realistic healthcare scenarios
