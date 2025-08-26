@@ -2,7 +2,14 @@
 // This file serves as the main entry point for all components
 
 // Auth components
-// export { LoginPage } from './auth/LoginPage';
+export { LoginPage } from './auth/LoginPage';
+export { ProtectedRoute, withProtectedRoute } from './auth/ProtectedRoute';
+
+// Common components
+export { Loading } from './common/Loading';
+
+// Main Application
+export { MainApplication } from './MainApplication';
 
 // Organization components  
 // export { OrganizationModal } from './organization/OrganizationModal';
@@ -21,10 +28,9 @@
 // UI components
 // export { Modal } from './ui/Modal';
 // export { Button } from './ui/Button';
-// export { Loading } from './ui/Loading';
 // export { ErrorBoundary } from './ui/ErrorBoundary';
 
-// Common components
+// Layout components
 // export { Layout } from './common/Layout';
 // export { Header } from './common/Header';
 // export { Sidebar } from './common/Sidebar';
