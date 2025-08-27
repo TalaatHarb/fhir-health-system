@@ -21,7 +21,7 @@ export function MainApplication(): React.JSX.Element {
   const isModalOpen = !currentOrganization || organizations.length > 0 && !currentOrganization;
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', minWidth: '80vw' }}>
       {/* Header */}
       <header style={{ 
         backgroundColor: 'white', 

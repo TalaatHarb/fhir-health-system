@@ -15,7 +15,7 @@ const { searchPatients, paginateResults, validateSearchParams } = require('./uti
 const { createFHIRBundle, createOperationOutcome } = require('./utils/fhirUtils');
 
 // FHIR Base URL
-const FHIR_BASE = '/fhir/R4';
+const FHIR_BASE = '/fhir';
 
 // Capability Statement endpoint
 app.get(`${FHIR_BASE}/metadata`, (req, res) => {
@@ -115,7 +115,7 @@ app.get(`${FHIR_BASE}/metadata`, (req, res) => {
       ]
     }]
   };
-  
+
   res.json(capabilityStatement);
 });
 
@@ -163,7 +163,7 @@ app.post(`${FHIR_BASE}/Patient`, (req, res) => {
         lastUpdated: new Date().toISOString()
       }
     };
-    
+
     patients.push(newPatient);
     res.status(201).json(newPatient);
   } catch (error) {
@@ -174,18 +174,18 @@ app.post(`${FHIR_BASE}/Patient`, (req, res) => {
 // Encounter endpoints
 app.get(`${FHIR_BASE}/Encounter`, (req, res) => {
   let filteredEncounters = encounters;
-  
+
   if (req.query.patient) {
     const patientId = req.query.patient.replace('Patient/', '');
-    filteredEncounters = encounters.filter(enc => 
+    filteredEncounters = encounters.filter(enc =>
       enc.subject.reference === `Patient/${patientId}`
     );
   }
-  
+
   if (req.query.status) {
     filteredEncounters = filteredEncounters.filter(enc => enc.status === req.query.status);
   }
-  
+
   const paginatedResults = paginateResults(filteredEncounters, req.query);
   const bundle = createFHIRBundle('Encounter', paginatedResults.data, req.query, paginatedResults.total);
   res.json(bundle);
@@ -209,7 +209,7 @@ app.post(`${FHIR_BASE}/Encounter`, (req, res) => {
         lastUpdated: new Date().toISOString()
       }
     };
-    
+
     encounters.push(newEncounter);
     res.status(201).json(newEncounter);
   } catch (error) {
@@ -220,21 +220,21 @@ app.post(`${FHIR_BASE}/Encounter`, (req, res) => {
 // Observation endpoints
 app.get(`${FHIR_BASE}/Observation`, (req, res) => {
   let filteredObservations = observations;
-  
+
   if (req.query.patient) {
     const patientId = req.query.patient.replace('Patient/', '');
-    filteredObservations = observations.filter(obs => 
+    filteredObservations = observations.filter(obs =>
       obs.subject.reference === `Patient/${patientId}`
     );
   }
-  
+
   if (req.query.encounter) {
     const encounterId = req.query.encounter.replace('Encounter/', '');
-    filteredObservations = filteredObservations.filter(obs => 
+    filteredObservations = filteredObservations.filter(obs =>
       obs.encounter && obs.encounter.reference === `Encounter/${encounterId}`
     );
   }
-  
+
   const paginatedResults = paginateResults(filteredObservations, req.query);
   const bundle = createFHIRBundle('Observation', paginatedResults.data, req.query, paginatedResults.total);
   res.json(bundle);
@@ -258,7 +258,7 @@ app.post(`${FHIR_BASE}/Observation`, (req, res) => {
         lastUpdated: new Date().toISOString()
       }
     };
-    
+
     observations.push(newObservation);
     res.status(201).json(newObservation);
   } catch (error) {
@@ -270,14 +270,14 @@ app.post(`${FHIR_BASE}/Observation`, (req, res) => {
 // Condition endpoints
 app.get(`${FHIR_BASE}/Condition`, (req, res) => {
   let filteredConditions = conditions;
-  
+
   if (req.query.patient) {
     const patientId = req.query.patient.replace('Patient/', '');
-    filteredConditions = conditions.filter(cond => 
+    filteredConditions = conditions.filter(cond =>
       cond.subject.reference === `Patient/${patientId}`
     );
   }
-  
+
   const paginatedResults = paginateResults(filteredConditions, req.query);
   const bundle = createFHIRBundle('Condition', paginatedResults.data, req.query, paginatedResults.total);
   res.json(bundle);
@@ -301,7 +301,7 @@ app.post(`${FHIR_BASE}/Condition`, (req, res) => {
         lastUpdated: new Date().toISOString()
       }
     };
-    
+
     conditions.push(newCondition);
     res.status(201).json(newCondition);
   } catch (error) {
@@ -312,14 +312,14 @@ app.post(`${FHIR_BASE}/Condition`, (req, res) => {
 // MedicationRequest endpoints
 app.get(`${FHIR_BASE}/MedicationRequest`, (req, res) => {
   let filteredMedications = medicationRequests;
-  
+
   if (req.query.patient) {
     const patientId = req.query.patient.replace('Patient/', '');
-    filteredMedications = medicationRequests.filter(med => 
+    filteredMedications = medicationRequests.filter(med =>
       med.subject.reference === `Patient/${patientId}`
     );
   }
-  
+
   const paginatedResults = paginateResults(filteredMedications, req.query);
   const bundle = createFHIRBundle('MedicationRequest', paginatedResults.data, req.query, paginatedResults.total);
   res.json(bundle);
@@ -343,7 +343,7 @@ app.post(`${FHIR_BASE}/MedicationRequest`, (req, res) => {
         lastUpdated: new Date().toISOString()
       }
     };
-    
+
     medicationRequests.push(newMedicationRequest);
     res.status(201).json(newMedicationRequest);
   } catch (error) {
@@ -354,14 +354,14 @@ app.post(`${FHIR_BASE}/MedicationRequest`, (req, res) => {
 // DiagnosticReport endpoints
 app.get(`${FHIR_BASE}/DiagnosticReport`, (req, res) => {
   let filteredReports = diagnosticReports;
-  
+
   if (req.query.patient) {
     const patientId = req.query.patient.replace('Patient/', '');
-    filteredReports = diagnosticReports.filter(report => 
+    filteredReports = diagnosticReports.filter(report =>
       report.subject.reference === `Patient/${patientId}`
     );
   }
-  
+
   const paginatedResults = paginateResults(filteredReports, req.query);
   const bundle = createFHIRBundle('DiagnosticReport', paginatedResults.data, req.query, paginatedResults.total);
   res.json(bundle);
@@ -385,7 +385,7 @@ app.post(`${FHIR_BASE}/DiagnosticReport`, (req, res) => {
         lastUpdated: new Date().toISOString()
       }
     };
-    
+
     diagnosticReports.push(newDiagnosticReport);
     res.status(201).json(newDiagnosticReport);
   } catch (error) {
@@ -396,14 +396,14 @@ app.post(`${FHIR_BASE}/DiagnosticReport`, (req, res) => {
 // Procedure endpoints
 app.get(`${FHIR_BASE}/Procedure`, (req, res) => {
   let filteredProcedures = procedures;
-  
+
   if (req.query.patient) {
     const patientId = req.query.patient.replace('Patient/', '');
-    filteredProcedures = procedures.filter(proc => 
+    filteredProcedures = procedures.filter(proc =>
       proc.subject.reference === `Patient/${patientId}`
     );
   }
-  
+
   const paginatedResults = paginateResults(filteredProcedures, req.query);
   const bundle = createFHIRBundle('Procedure', paginatedResults.data, req.query, paginatedResults.total);
   res.json(bundle);
@@ -427,7 +427,7 @@ app.post(`${FHIR_BASE}/Procedure`, (req, res) => {
         lastUpdated: new Date().toISOString()
       }
     };
-    
+
     procedures.push(newProcedure);
     res.status(201).json(newProcedure);
   } catch (error) {
