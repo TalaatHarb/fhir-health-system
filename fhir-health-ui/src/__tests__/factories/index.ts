@@ -25,8 +25,6 @@ export type {
  * Utility function to create a complete patient scenario with clinical data
  */
 export const createPatientScenario = (scenarioType: 'basic' | 'chronic-disease' | 'emergency' | 'pediatric') => {
-  const { PatientFactory } = require('./PatientFactory');
-  const { ClinicalDataFactory } = require('./ClinicalDataFactory');
 
   switch (scenarioType) {
     case 'basic':
@@ -98,7 +96,6 @@ export const createPatientScenario = (scenarioType: 'basic' | 'chronic-disease' 
  * Utility function to create test data for timeline/trending scenarios
  */
 export const createTimelineData = (patientId: string, months: number = 6) => {
-  const { ClinicalDataFactory } = require('./ClinicalDataFactory');
   
   return {
     heartRate: ClinicalDataFactory.createObservationSeries(patientId, 'heart-rate', months * 4, 7),
