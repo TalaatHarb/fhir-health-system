@@ -103,7 +103,10 @@ export interface MockEnhancedFhirClient {
   getOrganization: ReturnType<typeof vi.fn>;
 }
 
-// Mock data factories for realistic test data
+// Import comprehensive mock data factories
+export { PatientFactory, ClinicalDataFactory, createPatientScenario, createTimelineData } from './factories';
+
+// Legacy mock data factories for backward compatibility
 export const createMockEncounter = (patientId: string, overrides: Partial<Encounter> = {}): Encounter => ({
   resourceType: 'Encounter',
   id: `encounter-${Date.now()}`,
