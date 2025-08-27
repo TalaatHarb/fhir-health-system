@@ -1,8 +1,23 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { ProtectedRoute, withProtectedRoute } from '../../../components/auth/ProtectedRoute';
 import { AuthProvider } from '../../../contexts/AuthContext';
+
+// Mock react-router-dom Navigate component
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    Navigate: ({ to, state }: { to: string; state?: any }) => {
+      mockNavigate(to, state);
+      return <div data-testid="navigate-mock">Redirecting to {to}</div>;
+    },
+    useLocation: () => ({ pathname: '/protected', state: null }),
+  };
+});
 
 // Mock localStorage
 const localStorageMock = {
@@ -47,12 +62,17 @@ function TestWrapper({
     localStorageMock.getItem.mockReturnValue(null);
   }
 
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <MemoryRouter>
+      <AuthProvider>{children}</AuthProvider>
+    </MemoryRouter>
+  );
 }
 
 describe('ProtectedRoute', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockClear();
   });
 
   it('should render children when authenticated', async () => {
@@ -79,7 +99,7 @@ describe('ProtectedRoute', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /fhir resource visualizer/i })).toBeInTheDocument();
+      expect(screen.getByTestId('navigate-mock')).toBeInTheDocument();
       expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
     });
   });
@@ -122,12 +142,11 @@ describe('ProtectedRoute', () => {
       </TestWrapper>
     );
 
-    // The loading state is very brief, so we'll check that either loading shows or login page shows
-    // Since the auth context loads quickly in tests, we might see the login page immediately
+    // The loading state is very brief, so we'll check that either loading shows or navigation occurs
     await waitFor(() => {
       const hasLoading = screen.queryByText(/loading/i);
-      const hasLogin = screen.queryByRole('heading', { name: /fhir resource visualizer/i });
-      expect(hasLoading || hasLogin).toBeTruthy();
+      const hasNavigation = screen.queryByTestId('navigate-mock');
+      expect(hasLoading || hasNavigation).toBeTruthy();
     });
   });
 });
