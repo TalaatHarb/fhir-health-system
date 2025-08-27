@@ -1,47 +1,20 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { 
+  renderWithAuth, 
+  cleanupMocks,
+  mockPatient,
+  createMockBundle 
+} from '../test-utils';
 import { PatientTab } from '../../components/patient/PatientTab';
 import { fhirClient } from '../../services/fhirClient';
 import type { Patient, Encounter, Bundle } from '../../types/fhir';
 
-// Mock the FHIR client
-vi.mock('../../services/fhirClient', () => ({
-  fhirClient: {
-    getPatientEncounters: vi.fn(),
-    createEncounter: vi.fn(),
-    createResource: vi.fn()
-  }
-}));
+// Use the mock patient from test utils
 
-const mockPatient: Patient = {
-  resourceType: 'Patient',
-  id: 'patient-123',
-  name: [{
-    given: ['John'],
-    family: 'Doe'
-  }],
-  gender: 'male',
-  birthDate: '1980-01-01',
-  address: [{
-    line: ['123 Main St'],
-    city: 'Anytown',
-    state: 'CA',
-    postalCode: '12345'
-  }],
-  telecom: [{
-    system: 'phone',
-    value: '555-1234'
-  }]
-};
-
-const mockEncounterBundle: Bundle<Encounter> = {
-  resourceType: 'Bundle',
-  type: 'searchset',
-  total: 0,
-  entry: []
-};
+const mockEncounterBundle: Bundle<Encounter> = createMockBundle([]);
 
 const mockCreatedEncounter: Encounter = {
   resourceType: 'Encounter',
@@ -53,7 +26,7 @@ const mockCreatedEncounter: Encounter = {
     display: 'Ambulatory'
   },
   subject: {
-    reference: 'Patient/patient-123',
+    reference: `Patient/${mockPatient.id}`,
     display: 'John Doe'
   },
   period: {
@@ -66,8 +39,11 @@ describe('Encounter Creation Integration', () => {
   const user = userEvent.setup();
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue(mockEncounterBundle);
+    cleanupMocks();
+    
+    // Setup FHIR client mocks
+    vi.mocked(fhirClient.searchEncounters).mockResolvedValue(mockEncounterBundle);
+    vi.mocked(fhirClient.createEncounter).mockResolvedValue(mockCreatedEncounter);
   });
 
   afterEach(() => {
@@ -75,7 +51,7 @@ describe('Encounter Creation Integration', () => {
   });
 
   const renderPatientTab = () => {
-    return render(
+    return renderWithAuth(
       <PatientTab
         patient={mockPatient}
         isActive={true}
@@ -152,8 +128,8 @@ describe('Encounter Creation Integration', () => {
       expect(screen.queryByText('Create New Encounter')).not.toBeInTheDocument();
     });
 
-    // Encounter timeline should refresh (getPatientEncounters called again)
-    expect(fhirClient.getPatientEncounters).toHaveBeenCalledTimes(2); // Once on load, once after creation
+    // Encounter timeline should refresh (searchEncounters called again)
+    expect(fhirClient.searchEncounters).toHaveBeenCalledTimes(2); // Once on load, once after creation
   });
 
   it('should handle encounter creation with multiple resources', async () => {
@@ -301,7 +277,7 @@ describe('Encounter Creation Integration', () => {
       }]
     };
 
-    vi.mocked(fhirClient.getPatientEncounters)
+    vi.mocked(fhirClient.searchEncounters)
       .mockResolvedValueOnce(mockEncounterBundle) // Initial load
       .mockResolvedValueOnce(updatedBundle); // After creation
 
@@ -328,7 +304,7 @@ describe('Encounter Creation Integration', () => {
     });
 
     // Verify timeline was refreshed
-    expect(fhirClient.getPatientEncounters).toHaveBeenCalledTimes(2);
+    expect(fhirClient.searchEncounters).toHaveBeenCalledTimes(2);
   });
 
   it('should handle modal close via escape key', async () => {
