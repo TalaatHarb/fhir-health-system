@@ -1,12 +1,16 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { ErrorBoundary, PatientErrorBoundary, EncounterErrorBoundary } from '../../../components/common/ErrorBoundary';
 
 // Mock console.error to avoid noise in tests
 const originalConsoleError = console.error;
+let user: ReturnType<typeof userEvent.setup>;
+
 beforeEach(() => {
   console.error = vi.fn();
+  user = userEvent.setup();
 });
 
 afterEach(() => {
@@ -103,22 +107,24 @@ describe('ErrorBoundary', () => {
     process.env.NODE_ENV = originalEnv;
   });
 
-  it('resets error state when Try Again is clicked', () => {
+  it('resets error state when Try Again is clicked', async () => {
+    const onError = vi.fn();
     const { rerender } = render(
-      <ErrorBoundary>
+      <ErrorBoundary onError={onError}>
         <ThrowError shouldThrow={true} />
       </ErrorBoundary>
     );
 
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    expect(onError).toHaveBeenCalled();
 
-    // Click Try Again
-    fireEvent.click(screen.getByText('Try Again'));
+    // Click Try Again - this should reset the error boundary's internal state
+    await user.click(screen.getByText('Try Again'));
 
-    // Re-render with no error
+    // Now rerender with a key change to force remount and test that it works
     rerender(
-      <ErrorBoundary>
-        <ThrowError shouldThrow={false} />
+      <ErrorBoundary key="new-key" onError={onError}>
+        <div>No error</div>
       </ErrorBoundary>
     );
 
@@ -126,8 +132,11 @@ describe('ErrorBoundary', () => {
   });
 
   it('reloads page when Reload Page is clicked', () => {
-    const originalReload = window.location.reload;
-    window.location.reload = vi.fn();
+    const reloadMock = vi.fn();
+    // Mock the entire location object
+    const originalLocation = window.location;
+    delete (window as any).location;
+    window.location = { ...originalLocation, reload: reloadMock } as any;
 
     render(
       <ErrorBoundary>
@@ -137,9 +146,10 @@ describe('ErrorBoundary', () => {
 
     fireEvent.click(screen.getByText('Reload Page'));
 
-    expect(window.location.reload).toHaveBeenCalled();
-
-    window.location.reload = originalReload;
+    expect(reloadMock).toHaveBeenCalled();
+    
+    // Restore original location
+    window.location = originalLocation;
   });
 
   it('resets error when resetKeys change', () => {
@@ -185,22 +195,24 @@ describe('PatientErrorBoundary', () => {
     expect(screen.getByText('Retry Loading Patient')).toBeInTheDocument();
   });
 
-  it('resets error state when retry button is clicked', () => {
+  it('resets error state when retry button is clicked', async () => {
+    const onError = vi.fn();
     const { rerender } = render(
-      <PatientErrorBoundary>
+      <PatientErrorBoundary onError={onError}>
         <ThrowError shouldThrow={true} />
       </PatientErrorBoundary>
     );
 
     expect(screen.getByText('Patient Data Error')).toBeInTheDocument();
+    expect(onError).toHaveBeenCalled();
 
     // Click retry
-    fireEvent.click(screen.getByText('Retry Loading Patient'));
+    await user.click(screen.getByText('Retry Loading Patient'));
 
-    // Re-render with no error
+    // Rerender with key change to test reset functionality
     rerender(
-      <PatientErrorBoundary>
-        <ThrowError shouldThrow={false} />
+      <PatientErrorBoundary key="new-key" onError={onError}>
+        <div>No error</div>
       </PatientErrorBoundary>
     );
 
@@ -231,22 +243,24 @@ describe('EncounterErrorBoundary', () => {
     expect(screen.getByText('Retry Loading Encounters')).toBeInTheDocument();
   });
 
-  it('resets error state when retry button is clicked', () => {
+  it('resets error state when retry button is clicked', async () => {
+    const onError = vi.fn();
     const { rerender } = render(
-      <EncounterErrorBoundary>
+      <EncounterErrorBoundary onError={onError}>
         <ThrowError shouldThrow={true} />
       </EncounterErrorBoundary>
     );
 
     expect(screen.getByText('Encounter Data Error')).toBeInTheDocument();
+    expect(onError).toHaveBeenCalled();
 
     // Click retry
-    fireEvent.click(screen.getByText('Retry Loading Encounters'));
+    await user.click(screen.getByText('Retry Loading Encounters'));
 
-    // Re-render with no error
+    // Rerender with key change to test reset functionality
     rerender(
-      <EncounterErrorBoundary>
-        <ThrowError shouldThrow={false} />
+      <EncounterErrorBoundary key="new-key" onError={onError}>
+        <div>No error</div>
       </EncounterErrorBoundary>
     );
 

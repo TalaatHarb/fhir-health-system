@@ -44,7 +44,8 @@ describe('Toast', () => {
     rerender(
       <Toast notification={{ ...mockNotification, type: 'error' }} onRemove={onRemove} />
     );
-    expect(screen.getByText('✕')).toBeInTheDocument();
+    const toastElement = screen.getByRole('alert');
+    expect(toastElement.querySelector('.toast__icon')).toHaveTextContent('✕');
 
     rerender(
       <Toast notification={{ ...mockNotification, type: 'warning' }} onRemove={onRemove} />

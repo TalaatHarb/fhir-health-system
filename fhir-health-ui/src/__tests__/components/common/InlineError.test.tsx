@@ -197,6 +197,9 @@ describe('ErrorList', () => {
 
     expect(screen.getByText('Username is required')).toBeInTheDocument();
     expect(screen.getByText('Phone is invalid')).toBeInTheDocument();
-    expect(screen.queryByText('')).not.toBeInTheDocument();
+    
+    // Check that only 2 error items are rendered (empty and null errors should be filtered out)
+    const errorItems = screen.getAllByRole('listitem');
+    expect(errorItems).toHaveLength(2);
   });
 });
