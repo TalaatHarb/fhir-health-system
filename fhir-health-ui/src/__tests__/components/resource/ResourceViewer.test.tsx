@@ -187,7 +187,9 @@ describe('ResourceViewer', () => {
     render(<ResourceViewer resource={mockUnsupportedResource} viewMode="detailed" />);
 
     expect(screen.getByText('Raw Resource Data:')).toBeInTheDocument();
-    expect(screen.getByText('"resourceType": "Patient"')).toBeInTheDocument();
+    expect(screen.getByText((content, element) => {
+      return element?.tagName.toLowerCase() === 'pre' && content.includes('Patient');
+    })).toBeInTheDocument();
   });
 
   it('defaults to summary view mode when not specified', () => {

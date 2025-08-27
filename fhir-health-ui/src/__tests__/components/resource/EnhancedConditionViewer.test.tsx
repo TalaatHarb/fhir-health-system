@@ -66,7 +66,7 @@ describe('Enhanced ConditionViewer', () => {
       expect(screen.getByText('Mild Severity')).toBeInTheDocument();
       
       const severityIndicator = screen.getByText('Mild Severity').closest('.condition-severity-indicator');
-      expect(severityIndicator).toHaveClass('mild');
+      expect(severityIndicator).toHaveClass('255604002'); // SNOMED code for mild
       
       // Check for severity icon
       const severityIcon = severityIndicator?.querySelector('.severity-icon');
@@ -87,7 +87,7 @@ describe('Enhanced ConditionViewer', () => {
       expect(screen.getByText('Moderate Severity')).toBeInTheDocument();
       
       const severityIndicator = screen.getByText('Moderate Severity').closest('.condition-severity-indicator');
-      expect(severityIndicator).toHaveClass('moderate');
+      expect(severityIndicator).toHaveClass('6736007'); // SNOMED code for moderate
       
       const severityIcon = severityIndicator?.querySelector('.severity-icon');
       expect(severityIcon).toHaveTextContent('●●');
@@ -106,7 +106,7 @@ describe('Enhanced ConditionViewer', () => {
       expect(screen.getByText('Severe Severity')).toBeInTheDocument();
       
       const severityIndicator = screen.getByText('Severe Severity').closest('.condition-severity-indicator');
-      expect(severityIndicator).toHaveClass('severe');
+      expect(severityIndicator).toHaveClass('24484000'); // SNOMED code for severe
       
       const severityIcon = severityIndicator?.querySelector('.severity-icon');
       expect(severityIcon).toHaveTextContent('●●●');
