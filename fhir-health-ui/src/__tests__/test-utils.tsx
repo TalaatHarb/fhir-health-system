@@ -106,6 +106,9 @@ export interface MockEnhancedFhirClient {
 // Import comprehensive mock data factories
 export { PatientFactory, ClinicalDataFactory, createPatientScenario, createTimelineData } from './factories';
 
+// Import element selection utilities
+export * from './utils/element-selectors';
+
 // Legacy mock data factories for backward compatibility
 export const createMockEncounter = (patientId: string, overrides: Partial<Encounter> = {}): Encounter => ({
   resourceType: 'Encounter',

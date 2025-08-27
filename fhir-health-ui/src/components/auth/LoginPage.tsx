@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import type { LoginCredentials } from '../../types';
+import { TestIds } from '../../types/testable';
 import './LoginPage.css';
 
 interface LoginPageProps {
@@ -93,13 +94,14 @@ export function LoginPage({ onLogin }: LoginPageProps): React.JSX.Element {
           <p>Healthcare Data Visualization Platform</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
+        <form onSubmit={handleSubmit} className="login-form" data-testid={TestIds.LOGIN_FORM}>
           <div className="form-group">
             <label htmlFor="username">Username</label>
             <input
               type="text"
               id="username"
               name="username"
+              data-testid={TestIds.USERNAME_INPUT}
               value={credentials.username}
               onChange={handleInputChange}
               placeholder="Enter username (optional for demo)"
@@ -114,6 +116,7 @@ export function LoginPage({ onLogin }: LoginPageProps): React.JSX.Element {
               type="password"
               id="password"
               name="password"
+              data-testid={TestIds.PASSWORD_INPUT}
               value={credentials.password}
               onChange={handleInputChange}
               placeholder="Enter password (optional for demo)"
@@ -123,7 +126,7 @@ export function LoginPage({ onLogin }: LoginPageProps): React.JSX.Element {
           </div>
 
           {(error || formError) && (
-            <div className="error-message" role="alert">
+            <div className="error-message" role="alert" data-testid={TestIds.LOGIN_ERROR}>
               {error || formError}
             </div>
           )}
@@ -132,6 +135,7 @@ export function LoginPage({ onLogin }: LoginPageProps): React.JSX.Element {
             <button
               type="submit"
               className="login-button primary"
+              data-testid={TestIds.LOGIN_BUTTON}
               disabled={loading}
             >
               {loading ? 'Signing In...' : 'Sign In'}
@@ -140,6 +144,7 @@ export function LoginPage({ onLogin }: LoginPageProps): React.JSX.Element {
             <button
               type="button"
               className="login-button secondary"
+              data-testid={TestIds.DEMO_LOGIN_BUTTON}
               onClick={handleDemoLogin}
               disabled={loading}
             >

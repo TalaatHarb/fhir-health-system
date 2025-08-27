@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { usePatient } from '../../contexts/PatientContext';
 import type { Patient } from '../../types/fhir';
+import { TestIds } from '../../types/testable';
 import './PatientSearch.css';
 
 export interface PatientSearchProps {
@@ -147,7 +148,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
   }
 
   return (
-    <div className="patient-search">
+    <div className="patient-search" data-testid={TestIds.PATIENT_SEARCH}>
       <div className="patient-search__header">
         <h2>Patient Search</h2>
         <p>Search for existing patients or create a new patient record.</p>
@@ -158,6 +159,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
           <input
             type="text"
             className="patient-search__input"
+            data-testid={TestIds.PATIENT_SEARCH_INPUT}
             placeholder="Search by name, family name, or identifier..."
             value={searchInput}
             onChange={handleSearchInputChange}
@@ -166,6 +168,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
           <button
             type="submit"
             className="patient-search__search-button"
+            data-testid={TestIds.PATIENT_SEARCH_BUTTON}
             disabled={state.searchLoading || !searchInput.trim()}
           >
             {state.searchLoading ? 'Searching...' : 'Search'}
@@ -177,6 +180,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
         <button
           type="button"
           className="patient-search__create-button"
+          data-testid={TestIds.PATIENT_CREATE_BUTTON}
           onClick={handleCreatePatient}
           disabled={state.createLoading}
         >
@@ -186,11 +190,12 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
 
       {/* Search Results */}
       {state.searchError && (
-        <div className="patient-search__error">
+        <div className="patient-search__error" data-testid={TestIds.PATIENT_SEARCH_ERROR}>
           <p>Error searching patients: {state.searchError}</p>
           <button
             type="button"
             className="patient-search__retry-button"
+            data-testid={TestIds.RETRY_BUTTON}
             onClick={() => searchPatients(searchInput)}
           >
             Retry
@@ -199,19 +204,20 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
       )}
 
       {state.searchLoading && (
-        <div className="patient-search__loading">
+        <div className="patient-search__loading" data-testid={TestIds.PATIENT_SEARCH_LOADING}>
           <p>Searching patients...</p>
         </div>
       )}
 
       {state.searchResults.length > 0 && (
-        <div className="patient-search__results">
-          <h3>Search Results ({state.searchResults.length})</h3>
-          <div className="patient-search__results-list">
+        <div className="patient-search__results" data-testid={TestIds.PATIENT_RESULTS}>
+          <h3 data-testid={TestIds.RESULTS_COUNT}>Search Results ({state.searchResults.length})</h3>
+          <div className="patient-search__results-list" data-testid={TestIds.RESULTS_LIST}>
             {state.searchResults.map((patient) => (
               <div
                 key={patient.id}
                 className="patient-search__result-item"
+                data-testid={`${TestIds.PATIENT_RESULT_ITEM}-${patient.id}`}
                 onClick={() => handlePatientSelect(patient)}
                 role="button"
                 tabIndex={0}
@@ -261,7 +267,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
       )}
 
       {!state.searchLoading && state.searchQuery && state.searchResults.length === 0 && !state.searchError && (
-        <div className="patient-search__no-results">
+        <div className="patient-search__no-results" data-testid={TestIds.PATIENT_NO_RESULTS}>
           <p>No patients found matching "{state.searchQuery}"</p>
           <p>Try a different search term or create a new patient.</p>
         </div>

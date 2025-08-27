@@ -3,6 +3,7 @@ import { useAuth, useOrganization, usePatient } from '../contexts';
 import { OrganizationModal } from './organization/OrganizationModal';
 import { TabManager } from './patient/TabManager';
 import { PatientCreateModal } from './patient/PatientCreateModal';
+import { TestIds } from '../types/testable';
 
 export function MainApplication(): React.JSX.Element {
   const { user, logout } = useAuth();
@@ -23,32 +24,45 @@ export function MainApplication(): React.JSX.Element {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', minWidth: '80vw' }}>
       {/* Header */}
-      <header style={{ 
-        backgroundColor: 'white', 
-        borderBottom: '1px solid #e5e7eb',
-        padding: '1rem 2rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
+      <header 
+        data-testid={TestIds.MAIN_HEADER}
+        style={{ 
+          backgroundColor: 'white', 
+          borderBottom: '1px solid #e5e7eb',
+          padding: '1rem 2rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
         <div>
-          <h1 style={{ margin: 0, color: '#1f2937', fontSize: '1.5rem', fontWeight: '700' }}>
+          <h1 
+            data-testid={TestIds.APP_TITLE}
+            style={{ margin: 0, color: '#1f2937', fontSize: '1.5rem', fontWeight: '700' }}
+          >
             FHIR Resource Visualizer
           </h1>
           {currentOrganization && (
-            <p style={{ margin: '0.25rem 0 0 0', color: '#6b7280', fontSize: '0.875rem' }}>
+            <p 
+              data-testid={TestIds.CURRENT_ORG}
+              style={{ margin: '0.25rem 0 0 0', color: '#6b7280', fontSize: '0.875rem' }}
+            >
               {currentOrganization.name || 'Unnamed Organization'}
             </p>
           )}
         </div>
         
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+          <span 
+            data-testid={TestIds.USER_WELCOME}
+            style={{ color: '#6b7280', fontSize: '0.875rem' }}
+          >
             Welcome, {user?.name || 'User'}
           </span>
           
           {currentOrganization && (
             <button
+              data-testid={TestIds.SWITCH_ORG_BUTTON}
               onClick={showOrganizationModal}
               style={{
                 padding: '0.5rem 1rem',
@@ -66,6 +80,7 @@ export function MainApplication(): React.JSX.Element {
           )}
           
           <button 
+            data-testid={TestIds.LOGOUT_BUTTON}
             onClick={logout}
             style={{
               padding: '0.5rem 1rem',
@@ -100,6 +115,7 @@ export function MainApplication(): React.JSX.Element {
               Please select an organization to begin working with patient data.
             </p>
             <button
+              data-testid={TestIds.ORG_SELECT_BUTTON}
               onClick={showOrganizationModal}
               style={{
                 padding: '0.75rem 1.5rem',

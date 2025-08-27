@@ -3,6 +3,7 @@ import { usePatient } from '../../contexts/PatientContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { InlineError, ErrorList } from '../common/InlineError';
 import type { Patient, HumanName, Address, ContactPoint } from '../../types/fhir';
+import { TestIds } from '../../types/testable';
 import './PatientCreateModal.css';
 
 export interface PatientCreateModalProps {
@@ -236,13 +237,14 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
   }
 
   return (
-    <div className="patient-create-modal__overlay" onClick={handleClose}>
-      <div className="patient-create-modal__content" onClick={(e) => e.stopPropagation()}>
+    <div className="patient-create-modal__overlay" data-testid={TestIds.MODAL_OVERLAY} onClick={handleClose}>
+      <div className="patient-create-modal__content" data-testid={TestIds.PATIENT_CREATE_MODAL} onClick={(e) => e.stopPropagation()}>
         <div className="patient-create-modal__header">
           <h2>Create New Patient</h2>
           <button
             type="button"
             className="patient-create-modal__close-button"
+            data-testid={TestIds.MODAL_CLOSE}
             onClick={handleClose}
             aria-label="Close modal"
           >
@@ -250,7 +252,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
           </button>
         </div>
 
-        <form className="patient-create-modal__form" onSubmit={handleSubmit}>
+        <form className="patient-create-modal__form" data-testid={TestIds.PATIENT_FORM} onSubmit={handleSubmit}>
           {/* Basic Information */}
           <fieldset className="patient-create-modal__fieldset">
             <legend>Basic Information</legend>
@@ -263,6 +265,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                 <input
                   type="text"
                   id="givenName"
+                  data-testid={TestIds.GIVEN_NAME_INPUT}
                   className={`patient-create-modal__input ${validationErrors.givenName ? 'patient-create-modal__input--error' : ''}`}
                   value={formData.givenName}
                   onChange={(e) => handleFieldChange('givenName', e.target.value)}
@@ -282,6 +285,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                 <input
                   type="text"
                   id="familyName"
+                  data-testid={TestIds.FAMILY_NAME_INPUT}
                   className={`patient-create-modal__input ${validationErrors.familyName ? 'patient-create-modal__input--error' : ''}`}
                   value={formData.familyName}
                   onChange={(e) => handleFieldChange('familyName', e.target.value)}
@@ -302,6 +306,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                 </label>
                 <select
                   id="gender"
+                  data-testid={TestIds.GENDER_SELECT}
                   className={`patient-create-modal__select ${validationErrors.gender ? 'patient-create-modal__input--error' : ''}`}
                   value={formData.gender}
                   onChange={(e) => handleFieldChange('gender', e.target.value)}
@@ -327,6 +332,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                 <input
                   type="date"
                   id="birthDate"
+                  data-testid={TestIds.BIRTH_DATE_INPUT}
                   className={`patient-create-modal__input ${validationErrors.birthDate ? 'patient-create-modal__input--error' : ''}`}
                   value={formData.birthDate}
                   onChange={(e) => handleFieldChange('birthDate', e.target.value)}
@@ -354,6 +360,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                 <input
                   type="email"
                   id="email"
+                  data-testid={TestIds.EMAIL_INPUT}
                   className={`patient-create-modal__input ${validationErrors.email ? 'patient-create-modal__input--error' : ''}`}
                   value={formData.email}
                   onChange={(e) => handleFieldChange('email', e.target.value)}
@@ -372,6 +379,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                 <input
                   type="tel"
                   id="phone"
+                  data-testid={TestIds.PHONE_INPUT}
                   className={`patient-create-modal__input ${validationErrors.phone ? 'patient-create-modal__input--error' : ''}`}
                   value={formData.phone}
                   onChange={(e) => handleFieldChange('phone', e.target.value)}
@@ -478,6 +486,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
             <button
               type="button"
               className="patient-create-modal__cancel-button"
+              data-testid={TestIds.PATIENT_FORM_CANCEL}
               onClick={handleClose}
               disabled={state.createLoading}
             >
@@ -486,6 +495,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
             <button
               type="submit"
               className="patient-create-modal__submit-button"
+              data-testid={TestIds.PATIENT_FORM_SUBMIT}
               disabled={state.createLoading}
             >
               {state.createLoading ? 'Creating...' : 'Create Patient'}

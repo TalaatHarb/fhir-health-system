@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Organization } from '../../types';
 import { Loading } from '../common/Loading';
+import { TestIds } from '../../types/testable';
 import './OrganizationModal.css';
 
 interface OrganizationModalProps {
@@ -45,17 +46,19 @@ export function OrganizationModal({
   return (
     <div 
       className="organization-modal-overlay" 
+      data-testid={TestIds.MODAL_OVERLAY}
       onClick={handleOverlayClick}
       onKeyDown={handleKeyDown}
       role="dialog"
       aria-modal="true"
       aria-labelledby="organization-modal-title"
     >
-      <div className="organization-modal">
+      <div className="organization-modal" data-testid={TestIds.ORG_MODAL}>
         <div className="organization-modal-header">
-          <h2 id="organization-modal-title">Select Organization</h2>
+          <h2 id="organization-modal-title" data-testid={TestIds.ORG_MODAL_TITLE}>Select Organization</h2>
           <button
             className="organization-modal-close"
+            data-testid={TestIds.ORG_MODAL_CLOSE}
             onClick={onClose}
             aria-label="Close organization selection"
             type="button"
@@ -66,16 +69,17 @@ export function OrganizationModal({
 
         <div className="organization-modal-content">
           {loading && (
-            <div className="organization-modal-loading">
+            <div className="organization-modal-loading" data-testid={TestIds.ORG_LOADING}>
               <Loading size="medium" text="Loading organizations..." />
             </div>
           )}
 
           {error && (
-            <div className="organization-modal-error">
+            <div className="organization-modal-error" data-testid={TestIds.ORG_ERROR}>
               <p>Error loading organizations: {error}</p>
               <button 
                 className="organization-modal-retry"
+                data-testid={TestIds.RETRY_BUTTON}
                 onClick={() => window.location.reload()}
                 type="button"
               >
@@ -96,11 +100,12 @@ export function OrganizationModal({
                 Please select an organization to continue. This will determine which patients and resources you can access.
               </p>
               
-              <div className="organization-list">
+              <div className="organization-list" data-testid={TestIds.ORG_LIST}>
                 {organizations.map((org) => (
                   <div
                     key={org.id}
                     className={`organization-item ${currentOrg?.id === org.id ? 'selected' : ''}`}
+                    data-testid={`${TestIds.ORG_ITEM}-${org.id}`}
                     onClick={() => handleOrganizationSelect(org)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -151,7 +156,7 @@ export function OrganizationModal({
                     </div>
                     
                     {currentOrg?.id === org.id && (
-                      <div className="organization-selected-indicator">
+                      <div className="organization-selected-indicator" data-testid={TestIds.SELECTED_INDICATOR}>
                         ✓ Selected
                       </div>
                     )}
