@@ -109,6 +109,10 @@ export { PatientFactory, ClinicalDataFactory, createPatientScenario, createTimel
 // Import element selection utilities
 export * from './utils/element-selectors';
 
+// Import async testing utilities
+export * from './utils/async-test-config';
+export * from './utils/async-test-utils';
+
 // Legacy mock data factories for backward compatibility
 export const createMockEncounter = (patientId: string, overrides: Partial<Encounter> = {}): Encounter => ({
   resourceType: 'Encounter',
