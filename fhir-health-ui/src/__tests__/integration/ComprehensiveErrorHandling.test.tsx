@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { App } from '../../App';
+import App from '../../App';
 import { NotificationProvider } from '../../contexts/NotificationContext';
 import { PatientCreateModal } from '../../components/patient/PatientCreateModal';
 import { EncounterCreateModal } from '../../components/encounter/EncounterCreateModal';

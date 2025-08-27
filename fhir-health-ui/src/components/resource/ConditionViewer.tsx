@@ -56,7 +56,7 @@ export function ConditionViewer({
                    condition.clinicalStatus?.coding?.[0]?.display || 
                    status;
 
-    const statusClasses = {
+    const statusClasses: Record<string, string> = {
       'active': 'status-active',
       'recurrence': 'status-active',
       'relapse': 'status-active',
@@ -94,14 +94,14 @@ export function ConditionViewer({
                    condition.severity.coding?.[0]?.display || 
                    severity;
 
-    const severityClasses = {
+    const severityClasses: Record<string, string> = {
       'mild': 'severity-mild',
       'moderate': 'severity-moderate',
       'severe': 'severity-severe',
       'fatal': 'severity-fatal',
     };
 
-    const severityIcons = {
+    const severityIcons: Record<string, string> = {
       'mild': '●',
       'moderate': '●●',
       'severe': '●●●',

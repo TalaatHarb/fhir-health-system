@@ -232,7 +232,9 @@ export class EnhancedFHIRClient extends FHIRClient {
         const result = await super.createEncounter(encounter);
         
         // Clear related caches
-        this.clearEncounterCaches(encounter.subject.reference?.split('/')[1]);
+        if (encounter.subject?.reference) {
+          this.clearEncounterCaches(encounter.subject.reference.split('/')[1]);
+        }
         
         return result;
       },

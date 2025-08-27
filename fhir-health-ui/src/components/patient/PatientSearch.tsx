@@ -19,7 +19,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
   } = usePatient();
 
   const [searchInput, setSearchInput] = useState('');
-  const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
+  const [searchTimeout, setSearchTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   // Handle search input changes with debouncing
   const handleSearchInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {

@@ -100,7 +100,7 @@ export interface Notification {
   id: string;
   type: 'success' | 'error' | 'warning' | 'info';
   title: string;
-  message: string;
+  message?: string;
   timestamp: Date;
   duration?: number;
   actions?: NotificationAction[];

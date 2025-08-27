@@ -8,7 +8,7 @@ export function debounce<T extends (...args: any[]) => any>(
   wait: number,
   immediate = false
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
   
   return function executedFunction(...args: Parameters<T>) {
     const later = () => {
@@ -132,7 +132,7 @@ export async function loadComponent<T>(
 /**
  * Memory usage monitoring
  */
-export function getMemoryUsage(): MemoryInfo | null {
+export function getMemoryUsage(): any | null {
   if ('memory' in performance) {
     return (performance as any).memory;
   }

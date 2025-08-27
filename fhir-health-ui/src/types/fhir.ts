@@ -647,7 +647,7 @@ export interface ResourceSearchQuery {
   _sort?: string;
 }
 
-// Union type for all FHIR resources
+// Union type of all FHIR resources
 export type AnyFHIRResource = 
   | Patient 
   | Organization 
@@ -656,7 +656,8 @@ export type AnyFHIRResource =
   | Condition 
   | MedicationRequest 
   | DiagnosticReport 
-  | Procedure;
+  | Procedure 
+  | Bundle;
 
 // Resource type strings
 export type ResourceType = 

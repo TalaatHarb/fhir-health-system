@@ -63,7 +63,7 @@ export function FieldError({
 }: FieldErrorProps): React.JSX.Element | null {
   const error = errors[fieldName];
   const isFieldTouched = touched[fieldName];
-  const shouldShow = error && (showUntouched || isFieldTouched);
+  const shouldShow = Boolean(error && (showUntouched || isFieldTouched));
 
   return (
     <InlineError 

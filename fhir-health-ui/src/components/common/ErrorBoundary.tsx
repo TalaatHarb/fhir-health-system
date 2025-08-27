@@ -52,8 +52,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
   }
 
-  componentDidUpdate(prevProps: ErrorBoundaryProps): void {    // 
-Reset error state if resetKeys change
+  componentDidUpdate(prevProps: ErrorBoundaryProps): void {
+    // Reset error state if resetKeys change
     if (this.props.resetOnPropsChange && this.props.resetKeys) {
       const hasResetKeyChanged = this.props.resetKeys.some(
         (resetKey, idx) => prevProps.resetKeys?.[idx] !== resetKey

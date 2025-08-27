@@ -278,12 +278,12 @@ export function useFocusTrap(isActive: boolean) {
     previousFocusRef.current = document.activeElement as HTMLElement;
 
     // Set up focus trap
-    const cleanup = focusManager.current.trapFocus(containerRef.current);
+    const cleanup = focusManager.trapFocus(containerRef.current);
 
     return () => {
       cleanup();
       // Restore focus when trap is removed
-      focusManager.current.restoreFocus(previousFocusRef.current);
+      focusManager.restoreFocus(previousFocusRef.current);
     };
   }, [isActive]);
 
