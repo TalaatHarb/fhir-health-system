@@ -7,36 +7,155 @@ import { OrganizationProvider } from '../contexts/OrganizationContext';
 import { PatientProvider } from '../contexts/PatientContext';
 import { NotificationProvider } from '../contexts/NotificationContext';
 import type { User, Organization, Patient, Notification } from '../types';
-import type { Bundle, FHIRResource, Encounter, Observation, Condition, MedicationRequest, DiagnosticReport, Procedure } from '../types/fhir';
-import { T } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
-import { T } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
-import { T } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { config } from 'process';
-import { config } from 'process';
-import { config } from 'process';
-import { config } from 'process';
-import { config } from 'process';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/environment.d.cL3nLXbE.js';
-import { T } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
-import { T } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
-import { T } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
-import { config } from 'process';
+import type { Bundle, FHIRResource, Encounter, Observation, Condition, MedicationRequest } from '../types/fhir';
+
+// Utility to create mock FHIR responses
+export const createMockBundle = <T extends FHIRResource>(resources: T[]): Bundle<T> => ({
+  resourceType: 'Bundle' as const,
+  id: `bundle-${Date.now()}`,
+  type: 'searchset' as const,
+  total: resources.length,
+  entry: resources.map((resource, index) => ({
+    fullUrl: `http://example.com/fhir/${resource.resourceType}/${resource.id ?? index}`,
+    resource,
+  })),
+});
+
+// Mock data definitions
+export const mockUser: User = {
+  id: 'user-123',
+  username: 'demoUser',
+  name: 'Demo User',
+  email: 'demo@example.com',
+  roles: ['healthcare-professional'],
+};
+
+export const mockOrganization: Organization = {
+  resourceType: 'Organization',
+  id: 'org-123',
+  name: 'Test Healthcare Organization',
+  active: true,
+  type: [
+    {
+      coding: [
+        {
+          system: 'http://terminology.hl7.org/CodeSystem/organization-type',
+          code: 'prov',
+          display: 'Healthcare Provider',
+        },
+      ],
+    },
+  ],
+  telecom: [
+    {
+      system: 'phone',
+      value: '+1-555-123-4567',
+      use: 'work',
+    },
+    {
+      system: 'email',
+      value: 'contact@testhealthcare.org',
+      use: 'work',
+    },
+  ],
+  address: [
+    {
+      use: 'work',
+      type: 'physical',
+      line: ['123 Healthcare Ave'],
+      city: 'Medical City',
+      state: 'HC',
+      postalCode: '12345',
+      country: 'US',
+    },
+  ],
+};
+
+export const mockPatient: Patient = {
+  resourceType: 'Patient',
+  id: 'patient-123',
+  active: true,
+  name: [
+    {
+      use: 'official',
+      family: 'Doe',
+      given: ['John'],
+    },
+  ],
+  gender: 'male',
+  birthDate: '1990-01-01',
+  telecom: [
+    {
+      system: 'phone',
+      value: '+1-555-987-6543',
+      use: 'mobile',
+    },
+    {
+      system: 'email',
+      value: 'john.doe@example.com',
+      use: 'home',
+    },
+  ],
+  address: [
+    {
+      use: 'home',
+      type: 'physical',
+      line: ['456 Patient St'],
+      city: 'Patient City',
+      state: 'PC',
+      postalCode: '54321',
+      country: 'US',
+    },
+  ],
+  managingOrganization: {
+    reference: `Organization/${mockOrganization.id}`,
+    display: mockOrganization.name,
+  },
+};
+
+export const mockPatient2: Patient = {
+  resourceType: 'Patient',
+  id: 'patient-456',
+  active: true,
+  name: [
+    {
+      use: 'official',
+      family: 'Smith',
+      given: ['Jane'],
+    },
+  ],
+  gender: 'female',
+  birthDate: '1985-05-15',
+  telecom: [
+    {
+      system: 'phone',
+      value: '+1-555-123-7890',
+      use: 'mobile',
+    },
+  ],
+  managingOrganization: {
+    reference: `Organization/${mockOrganization.id}`,
+    display: mockOrganization.name,
+  },
+};
+
+export const mockNotification: Notification = {
+  id: 'notification-123',
+  type: 'success',
+  title: 'Test Notification',
+  message: 'This is a test notification message',
+  timestamp: new Date(),
+  duration: 4000,
+};
+
+export const mockNotificationError: Notification = {
+  id: 'notification-error-123',
+  type: 'error',
+  title: 'Test Error',
+  message: 'This is a test error notification',
+  timestamp: new Date(),
+  duration: 8000,
+};
 
 // Mock function interface for better type safety
 export interface MockFhirClient {
@@ -295,7 +414,7 @@ export const createCompleteFhirClientMock = (): MockFhirClient => ({
 
   // Clinical data operations
   searchObservations: vi.fn().mockImplementation((query: any) => {
-    const patientId = query?.patient || 'patient-123';
+    const patientId = query?.patient ?? 'patient-123';
     const observations = [
       createMockObservation(patientId, undefined, {
         code: { coding: [{ system: 'http://loinc.org', code: '8867-4', display: 'Heart rate' }] },
@@ -309,7 +428,7 @@ export const createCompleteFhirClientMock = (): MockFhirClient => ({
     return Promise.resolve(createMockBundle(observations));
   }),
   searchConditions: vi.fn().mockImplementation((query: any) => {
-    const patientId = query?.patient || 'patient-123';
+    const patientId = query?.patient ?? 'patient-123';
     const conditions = [
       createMockCondition(patientId, undefined, {
         code: { coding: [{ system: 'http://snomed.info/sct', code: '38341003', display: 'Hypertensive disorder' }] }
@@ -318,7 +437,7 @@ export const createCompleteFhirClientMock = (): MockFhirClient => ({
     return Promise.resolve(createMockBundle(conditions));
   }),
   searchMedicationRequests: vi.fn().mockImplementation((query: any) => {
-    const patientId = query?.patient || 'patient-123';
+    const patientId = query?.patient ?? 'patient-123';
     const medications = [
       createMockMedicationRequest(patientId, undefined, {
         medicationCodeableConcept: { coding: [{ system: 'http://www.nlm.nih.gov/research/umls/rxnorm', code: '316049', display: 'Lisinopril' }] }
@@ -368,7 +487,7 @@ export const createCompleteFhirClientMock = (): MockFhirClient => ({
       type: 'collection',
       total: resources.length,
       entry: resources.map((resource, index) => ({
-        fullUrl: `http://example.com/fhir/${resource.resourceType}/${resource.id || index}`,
+        fullUrl: `http://example.com/fhir/${resource.resourceType}/${resource.id ?? index}`,
         resource
       }))
     };
@@ -385,7 +504,14 @@ export interface NetworkSimulationConfig {
   circuitBreakerOpen?: boolean;
 }
 
-export const createNetworkSimulation = (config: NetworkSimulationConfig = {}) => {
+export const createNetworkSimulation = (config: NetworkSimulationConfig = {}): {
+  simulateNetworkConditions: <T>(operation: () => Promise<T>) => Promise<T>;
+  isOffline: () => boolean;
+  getDelay: () => number;
+  getErrorRate: () => number;
+  getTimeoutRate: () => number;
+  isCircuitBreakerOpen: () => boolean;
+} => {
   const {
     isOffline = false,
     networkDelay = 0,
@@ -394,41 +520,42 @@ export const createNetworkSimulation = (config: NetworkSimulationConfig = {}) =>
     circuitBreakerOpen = false
   } = config;
 
+  const simulateNetworkConditions = async <T,>(operation: () => Promise<T>): Promise<T> => {
+    // Simulate circuit breaker open state
+    if (circuitBreakerOpen) {
+      throw new Error('Circuit breaker is open');
+    }
+
+    // Simulate offline state
+    if (isOffline) {
+      throw new Error('NetworkError: No internet connection');
+    }
+
+    // Simulate timeout
+    if (Math.random() < timeoutRate) {
+      throw new Error('AbortError: Request timeout');
+    }
+
+    // Simulate network errors
+    if (Math.random() < errorRate) {
+      throw new Error('NetworkError: Request failed');
+    }
+
+    // Simulate network delay
+    if (networkDelay > 0) {
+      await new Promise(resolve => setTimeout(resolve, networkDelay));
+    }
+
+    return operation();
+  };
+
   return {
-    simulateNetworkConditions: async<T>(operation: () => Promise<T>): Promise<T> => {
-  // Simulate circuit breaker open state
-  if (circuitBreakerOpen) {
-    throw new Error('Circuit breaker is open');
-  }
-
-  // Simulate offline state
-  if (isOffline) {
-    throw new Error('NetworkError: No internet connection');
-  }
-
-  // Simulate timeout
-  if (Math.random() < timeoutRate) {
-    throw new Error('AbortError: Request timeout');
-  }
-
-  // Simulate network errors
-  if (Math.random() < errorRate) {
-    throw new Error('NetworkError: Request failed');
-  }
-
-  // Simulate network delay
-  if (networkDelay > 0) {
-    await new Promise(resolve => setTimeout(resolve, networkDelay));
-  }
-
-  return operation();
-},
-
-isOffline: () => isOffline,
-  getDelay: () => networkDelay,
+    simulateNetworkConditions,
+    isOffline: () => isOffline,
+    getDelay: () => networkDelay,
     getErrorRate: () => errorRate,
-      getTimeoutRate: () => timeoutRate,
-        isCircuitBreakerOpen: () => circuitBreakerOpen
+    getTimeoutRate: () => timeoutRate,
+    isCircuitBreakerOpen: () => circuitBreakerOpen
   };
 };
 
@@ -604,7 +731,7 @@ export const createEnhancedFhirClientMock = (networkConfig: NetworkSimulationCon
       return networkSim.simulateNetworkConditions(() => baseFhirMock.searchEncounters(query));
     }),
 
-    getPatientEncounters: vi.fn().mockImplementation(async (patientId: string, options: any = {}) => {
+    getPatientEncounters: vi.fn().mockImplementation(async (patientId: string, _options: any = {}) => {
       return networkSim.simulateNetworkConditions(() => baseFhirMock.getPatientEncounters(patientId));
     }),
 
@@ -851,7 +978,7 @@ vi.mock('../services/fhirClient', () => ({
         type: 'collection',
         total: resources.length,
         entry: resources.map((resource, index) => ({
-          fullUrl: `http://example.com/fhir/${resource.resourceType}/${resource.id || index}`,
+          fullUrl: `http://example.com/fhir/${resource.resourceType}/${resource.id ?? index}`,
           resource
         }))
       };
@@ -892,142 +1019,7 @@ vi.mock('../hooks/useOfflineDetection', () => ({
   })),
 }));
 
-// Default mock data
-export const mockUser: User = {
-  id: 'user-123',
-  username: 'demo-user',
-  name: 'Demo User',
-  email: 'demo@example.com',
-  roles: ['healthcare-professional'],
-};
 
-export const mockOrganization: Organization = {
-  resourceType: 'Organization',
-  id: 'org-123',
-  name: 'Test Healthcare Organization',
-  active: true,
-  type: [
-    {
-      coding: [
-        {
-          system: 'http://terminology.hl7.org/CodeSystem/organization-type',
-          code: 'prov',
-          display: 'Healthcare Provider',
-        },
-      ],
-    },
-  ],
-  telecom: [
-    {
-      system: 'phone',
-      value: '+1-555-123-4567',
-      use: 'work',
-    },
-    {
-      system: 'email',
-      value: 'contact@testhealthcare.org',
-      use: 'work',
-    },
-  ],
-  address: [
-    {
-      use: 'work',
-      type: 'physical',
-      line: ['123 Healthcare Ave'],
-      city: 'Medical City',
-      state: 'HC',
-      postalCode: '12345',
-      country: 'US',
-    },
-  ],
-};
-
-export const mockPatient: Patient = {
-  resourceType: 'Patient',
-  id: 'patient-123',
-  active: true,
-  name: [
-    {
-      use: 'official',
-      family: 'Doe',
-      given: ['John'],
-    },
-  ],
-  gender: 'male',
-  birthDate: '1990-01-01',
-  telecom: [
-    {
-      system: 'phone',
-      value: '+1-555-987-6543',
-      use: 'mobile',
-    },
-    {
-      system: 'email',
-      value: 'john.doe@example.com',
-      use: 'home',
-    },
-  ],
-  address: [
-    {
-      use: 'home',
-      type: 'physical',
-      line: ['456 Patient St'],
-      city: 'Patient City',
-      state: 'PC',
-      postalCode: '54321',
-      country: 'US',
-    },
-  ],
-  managingOrganization: {
-    reference: `Organization/${mockOrganization.id}`,
-    display: mockOrganization.name,
-  },
-};
-
-// Additional mock data for comprehensive testing
-export const mockPatient2: Patient = {
-  resourceType: 'Patient',
-  id: 'patient-456',
-  active: true,
-  name: [
-    {
-      use: 'official',
-      family: 'Smith',
-      given: ['Jane'],
-    },
-  ],
-  gender: 'female',
-  birthDate: '1985-05-15',
-  telecom: [
-    {
-      system: 'phone',
-      value: '+1-555-123-7890',
-      use: 'mobile',
-    },
-  ],
-  managingOrganization: {
-    reference: `Organization/${mockOrganization.id}`,
-    display: mockOrganization.name,
-  },
-};
-
-export const mockNotification: Notification = {
-  id: 'notification-123',
-  type: 'success',
-  title: 'Test Notification',
-  message: 'This is a test notification message',
-  timestamp: new Date(),
-  duration: 4000,
-};
-
-export const mockNotificationError: Notification = {
-  id: 'notification-error-123',
-  type: 'error',
-  title: 'Error Notification',
-  message: 'This is a test error notification',
-  timestamp: new Date(),
-  duration: 8000,
-};
 
 // Enhanced Test Wrapper Options Interface
 export interface EnhancedTestWrapperOptions {
@@ -1096,7 +1088,14 @@ export interface EnhancedTestWrapperOptions {
 export type TestWrapperOptions = EnhancedTestWrapperOptions;
 
 // Provider state management utilities
-export const createProviderStateManager = (options: EnhancedTestWrapperOptions) => {
+export const createProviderStateManager = (options: EnhancedTestWrapperOptions): {
+  routerConfig: any;
+  authConfig: any;
+  orgConfig: any;
+  patientConfig: any;
+  notificationConfig: any;
+  envConfig: any;
+} => {
   const {
     routing = {},
     auth = {},
@@ -1108,33 +1107,33 @@ export const createProviderStateManager = (options: EnhancedTestWrapperOptions) 
 
   // Router configuration
   const routerConfig = {
-    initialEntries: routing.initialEntries || ['/'],
+    initialEntries: routing.initialEntries ?? ['/'],
     useMemoryRouter: routing.useMemoryRouter !== false, // Default to true
   };
 
   // Auth state configuration
   const authConfig = {
     isAuthenticated: auth.isAuthenticated !== false, // Default to true
-    user: auth.user || mockUser,
-    permissions: auth.permissions || [],
+    user: auth.user ?? mockUser,
+    permissions: auth.permissions ?? [],
   };
 
   // Organization state configuration
   const orgConfig = {
-    current: organization.current || mockOrganization,
-    available: organization.available || [mockOrganization],
-    loading: organization.loading || false,
-    modalOpen: organization.modalOpen || false,
+    current: organization.current ?? mockOrganization,
+    available: organization.available ?? [mockOrganization],
+    loading: organization.loading ?? false,
+    modalOpen: organization.modalOpen ?? false,
     error: organization.error || null,
   };
 
   // Patient state configuration
   const patientConfig = {
-    openPatients: patient.openPatients || new Map(),
-    activePatientId: patient.activePatientId || null,
-    searchResults: patient.searchResults || [],
-    searchLoading: patient.searchLoading || false,
-    searchError: patient.searchError || null,
+    openPatients: patient.openPatients ?? new Map(),
+    activePatientId: patient.activePatientId ?? null,
+    searchResults: patient.searchResults ?? [],
+    searchLoading: patient.searchLoading ?? false,
+    searchError: patient.searchError ?? null,
     createModalOpen: patient.createModalOpen || false,
     createLoading: patient.createLoading || false,
     createError: patient.createError || null,
@@ -1142,8 +1141,8 @@ export const createProviderStateManager = (options: EnhancedTestWrapperOptions) 
 
   // Notification state configuration
   const notificationConfig = {
-    messages: notifications.messages || [],
-    maxMessages: notifications.maxMessages || 5,
+    messages: notifications.messages ?? [],
+    maxMessages: notifications.maxMessages ?? 5,
   };
 
   // Environment configuration
@@ -1169,7 +1168,7 @@ export const createProviderStateManager = (options: EnhancedTestWrapperOptions) 
 // Enhanced test wrapper component creation
 function createTestWrapper(options: EnhancedTestWrapperOptions = {}) {
   const stateManager = createProviderStateManager(options);
-  const { routerConfig, authConfig, orgConfig, patientConfig, notificationConfig, envConfig } = stateManager;
+  const { routerConfig, authConfig, envConfig } = stateManager;
 
   // Mock localStorage for auth persistence
   const mockLocalStorage = {
@@ -1226,7 +1225,7 @@ function createTestWrapper(options: EnhancedTestWrapperOptions = {}) {
 export function renderWithProviders(
   ui: React.ReactElement,
   options: EnhancedTestWrapperOptions = {}
-) {
+): ReturnType<typeof render> {
   const { renderOptions, ...wrapperOptions } = options;
   const Wrapper = createTestWrapper(wrapperOptions);
 
@@ -1240,7 +1239,7 @@ export function renderWithProviders(
 export function renderWithAuth(
   ui: React.ReactElement,
   options: EnhancedTestWrapperOptions = {}
-) {
+): ReturnType<typeof render> {
   return renderWithProviders(ui, {
     auth: {
       isAuthenticated: true,
@@ -1264,7 +1263,7 @@ export function renderWithAuth(
 export function renderWithoutAuth(
   ui: React.ReactElement,
   options: EnhancedTestWrapperOptions = {}
-) {
+): ReturnType<typeof render> {
   return renderWithProviders(ui, {
     auth: {
       isAuthenticated: false,
@@ -1289,7 +1288,7 @@ export function renderWithOrganization(
   ui: React.ReactElement,
   organization: Organization,
   options: EnhancedTestWrapperOptions = {}
-) {
+): ReturnType<typeof render> {
   return renderWithProviders(ui, {
     organization: {
       current: organization,
@@ -1308,7 +1307,7 @@ export function renderWithPatient(
   ui: React.ReactElement,
   patient: Patient,
   options: EnhancedTestWrapperOptions = {}
-) {
+): ReturnType<typeof render> {
   const openPatients = new Map([[patient.id!, patient]]);
 
   return renderWithProviders(ui, {
@@ -1333,9 +1332,9 @@ export function renderWithMultiplePatients(
   patients: Patient[],
   activePatientId?: string,
   options: EnhancedTestWrapperOptions = {}
-) {
+): ReturnType<typeof render> {
   const openPatients = new Map(patients.map(p => [p.id!, p]));
-  const activeId = activePatientId || (patients.length > 0 ? patients[0].id! : null);
+  const activeId = activePatientId ?? (patients.length > 0 ? patients[0].id! : null);
 
   return renderWithProviders(ui, {
     patient: {
@@ -1358,7 +1357,7 @@ export function renderWithNotifications(
   ui: React.ReactElement,
   notifications: Notification[],
   options: EnhancedTestWrapperOptions = {}
-) {
+): ReturnType<typeof render> {
   return renderWithProviders(ui, {
     notifications: {
       messages: notifications,
@@ -1373,7 +1372,7 @@ export function renderWithNotifications(
 export function renderWithOfflineEnvironment(
   ui: React.ReactElement,
   options: EnhancedTestWrapperOptions = {}
-) {
+): ReturnType<typeof render> {
   return renderWithProviders(ui, {
     environment: {
       isOffline: true,
@@ -1385,20 +1384,8 @@ export function renderWithOfflineEnvironment(
   });
 }
 
-// Utility to create mock FHIR responses
-export const createMockBundle = <T extends FHIRResource>(resources: T[]): Bundle<T> => ({
-  resourceType: 'Bundle' as const,
-  id: `bundle-${Date.now()}`,
-  type: 'searchset' as const,
-  total: resources.length,
-  entry: resources.map((resource, index) => ({
-    fullUrl: `http://example.com/fhir/${resource.resourceType}/${resource.id || index}`,
-    resource,
-  })),
-});
-
 // Mock fetch for FHIR API calls
-export function mockFhirApi() {
+export function mockFhirApi(): { mockFetch: ReturnType<typeof vi.fn>; cleanup: () => void } {
   const mockFetch = vi.fn();
 
   // Default successful responses
@@ -1440,11 +1427,18 @@ export function mockFhirApi() {
   });
 
   global.fetch = mockFetch;
-  return mockFetch;
+
+  const cleanup = () => {
+    if (global.fetch && vi.isMockFunction(global.fetch)) {
+      (global.fetch as ReturnType<typeof vi.fn>).mockRestore();
+    }
+  };
+
+  return { mockFetch, cleanup };
 }
 
 // Enhanced cleanup function for tests
-export function cleanupMocks() {
+export function cleanupMocks(): void {
   vi.clearAllMocks();
 
   // Reset localStorage mock
@@ -1462,7 +1456,7 @@ export function cleanupMocks() {
 
   // Reset fetch mock if it exists
   if (global.fetch && vi.isMockFunction(global.fetch)) {
-    global.fetch.mockReset();
+    (global.fetch as ReturnType<typeof vi.fn>).mockReset();
   }
 
   // Reset any environment mocks
@@ -1471,11 +1465,10 @@ export function cleanupMocks() {
 }
 
 // Utility to setup mock timers for async operations
-export function setupMockTimers() {
+export function setupMockTimers(): { cleanup: () => void; advanceTime: (ms: number) => void } {
   vi.useFakeTimers();
   return {
-    advanceTimers: (ms: number) => vi.advanceTimersByTime(ms),
-    runAllTimers: () => vi.runAllTimers(),
+    advanceTime: (ms: number) => vi.advanceTimersByTime(ms),
     cleanup: () => {
       vi.runOnlyPendingTimers();
       vi.useRealTimers();
@@ -1526,9 +1519,9 @@ export function createMockProviderConfig(overrides: Partial<EnhancedTestWrapperO
 }
 
 // Test debugging utilities
-export const debugTestState = (options: EnhancedTestWrapperOptions) => {
+export const debugTestState = (options: EnhancedTestWrapperOptions): void => {
   const stateManager = createProviderStateManager(options);
-  console.log('Test State Configuration:', {
+  console.warn('Test State Configuration:', {
     router: stateManager.routerConfig,
     auth: stateManager.authConfig,
     organization: stateManager.orgConfig,
@@ -1542,13 +1535,13 @@ export const debugTestState = (options: EnhancedTestWrapperOptions) => {
 export const waitForAsync = async (
   callback: () => void | Promise<void>,
   timeout: number = 5000
-) => {
+): Promise<void> => {
   const { waitFor } = await import('@testing-library/react');
   return waitFor(callback, { timeout });
 };
 
 // Utility to simulate network delays in tests
-export const simulateNetworkDelay = (ms: number = 100) => {
+export const simulateNetworkDelay = (ms: number = 100): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
@@ -1608,7 +1601,6 @@ export const asyncTestUtils = {
       if (!result) {
         throw new Error('Condition not met');
       }
-      return result;
     }, {
       timeout: config.timeouts.dataLoading,
       interval: config.waitStrategies.dataLoading.interval,
@@ -1628,7 +1620,6 @@ export const asyncTestUtils = {
       if (!result) {
         throw new Error('Condition not met');
       }
-      return result;
     }, {
       timeout: config.timeouts.network,
       interval: config.waitStrategies.networkResponse.interval,
@@ -1648,7 +1639,6 @@ export const asyncTestUtils = {
       if (!result) {
         throw new Error('Condition not met');
       }
-      return result;
     }, {
       timeout: config.timeouts.rendering,
       interval: config.waitStrategies.elementAppearance.interval,
@@ -1658,83 +1648,83 @@ export const asyncTestUtils = {
   /**
    * Retry async operation with backoff
    */
-  retryAsyncOperation: async<T>(
+  retryAsyncOperation: async <T,>(
     operation: () => Promise<T>,
     config: AsyncTestConfig = defaultAsyncTestConfig
   ): Promise<T> => {
-  let lastError: Error;
+    let lastError: Error;
 
-  for (let attempt = 1; attempt <= config.retries.maxAttempts; attempt++) {
-    try {
-      return await operation();
-    } catch (error) {
-      lastError = error as Error;
+    for (let attempt = 1; attempt <= config.retries.maxAttempts; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error as Error;
 
-      // Check if error should trigger retry
-      const shouldRetry = config.retries.conditions.some(condition =>
-        lastError.name.includes(condition) || lastError.message.includes(condition)
-      );
+        // Check if error should trigger retry
+        const shouldRetry = config.retries.conditions.some(condition =>
+          lastError.name.includes(condition) || lastError.message.includes(condition)
+        );
 
-      if (!shouldRetry || attempt === config.retries.maxAttempts) {
-        throw lastError;
+        if (!shouldRetry || attempt === config.retries.maxAttempts) {
+          throw lastError;
+        }
+
+        // Wait before retry with exponential backoff
+        const delay = config.retries.backoffMs * Math.pow(2, attempt - 1);
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
-
-      // Wait before retry with exponential backoff
-      const delay = config.retries.backoffMs * Math.pow(2, attempt - 1);
-      await new Promise(resolve => setTimeout(resolve, delay));
-    }
-  }
-
-  throw lastError!;
-},
-
-/**
- * Create timeout promise for operations
- */
-withTimeout: async<T>(
-  promise: Promise<T>,
-  timeoutMs: number,
-  timeoutMessage: string = 'Operation timed out'
-): Promise<T> => {
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
-  });
-
-  return Promise.race([promise, timeoutPromise]);
-},
-
-/**
- * Simulate flaky network conditions for testing
- */
-simulateFlakyNetwork: async<T>(
-  operation: () => Promise<T>,
-  failureRate: number = 0.3,
-  maxRetries: number = 3
-): Promise<T> => {
-  let attempts = 0;
-
-  while (attempts < maxRetries) {
-    attempts++;
-
-    // Simulate network failure
-    if (Math.random() < failureRate) {
-      if (attempts === maxRetries) {
-        throw new Error('NetworkError: Simulated network failure');
-      }
-
-      // Wait before retry
-      await new Promise(resolve => setTimeout(resolve, 100 * attempts));
-      continue;
     }
 
-    // Simulate network delay
-    await simulateNetworkDelay(50 + Math.random() * 200);
+    throw lastError!;
+  },
 
-    return operation();
-  }
+  /**
+   * Create timeout promise for operations
+   */
+  withTimeout: async <T,>(
+    promise: Promise<T>,
+    timeoutMs: number,
+    timeoutMessage: string = 'Operation timed out'
+  ): Promise<T> => {
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+    });
 
-  throw new Error('NetworkError: Max retries exceeded');
-},
+    return Promise.race([promise, timeoutPromise]);
+  },
+
+  /**
+   * Simulate flaky network conditions for testing
+   */
+  simulateFlakyNetwork: async <T,>(
+    operation: () => Promise<T>,
+    failureRate: number = 0.3,
+    maxRetries: number = 3
+  ): Promise<T> => {
+    let attempts = 0;
+
+    while (attempts < maxRetries) {
+      attempts++;
+
+      // Simulate network failure
+      if (Math.random() < failureRate) {
+        if (attempts === maxRetries) {
+          throw new Error('NetworkError: Simulated network failure');
+        }
+
+        // Wait before retry
+        await new Promise(resolve => setTimeout(resolve, 100 * attempts));
+        continue;
+      }
+
+      // Simulate network delay
+      await simulateNetworkDelay(50 + Math.random() * 200);
+
+      return operation();
+    }
+
+    throw new Error('NetworkError: Max retries exceeded');
+  },
 };
 
 // Performance optimization helpers for test execution
@@ -1742,50 +1732,50 @@ export const testPerformanceUtils = {
   /**
    * Measure test execution time
    */
-  measureExecutionTime: async<T>(
+  measureExecutionTime: async <T,>(
     operation: () => Promise<T>,
     label: string = 'Operation'
   ): Promise<{ result: T; duration: number }> => {
-  const startTime = performance.now();
-  const result = await operation();
-  const duration = performance.now() - startTime;
+    const startTime = performance.now();
+    const result = await operation();
+    const duration = performance.now() - startTime;
 
-  console.log(`${label} took ${duration.toFixed(2)}ms`);
+    console.warn(`${label} took ${duration.toFixed(2)}ms`);
 
-  return { result, duration };
-},
+    return { result, duration };
+  },
 
-/**
- * Batch async operations for better performance
- */
-batchAsyncOperations: async<T>(
-  operations: (() => Promise<T>)[],
-  batchSize: number = 5
-): Promise<T[]> => {
-  const results: T[] = [];
+  /**
+   * Batch async operations for better performance
+   */
+  batchAsyncOperations: async <T,>(
+    operations: (() => Promise<T>)[],
+    batchSize: number = 5
+  ): Promise<T[]> => {
+    const results: T[] = [];
 
-  for (let i = 0; i < operations.length; i += batchSize) {
-    const batch = operations.slice(i, i + batchSize);
-    const batchResults = await Promise.all(batch.map(op => op()));
-    results.push(...batchResults);
-  }
+    for (let i = 0; i < operations.length; i += batchSize) {
+      const batch = operations.slice(i, i + batchSize);
+      const batchResults = await Promise.all(batch.map(op => op()));
+      results.push(...batchResults);
+    }
 
-  return results;
-},
+    return results;
+  },
 
-/**
- * Optimize test data loading
- */
-preloadTestData: async (
-  dataLoaders: Record<string, () => Promise<any>>
-): Promise<Record<string, any>> => {
-  const entries = Object.entries(dataLoaders);
-  const results = await Promise.all(
-    entries.map(async ([key, loader]) => [key, await loader()])
-  );
+  /**
+   * Optimize test data loading
+   */
+  preloadTestData: async (
+    dataLoaders: Record<string, () => Promise<any>>
+  ): Promise<Record<string, any>> => {
+    const entries = Object.entries(dataLoaders);
+    const results = await Promise.all(
+      entries.map(async ([key, loader]) => [key, await loader()])
+    );
 
-  return Object.fromEntries(results);
-},
+    return Object.fromEntries(results);
+  },
 };
 
 // Debugging utilities for async operations
@@ -1794,7 +1784,7 @@ export const asyncDebugUtils = {
    * Log async operation progress
    */
   logAsyncProgress: (operation: string, stage: string, data?: any) => {
-    console.log(`[ASYNC DEBUG] ${operation} - ${stage}`, data ? data : '');
+    console.warn(`[ASYNC DEBUG] ${operation} - ${stage}`, data ?? '');
   },
 
   /**
@@ -1804,27 +1794,27 @@ export const asyncDebugUtils = {
     const pendingPromises = new Set<Promise<any>>();
 
     return {
-      add: <T>(promise: Promise<T>, label: string = 'Unknown'): Promise<T> => {
+      add: <T,>(promise: Promise<T>, label: string = 'Unknown'): Promise<T> => {
         pendingPromises.add(promise);
-        console.log(`[PROMISE TRACKER] Added: ${label} (Total: ${pendingPromises.size})`);
-        
-        promise.finally(() => {
+        console.warn(`[PROMISE TRACKER] Added: ${label} (Total: ${pendingPromises.size})`);
+
+        void promise.finally(() => {
           pendingPromises.delete(promise);
-        console.log(`[PROMISE TRACKER] Resolved: ${label} (Remaining: ${pendingPromises.size})`);
+          console.warn(`[PROMISE TRACKER] Resolved: ${label} (Remaining: ${pendingPromises.size})`);
         });
 
         return promise;
       },
-      
+
       getPendingCount: () => pendingPromises.size,
-      
+
       waitForAll: async (timeout: number = 5000) => {
         const startTime = Date.now();
-        
+
         while (pendingPromises.size > 0 && Date.now() - startTime < timeout) {
           await new Promise(resolve => setTimeout(resolve, 10));
         }
-        
+
         if (pendingPromises.size > 0) {
           console.warn(`[PROMISE TRACKER] ${pendingPromises.size} promises still pending after timeout`);
         }
@@ -1837,23 +1827,23 @@ export const asyncDebugUtils = {
    */
   monitorTestState: (interval: number = 1000) => {
     const monitor = setInterval(() => {
-          console.log('[TEST STATE MONITOR]', {
-            pendingPromises: asyncDebugUtils.trackPromises.getPendingCount(),
-            localStorage: Object.keys(localStorage).length,
-            timers: vi.getTimerCount?.() || 'N/A',
-          });
+      console.warn('[TEST STATE MONITOR]', {
+        pendingPromises: asyncDebugUtils.trackPromises.getPendingCount(),
+        localStorage: Object.keys(localStorage).length,
+        timers: vi.getTimerCount?.() || 'N/A',
+      });
     }, interval);
-    
+
     return () => clearInterval(monitor);
   },
 };
 
-        // Export all mock data and utilities (functions already exported above)
+// Export all mock data and utilities (functions already exported above)
 
-        // Re-export testing library utilities with additional custom utilities
-        export * from '@testing-library/react';
-        export { default as userEvent } from '@testing-library/user-event';
+// Re-export testing library utilities with additional custom utilities
+export * from '@testing-library/react';
+export { default as userEvent } from '@testing-library/user-event';
 
-        // Export commonly used testing utilities
-        export {vi} from 'vitest';
-        export {expect} from 'vitest';
+// Export commonly used testing utilities
+export { vi } from 'vitest';
+export { expect } from 'vitest';

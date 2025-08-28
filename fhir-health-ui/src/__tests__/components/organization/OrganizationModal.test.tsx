@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { OrganizationModal } from '../../../components/organization/OrganizationModal';
+import { renderWithProviders } from '../../test-utils';
 import type { Organization } from '../../../types/fhir';
 
 const mockOrganizations: Organization[] = [
@@ -69,7 +70,7 @@ describe('OrganizationModal', () => {
   });
 
   it('should not render when closed', () => {
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         isOpen={false}
@@ -80,14 +81,14 @@ describe('OrganizationModal', () => {
   });
 
   it('should render modal when open', () => {
-    render(<OrganizationModal {...defaultProps} />);
+    renderWithProviders(<OrganizationModal {...defaultProps} />);
 
     expect(screen.getByText('Select Organization')).toBeInTheDocument();
     expect(screen.getByText('Please select an organization to continue')).toBeInTheDocument();
   });
 
   it('should display organizations list', () => {
-    render(<OrganizationModal {...defaultProps} />);
+    renderWithProviders(<OrganizationModal {...defaultProps} />);
 
     expect(screen.getByText('Test Hospital')).toBeInTheDocument();
     expect(screen.getByText('Test Clinic')).toBeInTheDocument();
@@ -95,7 +96,7 @@ describe('OrganizationModal', () => {
   });
 
   it('should display organization details', () => {
-    render(<OrganizationModal {...defaultProps} />);
+    renderWithProviders(<OrganizationModal {...defaultProps} />);
 
     // Check for organization details
     expect(screen.getByText('ID: org-1')).toBeInTheDocument();
@@ -109,7 +110,7 @@ describe('OrganizationModal', () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         onSelect={onSelect}
@@ -125,7 +126,7 @@ describe('OrganizationModal', () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         onSelect={onSelect}
@@ -147,7 +148,7 @@ describe('OrganizationModal', () => {
   });
 
   it('should show selected organization', () => {
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         currentOrg={mockOrganizations[0]}
@@ -164,7 +165,7 @@ describe('OrganizationModal', () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         onClose={onClose}
@@ -180,7 +181,7 @@ describe('OrganizationModal', () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         onClose={onClose}
@@ -197,7 +198,7 @@ describe('OrganizationModal', () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         onClose={onClose}
@@ -213,7 +214,7 @@ describe('OrganizationModal', () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         onClose={onClose}
@@ -227,7 +228,7 @@ describe('OrganizationModal', () => {
   });
 
   it('should show loading state', () => {
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         loading={true}
@@ -241,7 +242,7 @@ describe('OrganizationModal', () => {
   it('should show error state', () => {
     const errorMessage = 'Failed to load organizations';
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         error={errorMessage}
@@ -264,7 +265,7 @@ describe('OrganizationModal', () => {
       writable: true
     });
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         error="Failed to load"
@@ -278,7 +279,7 @@ describe('OrganizationModal', () => {
   });
 
   it('should show empty state', () => {
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         organizations={[]}
@@ -296,7 +297,7 @@ describe('OrganizationModal', () => {
       // Missing name, type, address, telecom
     };
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         organizations={[incompleteOrg]}
@@ -327,7 +328,7 @@ describe('OrganizationModal', () => {
       }]
     };
 
-    render(
+    renderWithProviders(
       <OrganizationModal
         {...defaultProps}
         organizations={[complexOrg]}
@@ -339,7 +340,7 @@ describe('OrganizationModal', () => {
   });
 
   it('should have proper accessibility attributes', () => {
-    render(<OrganizationModal {...defaultProps} />);
+    renderWithProviders(<OrganizationModal {...defaultProps} />);
 
     const dialog = screen.getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-modal', 'true');

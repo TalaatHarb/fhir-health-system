@@ -1,10 +1,9 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
 import { LoginPage } from '../../../components/auth/LoginPage';
-import { AuthProvider } from '../../../contexts/AuthContext';
+import { renderWithProviders } from '../../test-utils';
 
 // Mock react-router-dom hooks
 const mockNavigate = vi.fn();
@@ -17,39 +16,27 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
-
-function TestWrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <MemoryRouter>
-      <AuthProvider>{children}</AuthProvider>
-    </MemoryRouter>
-  );
-}
-
 describe('LoginPage', () => {
   const mockOnLogin = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorageMock.getItem.mockReturnValue(null);
     mockNavigate.mockClear();
   });
 
   it('should render login form with all elements', () => {
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     expect(screen.getByRole('heading', { name: /fhir resource visualizer/i })).toBeInTheDocument();
@@ -62,10 +49,18 @@ describe('LoginPage', () => {
   it('should handle form input changes', async () => {
     const user = userEvent.setup();
     
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     const usernameInput = screen.getByLabelText(/username/i);
@@ -81,10 +76,18 @@ describe('LoginPage', () => {
   it('should handle form submission with credentials', async () => {
     const user = userEvent.setup();
     
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     const usernameInput = screen.getByLabelText(/username/i);
@@ -104,10 +107,18 @@ describe('LoginPage', () => {
   it('should handle demo login button', async () => {
     const user = userEvent.setup();
     
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     const demoButton = screen.getByRole('button', { name: /demo login/i });
@@ -122,10 +133,18 @@ describe('LoginPage', () => {
   it('should handle empty form submission (demo mode)', async () => {
     const user = userEvent.setup();
     
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     const submitButton = screen.getByRole('button', { name: /sign in/i });
@@ -140,10 +159,18 @@ describe('LoginPage', () => {
   it('should disable form elements during loading', async () => {
     const user = userEvent.setup();
     
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     const usernameInput = screen.getByLabelText(/username/i);
@@ -163,10 +190,18 @@ describe('LoginPage', () => {
   it('should clear form error when user starts typing', async () => {
     const user = userEvent.setup();
     
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     const usernameInput = screen.getByLabelText(/username/i);
@@ -180,10 +215,18 @@ describe('LoginPage', () => {
   });
 
   it('should show development mode information', () => {
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     expect(screen.getByText(/development mode/i)).toBeInTheDocument();
@@ -191,10 +234,18 @@ describe('LoginPage', () => {
   });
 
   it('should have proper accessibility attributes', () => {
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     const usernameInput = screen.getByLabelText(/username/i);
@@ -208,10 +259,18 @@ describe('LoginPage', () => {
   it('should call onLogin callback when authentication succeeds', async () => {
     const user = userEvent.setup();
     
-    render(
-      <TestWrapper>
-        <LoginPage onLogin={mockOnLogin} />
-      </TestWrapper>
+    renderWithProviders(
+      <LoginPage onLogin={mockOnLogin} />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/login']
+        }
+      }
     );
 
     const demoButton = screen.getByRole('button', { name: /demo login/i });

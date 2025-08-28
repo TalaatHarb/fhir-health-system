@@ -1,13 +1,11 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { renderWithProviders } from '../../../test-utils';
 import { ObservationForm } from '../../../../components/encounter/forms/ObservationForm';
 import type { Observation } from '../../../../types/fhir';
 
-// Mock window.alert
-const mockAlert = vi.fn();
-global.alert = mockAlert;
+// No need to mock alert since component uses ErrorList
 
 describe('ObservationForm', () => {
   const mockOnAdd = vi.fn();
@@ -26,10 +24,10 @@ describe('ObservationForm', () => {
         text: 'Body temperature'
       },
       valueQuantity: {
-        value: 98.6,
-        unit: 'degF',
+        value: 37.0,
+        unit: 'Cel',
         system: 'http://unitsofmeasure.org',
-        code: 'degF'
+        code: 'Cel'
       },
       effectiveDateTime: '2024-01-15T10:00:00Z'
     }
@@ -40,7 +38,7 @@ describe('ObservationForm', () => {
   });
 
   const renderForm = (observations = [], disabled = false) => {
-    return render(
+    return renderWithProviders(
       <ObservationForm
         observations={observations}
         onAdd={mockOnAdd}
@@ -58,7 +56,7 @@ describe('ObservationForm', () => {
 
   it('should display existing observations', () => {
     renderForm(mockObservations);
-    expect(screen.getByText('Body temperature: 98.6 degF')).toBeInTheDocument();
+    expect(screen.getByText('Body temperature: 37 Cel')).toBeInTheDocument();
     expect(screen.getByText('final')).toBeInTheDocument();
   });
 
@@ -77,7 +75,7 @@ describe('ObservationForm', () => {
     
     await user.click(screen.getByText('Add Observation'));
     
-    const commonSelect = screen.getByDisplayValue('Select a common observation...');
+    const commonSelect = screen.getByRole('combobox', { name: /common observations/i });
     await user.selectOptions(commonSelect, '8310-5');
     
     expect(screen.getByDisplayValue('8310-5')).toBeInTheDocument();
@@ -91,9 +89,7 @@ describe('ObservationForm', () => {
     await user.click(screen.getByText('Add Observation'));
     await user.click(screen.getByText('Add Observation'));
     
-    expect(mockAlert).toHaveBeenCalledWith(
-      expect.stringContaining('Observation code is required')
-    );
+    expect(screen.getByText('Observation code is required')).toBeInTheDocument();
     expect(mockOnAdd).not.toHaveBeenCalled();
   });
 
@@ -108,8 +104,8 @@ describe('ObservationForm', () => {
     await user.type(screen.getByLabelText('Code *'), '8310-5');
     await user.type(screen.getByLabelText('Display Name *'), 'Body temperature');
     await user.selectOptions(screen.getByLabelText('Value Type *'), 'quantity');
-    await user.type(screen.getByLabelText('Value *'), '98.6');
-    await user.type(screen.getByLabelText('Unit *'), 'degF');
+    await user.type(screen.getByLabelText('Value *'), '37.0');
+    await user.type(screen.getByLabelText('Unit *'), 'Cel');
     
     const effectiveInput = screen.getByLabelText('Effective Date/Time *');
     await user.clear(effectiveInput);
@@ -136,10 +132,10 @@ describe('ObservationForm', () => {
       },
       effectiveDateTime: '2024-01-15T10:00',
       valueQuantity: {
-        value: 98.6,
-        unit: 'degF',
+        value: 37.0,
+        unit: 'Cel',
         system: 'http://unitsofmeasure.org',
-        code: 'degF'
+        code: 'Cel'
       }
     });
   });
@@ -224,8 +220,8 @@ describe('ObservationForm', () => {
     await user.selectOptions(screen.getByLabelText('Status *'), 'final');
     await user.type(screen.getByLabelText('Code *'), '8310-5');
     await user.type(screen.getByLabelText('Display Name *'), 'Body temperature');
-    await user.type(screen.getByLabelText('Value *'), '98.6');
-    await user.type(screen.getByLabelText('Unit *'), 'degF');
+    await user.type(screen.getByLabelText('Value *'), '37.0');
+    await user.type(screen.getByLabelText('Unit *'), 'Cel');
     
     await user.selectOptions(screen.getByLabelText('Interpretation'), 'N');
     await user.type(screen.getByLabelText('Notes'), 'Patient appears comfortable');
@@ -293,9 +289,7 @@ describe('ObservationForm', () => {
     
     await user.click(screen.getByText('Add Observation'));
     
-    expect(mockAlert).toHaveBeenCalledWith(
-      expect.stringContaining('Quantity value is required')
-    );
+    expect(screen.getByText('Quantity value is required')).toBeInTheDocument();
     expect(mockOnAdd).not.toHaveBeenCalled();
   });
 
@@ -313,9 +307,7 @@ describe('ObservationForm', () => {
     
     await user.click(screen.getByText('Add Observation'));
     
-    expect(mockAlert).toHaveBeenCalledWith(
-      expect.stringContaining('String value is required')
-    );
+    expect(screen.getByText('String value is required')).toBeInTheDocument();
     expect(mockOnAdd).not.toHaveBeenCalled();
   });
 
@@ -328,8 +320,8 @@ describe('ObservationForm', () => {
     await user.selectOptions(screen.getByLabelText('Status *'), 'final');
     await user.type(screen.getByLabelText('Code *'), '8310-5');
     await user.type(screen.getByLabelText('Display Name *'), 'Body temperature');
-    await user.type(screen.getByLabelText('Value *'), '98.6');
-    await user.type(screen.getByLabelText('Unit *'), 'degF');
+    await user.type(screen.getByLabelText('Value *'), '37.0');
+    await user.type(screen.getByLabelText('Unit *'), 'Cel');
     
     await user.click(screen.getByText('Add Observation'));
     

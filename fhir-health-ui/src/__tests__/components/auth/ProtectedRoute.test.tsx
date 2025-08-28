@@ -1,9 +1,8 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
 import { ProtectedRoute, withProtectedRoute } from '../../../components/auth/ProtectedRoute';
-import { AuthProvider } from '../../../contexts/AuthContext';
+import { renderWithProviders } from '../../test-utils';
 
 // Mock react-router-dom Navigate component
 const mockNavigate = vi.fn();
@@ -19,17 +18,6 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
-
 // Test components
 function TestComponent() {
   return <div data-testid="protected-content">Protected Content</div>;
@@ -39,36 +27,6 @@ function CustomFallback() {
   return <div data-testid="custom-fallback">Custom Fallback</div>;
 }
 
-function TestWrapper({ 
-  children, 
-  authenticated = false 
-}: { 
-  children: React.ReactNode;
-  authenticated?: boolean;
-}) {
-  // Mock localStorage to simulate authentication state
-  if (authenticated) {
-    localStorageMock.getItem.mockReturnValue(JSON.stringify({
-      isAuthenticated: true,
-      user: {
-        id: 'user-123',
-        username: 'testuser',
-        name: 'Test User',
-        email: 'test@example.com',
-        roles: ['healthcare-professional'],
-      },
-    }));
-  } else {
-    localStorageMock.getItem.mockReturnValue(null);
-  }
-
-  return (
-    <MemoryRouter>
-      <AuthProvider>{children}</AuthProvider>
-    </MemoryRouter>
-  );
-}
-
 describe('ProtectedRoute', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -76,12 +34,26 @@ describe('ProtectedRoute', () => {
   });
 
   it('should render children when authenticated', async () => {
-    render(
-      <TestWrapper authenticated={true}>
-        <ProtectedRoute>
-          <TestComponent />
-        </ProtectedRoute>
-      </TestWrapper>
+    renderWithProviders(
+      <ProtectedRoute>
+        <TestComponent />
+      </ProtectedRoute>,
+      {
+        auth: {
+          isAuthenticated: true,
+          user: {
+            id: 'user-123',
+            username: 'testuser',
+            name: 'Test User',
+            email: 'test@example.com',
+            roles: ['healthcare-professional'],
+          }
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/protected']
+        }
+      }
     );
 
     await waitFor(() => {
@@ -90,12 +62,20 @@ describe('ProtectedRoute', () => {
   });
 
   it('should render login page when not authenticated', async () => {
-    render(
-      <TestWrapper authenticated={false}>
-        <ProtectedRoute>
-          <TestComponent />
-        </ProtectedRoute>
-      </TestWrapper>
+    renderWithProviders(
+      <ProtectedRoute>
+        <TestComponent />
+      </ProtectedRoute>,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/protected']
+        }
+      }
     );
 
     await waitFor(() => {
@@ -105,12 +85,20 @@ describe('ProtectedRoute', () => {
   });
 
   it('should render custom fallback when not authenticated', async () => {
-    render(
-      <TestWrapper authenticated={false}>
-        <ProtectedRoute fallback={<CustomFallback />}>
-          <TestComponent />
-        </ProtectedRoute>
-      </TestWrapper>
+    renderWithProviders(
+      <ProtectedRoute fallback={<CustomFallback />}>
+        <TestComponent />
+      </ProtectedRoute>,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/protected']
+        }
+      }
     );
 
     await waitFor(() => {
@@ -120,12 +108,20 @@ describe('ProtectedRoute', () => {
   });
 
   it('should render children when requireAuth is false', async () => {
-    render(
-      <TestWrapper authenticated={false}>
-        <ProtectedRoute requireAuth={false}>
-          <TestComponent />
-        </ProtectedRoute>
-      </TestWrapper>
+    renderWithProviders(
+      <ProtectedRoute requireAuth={false}>
+        <TestComponent />
+      </ProtectedRoute>,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/protected']
+        }
+      }
     );
 
     await waitFor(() => {
@@ -134,12 +130,20 @@ describe('ProtectedRoute', () => {
   });
 
   it('should show loading state initially', async () => {
-    render(
-      <TestWrapper authenticated={false}>
-        <ProtectedRoute>
-          <TestComponent />
-        </ProtectedRoute>
-      </TestWrapper>
+    renderWithProviders(
+      <ProtectedRoute>
+        <TestComponent />
+      </ProtectedRoute>,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/protected']
+        }
+      }
     );
 
     // The loading state is very brief, so we'll check that either loading shows or navigation occurs
@@ -159,10 +163,24 @@ describe('withProtectedRoute HOC', () => {
   it('should wrap component with ProtectedRoute', async () => {
     const WrappedComponent = withProtectedRoute(TestComponent);
 
-    render(
-      <TestWrapper authenticated={true}>
-        <WrappedComponent />
-      </TestWrapper>
+    renderWithProviders(
+      <WrappedComponent />,
+      {
+        auth: {
+          isAuthenticated: true,
+          user: {
+            id: 'user-123',
+            username: 'testuser',
+            name: 'Test User',
+            email: 'test@example.com',
+            roles: ['healthcare-professional'],
+          }
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/protected']
+        }
+      }
     );
 
     await waitFor(() => {
@@ -181,10 +199,24 @@ describe('withProtectedRoute HOC', () => {
 
     const WrappedComponent = withProtectedRoute(TestComponentWithProps);
 
-    render(
-      <TestWrapper authenticated={true}>
-        <WrappedComponent message="Hello World" />
-      </TestWrapper>
+    renderWithProviders(
+      <WrappedComponent message="Hello World" />,
+      {
+        auth: {
+          isAuthenticated: true,
+          user: {
+            id: 'user-123',
+            username: 'testuser',
+            name: 'Test User',
+            email: 'test@example.com',
+            roles: ['healthcare-professional'],
+          }
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/protected']
+        }
+      }
     );
 
     await waitFor(() => {
@@ -197,10 +229,18 @@ describe('withProtectedRoute HOC', () => {
       requireAuth: false,
     });
 
-    render(
-      <TestWrapper authenticated={false}>
-        <WrappedComponent />
-      </TestWrapper>
+    renderWithProviders(
+      <WrappedComponent />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/protected']
+        }
+      }
     );
 
     await waitFor(() => {
@@ -213,10 +253,18 @@ describe('withProtectedRoute HOC', () => {
       fallback: <CustomFallback />,
     });
 
-    render(
-      <TestWrapper authenticated={false}>
-        <WrappedComponent />
-      </TestWrapper>
+    renderWithProviders(
+      <WrappedComponent />,
+      {
+        auth: {
+          isAuthenticated: false,
+          user: null
+        },
+        routing: {
+          useMemoryRouter: true,
+          initialEntries: ['/protected']
+        }
+      }
     );
 
     await waitFor(() => {

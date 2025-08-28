@@ -283,8 +283,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
             <h4>Add New Observation</h4>
 
             <div className="form-group">
-              <label>Common Observations</label>
+              <label htmlFor="common-observations">Common Observations</label>
               <select
+                id="common-observations"
                 value=""
                 onChange={(e) => e.target.value && handleObservationSelect(e.target.value)}
                 disabled={disabled}
@@ -300,8 +301,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
 
             <div className="form-row">
               <div className="form-group">
-                <label>Status *</label>
+                <label htmlFor="status">Status *</label>
                 <select
+                  id="status"
                   value={formData.status}
                   onChange={(e) => handleChange('status', e.target.value as Observation['status'])}
                   disabled={disabled}
@@ -317,8 +319,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
               </div>
 
               <div className="form-group">
-                <label>Category *</label>
+                <label htmlFor="category">Category *</label>
                 <select
+                  id="category"
                   value={formData.category}
                   onChange={(e) => handleChange('category', e.target.value)}
                   disabled={disabled}
@@ -333,8 +336,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
 
             <div className="form-row">
               <div className="form-group">
-                <label>Code *</label>
+                <label htmlFor="code">Code *</label>
                 <input
+                  id="code"
                   type="text"
                   value={formData.code}
                   onChange={(e) => handleChange('code', e.target.value)}
@@ -345,8 +349,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
               </div>
 
               <div className="form-group">
-                <label>Display Name *</label>
+                <label htmlFor="code-display">Display Name *</label>
                 <input
+                  id="code-display"
                   type="text"
                   value={formData.codeDisplay}
                   onChange={(e) => handleChange('codeDisplay', e.target.value)}
@@ -358,8 +363,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
             </div>
 
             <div className="form-group">
-              <label>Value Type *</label>
+              <label htmlFor="value-type">Value Type *</label>
               <select
+                id="value-type"
                 value={formData.valueType}
                 onChange={(e) => handleChange('valueType', e.target.value as 'quantity' | 'string' | 'boolean' | 'codeable')}
                 disabled={disabled}
@@ -375,8 +381,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
             {formData.valueType === 'quantity' && (
               <div className="form-row">
                 <div className="form-group">
-                  <label>Value *</label>
+                  <label htmlFor="quantity-value">Value *</label>
                   <input
+                    id="quantity-value"
                     type="number"
                     step="any"
                     value={formData.valueQuantity?.value || ''}

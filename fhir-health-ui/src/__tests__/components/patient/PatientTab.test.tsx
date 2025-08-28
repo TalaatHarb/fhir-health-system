@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
 import { PatientTab } from '../../../components/patient/PatientTab';
+import { renderWithProviders } from '../../test-utils';
 import type { Patient } from '../../../types/fhir';
 
 const mockPatient: Patient = {
@@ -55,7 +56,7 @@ describe('PatientTab', () => {
   it('should not render when not active', () => {
     const onClose = vi.fn();
     
-    const { container } = render(
+    const { container } = renderWithProviders(
       <PatientTab
         patient={mockPatient}
         isActive={false}
@@ -70,7 +71,7 @@ describe('PatientTab', () => {
   it('should render patient information when active', () => {
     const onClose = vi.fn();
     
-    render(
+    renderWithProviders(
       <PatientTab
         patient={mockPatient}
         isActive={true}
@@ -93,7 +94,7 @@ describe('PatientTab', () => {
   it('should display contact information', () => {
     const onClose = vi.fn();
     
-    render(
+    renderWithProviders(
       <PatientTab
         patient={mockPatient}
         isActive={true}
@@ -117,7 +118,7 @@ describe('PatientTab', () => {
   it('should handle minimal patient data gracefully', () => {
     const onClose = vi.fn();
     
-    render(
+    renderWithProviders(
       <PatientTab
         patient={mockPatientMinimal}
         isActive={true}
@@ -136,7 +137,7 @@ describe('PatientTab', () => {
   it('should call onClose when close button is clicked', () => {
     const onClose = vi.fn();
     
-    render(
+    renderWithProviders(
       <PatientTab
         patient={mockPatient}
         isActive={true}
@@ -153,7 +154,7 @@ describe('PatientTab', () => {
   it('should display placeholder sections for future features', () => {
     const onClose = vi.fn();
     
-    render(
+    renderWithProviders(
       <PatientTab
         patient={mockPatient}
         isActive={true}
@@ -180,7 +181,7 @@ describe('PatientTab', () => {
     
     const onClose = vi.fn();
     
-    render(
+    renderWithProviders(
       <PatientTab
         patient={patientNoName}
         isActive={true}
@@ -201,7 +202,7 @@ describe('PatientTab', () => {
     
     const onClose = vi.fn();
     
-    render(
+    renderWithProviders(
       <PatientTab
         patient={patientWithBirthDate}
         isActive={true}
@@ -235,7 +236,7 @@ describe('PatientTab', () => {
     
     const onClose = vi.fn();
     
-    render(
+    renderWithProviders(
       <PatientTab
         patient={patientMultipleAddresses}
         isActive={true}
@@ -279,7 +280,7 @@ describe('PatientTab', () => {
     
     const onClose = vi.fn();
     
-    render(
+    renderWithProviders(
       <PatientTab
         patient={patientMultipleContacts}
         isActive={true}
