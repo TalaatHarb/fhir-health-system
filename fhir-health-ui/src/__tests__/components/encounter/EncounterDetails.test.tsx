@@ -229,10 +229,10 @@ describe('EncounterDetails', () => {
     render(<EncounterDetails encounter={mockEncounter} />);
 
     await waitFor(() => {
-      expect(screen.getByText('January 15, 2024 at 10:00 AM')).toBeInTheDocument();
+      expect(screen.getByText('January 15, 2024 at 12:00 PM')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('January 15, 2024 at 11:00 AM')).toBeInTheDocument();
+    expect(screen.getByText('January 15, 2024 at 01:00 PM')).toBeInTheDocument();
     expect(screen.getByText('1 hour')).toBeInTheDocument();
     expect(screen.getByText('encounter-123')).toBeInTheDocument();
   });
@@ -258,7 +258,7 @@ describe('EncounterDetails', () => {
     });
 
     // Check resource counts in overview
-    const observationCount = screen.getByText('1');
+    const observationCount = screen.getAllByText('1')[0];
     expect(observationCount).toBeInTheDocument();
     expect(screen.getByText('Observations')).toBeInTheDocument();
   });

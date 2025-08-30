@@ -32,6 +32,7 @@ const mockPatientContext = {
 
 vi.mock('../../../contexts/PatientContext', () => ({
   usePatient: () => mockPatientContext,
+  PatientProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 describe('PatientSearch - Basic Tests', () => {

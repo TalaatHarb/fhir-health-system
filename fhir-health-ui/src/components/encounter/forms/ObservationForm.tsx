@@ -397,8 +397,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
                 </div>
 
                 <div className="form-group">
-                  <label>Unit *</label>
+                  <label htmlFor='unit-input'>Unit *</label>
                   <input
+                    id='unit-input'
                     type="text"
                     value={formData.valueQuantity?.unit || ''}
                     onChange={(e) => handleChange('valueQuantity', {
@@ -416,8 +417,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
 
             {formData.valueType === 'string' && (
               <div className="form-group">
-                <label>Value *</label>
+                <label htmlFor='value-input'>Value *</label>
                 <input
+                  id='value-input'
                   type="text"
                   value={formData.valueString || ''}
                   onChange={(e) => handleChange('valueString', e.target.value)}
@@ -429,8 +431,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
 
             {formData.valueType === 'boolean' && (
               <div className="form-group">
-                <label>Value *</label>
+                <label htmlFor='value-options'>Value *</label>
                 <select
+                  id='value-options'
                   value={formData.valueBoolean?.toString() || ''}
                   onChange={(e) => handleChange('valueBoolean', e.target.value === 'true')}
                   disabled={disabled}
@@ -461,8 +464,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
                 </div>
 
                 <div className="form-group">
-                  <label>Display *</label>
+                  <label htmlFor='display-input'>Display *</label>
                   <input
+                    id='display-input'
                     type="text"
                     value={formData.valueCodeable?.display || ''}
                     onChange={(e) => handleChange('valueCodeable', {
@@ -478,8 +482,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
             )}
 
             <div className="form-group">
-              <label>Effective Date/Time *</label>
+              <label htmlFor='eff-date-time'>Effective Date/Time *</label>
               <input
+                id='eff-date-time'
                 type="datetime-local"
                 value={formData.effectiveDateTime}
                 onChange={(e) => handleChange('effectiveDateTime', e.target.value)}
@@ -489,8 +494,9 @@ export function ObservationForm({ observations, onAdd, onRemove, disabled }: Obs
             </div>
 
             <div className="form-group">
-              <label>Interpretation</label>
+              <label htmlFor='interpr-options'>Interpretation</label>
               <select
+                id='interpr-options'
                 value={formData.interpretation || ''}
                 onChange={(e) => {
                   const interp = INTERPRETATION_CODES.find(i => i.code === e.target.value);

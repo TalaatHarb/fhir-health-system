@@ -1,10 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { EncounterCreateModal } from '../../../components/encounter/EncounterCreateModal';
 import { fhirClient } from '../../../services/fhirClient';
 import type { Patient, Encounter } from '../../../types/fhir';
+import { renderWithProviders} from '../../test-utils';
 
 // Mock the FHIR client
 vi.mock('../../../services/fhirClient', () => ({
@@ -138,7 +139,7 @@ describe('EncounterCreateModal', () => {
   });
 
   const renderModal = (isOpen = true) => {
-    return render(
+    return renderWithProviders(
       <EncounterCreateModal
         patient={mockPatient}
         isOpen={isOpen}

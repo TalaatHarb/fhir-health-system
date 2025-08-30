@@ -1,8 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PatientCreateModal } from '../../../components/patient/PatientCreateModal';
 import type { Patient } from '../../../types/fhir';
+import { renderWithProviders } from '../../test-utils';
 
 // Mock the patient context
 const mockPatientContext = {
@@ -34,6 +35,7 @@ vi.mock('../../../contexts/PatientContext', async () => {
   return {
     ...actual,
     usePatient: () => mockPatientContext,
+    PatientProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   };
 });
 
@@ -63,7 +65,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should not render when not open', () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={false}
         onClose={mockOnClose}
@@ -74,7 +76,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should render modal when open', () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -107,7 +109,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should handle form input changes', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -134,7 +136,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should validate required fields', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -155,7 +157,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should validate email format', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -172,7 +174,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should validate birth date is not in future', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -193,7 +195,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should clear validation errors when field is corrected', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -224,7 +226,7 @@ describe('PatientCreateModal', () => {
     mockPatientContext.createPatient.mockResolvedValue(undefined);
     mockPatientContext.state.openPatients = new Map([['patient-new', mockCreatedPatient]]);
 
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -271,7 +273,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should handle form submission with minimal data', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -296,7 +298,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should handle close button click', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -310,7 +312,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should handle cancel button click', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -324,7 +326,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should handle overlay click', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -338,7 +340,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should not close when clicking modal content', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -354,7 +356,7 @@ describe('PatientCreateModal', () => {
   it('should display loading state', () => {
     mockPatientContext.state.createLoading = true;
 
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -373,7 +375,7 @@ describe('PatientCreateModal', () => {
   it('should display error state', () => {
     mockPatientContext.state.createError = 'Failed to create patient';
 
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -384,7 +386,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should reset form when closing', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -402,7 +404,7 @@ describe('PatientCreateModal', () => {
     expect(mockOnClose).toHaveBeenCalled();
 
     // Re-open modal (simulate new render)
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -423,7 +425,7 @@ describe('PatientCreateModal', () => {
 
     mockPatientContext.state.openPatients = new Map([['patient-new', mockCreatedPatient]]);
 
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -446,7 +448,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should use closeCreateModal when no onClose prop provided', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={undefined as any}
@@ -460,7 +462,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should validate phone number format', async () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
@@ -477,7 +479,7 @@ describe('PatientCreateModal', () => {
   });
 
   it('should handle country field default value', () => {
-    render(
+    renderWithProviders(
       <PatientCreateModal
         isOpen={true}
         onClose={mockOnClose}
