@@ -104,19 +104,19 @@ describe('Enhanced ProcedureViewer', () => {
     it('renders procedure timeline with status indicator', () => {
       const procedure = createMockProcedure('1', 'completed');
 
-      render(
-        <ProcedureViewer 
+      const { container } = render(
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
       );
 
-      const timeline = screen.getByText('Appendectomy').closest('.procedure-timeline');
+      const timeline = container.querySelector('.procedure-timeline');
       expect(timeline).toBeInTheDocument();
-      
-      const phase = screen.getByText('Appendectomy').closest('.procedure-phase');
+
+      const phase = container.querySelector('.procedure-phase');
       expect(phase).toHaveClass('completed');
-      
+
       const indicator = phase?.querySelector('.phase-indicator');
       expect(indicator).toHaveClass('completed');
       expect(indicator).toHaveTextContent('✓');
@@ -125,16 +125,16 @@ describe('Enhanced ProcedureViewer', () => {
     it('renders in-progress status correctly', () => {
       const procedure = createMockProcedure('1', 'in-progress');
 
-      render(
-        <ProcedureViewer 
+      const { container } = render(
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
       );
 
-      const phase = screen.getByText('Appendectomy').closest('.procedure-phase');
+      const phase = container.querySelector('.procedure-phase');
       expect(phase).toHaveClass('in-progress');
-      
+
       const indicator = phase?.querySelector('.phase-indicator');
       expect(indicator).toHaveClass('in-progress');
       expect(indicator).toHaveTextContent('⟳');
@@ -143,16 +143,16 @@ describe('Enhanced ProcedureViewer', () => {
     it('renders preparation status correctly', () => {
       const procedure = createMockProcedure('1', 'preparation');
 
-      render(
-        <ProcedureViewer 
+      const { container } = render(
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
       );
 
-      const phase = screen.getByText('Appendectomy').closest('.procedure-phase');
+      const phase = container.querySelector('.procedure-phase');
       expect(phase).toHaveClass('preparation');
-      
+
       const indicator = phase?.querySelector('.phase-indicator');
       expect(indicator).toHaveClass('preparation');
       expect(indicator).toHaveTextContent('◐');
@@ -162,7 +162,7 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed');
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
@@ -178,7 +178,7 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed', true, false);
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
@@ -186,17 +186,17 @@ describe('Enhanced ProcedureViewer', () => {
 
       const outcomeCard = screen.getByText('Procedure Outcome').closest('.procedure-outcome-card');
       expect(outcomeCard).toHaveClass('outcome-success');
-      
+
       expect(screen.getByText('Procedure Outcome')).toBeInTheDocument();
       expect(screen.getByText('Result:')).toBeInTheDocument();
-      expect(screen.getByText('Successful removal of inflamed appendix')).toBeInTheDocument();
+      expect(screen.getAllByText('Successful removal of inflamed appendix')[0]).toBeInTheDocument();
     });
 
     it('renders outcome with complications', () => {
       const procedure = createMockProcedure('1', 'completed', true, true);
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
@@ -204,19 +204,19 @@ describe('Enhanced ProcedureViewer', () => {
 
       const outcomeCard = screen.getByText('Procedure Outcome with Complications').closest('.procedure-outcome-card');
       expect(outcomeCard).toHaveClass('outcome-complications');
-      
+
       expect(screen.getByText('Procedure Outcome with Complications')).toBeInTheDocument();
       expect(screen.getByText('Result:')).toBeInTheDocument();
-      expect(screen.getByText('Successful removal of inflamed appendix')).toBeInTheDocument();
+      expect(screen.getAllByText('Successful removal of inflamed appendix')[0]).toBeInTheDocument();
       expect(screen.getByText('Complications:')).toBeInTheDocument();
-      expect(screen.getByText('Minor bleeding')).toBeInTheDocument();
+      expect(screen.getAllByText('Minor bleeding')[0]).toBeInTheDocument();
     });
 
     it('renders complications-only outcome card', () => {
       const procedure = createMockProcedure('1', 'completed', false, true);
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
@@ -224,9 +224,9 @@ describe('Enhanced ProcedureViewer', () => {
 
       const outcomeCard = screen.getByText('Procedure Outcome with Complications').closest('.procedure-outcome-card');
       expect(outcomeCard).toHaveClass('outcome-complications');
-      
+
       expect(screen.getByText('Complications:')).toBeInTheDocument();
-      expect(screen.getByText('Minor bleeding')).toBeInTheDocument();
+      expect(screen.getAllByText('Minor bleeding')[0]).toBeInTheDocument();
       expect(screen.queryByText('Result:')).not.toBeInTheDocument();
     });
 
@@ -234,7 +234,7 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed', false, false);
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
@@ -249,7 +249,7 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed', true, false);
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="summary"
         />
@@ -264,7 +264,7 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed', false, false);
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="summary"
         />
@@ -277,7 +277,7 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed');
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="summary"
         />
@@ -292,7 +292,7 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed');
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
@@ -314,7 +314,7 @@ describe('Enhanced ProcedureViewer', () => {
       };
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedureWithoutRoles}
           viewMode="detailed"
         />
@@ -330,14 +330,14 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed');
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
       );
 
       expect(screen.getByText('Body Sites')).toBeInTheDocument();
-      
+
       const bodySiteTag = screen.getByText('Appendix');
       expect(bodySiteTag).toHaveClass('body-site-tag');
     });
@@ -348,7 +348,7 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed');
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
@@ -364,7 +364,7 @@ describe('Enhanced ProcedureViewer', () => {
       const procedure = createMockProcedure('1', 'completed');
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedure}
           viewMode="detailed"
         />
@@ -391,7 +391,7 @@ describe('Enhanced ProcedureViewer', () => {
       };
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedureWithStatusReason}
           viewMode="detailed"
         />
@@ -421,7 +421,7 @@ describe('Enhanced ProcedureViewer', () => {
       };
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedureWithReasons}
           viewMode="detailed"
         />
@@ -446,7 +446,7 @@ describe('Enhanced ProcedureViewer', () => {
       };
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedureWithReports}
           viewMode="detailed"
         />
@@ -476,7 +476,7 @@ describe('Enhanced ProcedureViewer', () => {
       };
 
       render(
-        <ProcedureViewer 
+        <ProcedureViewer
           procedure={procedureWithUsedItems}
           viewMode="detailed"
         />

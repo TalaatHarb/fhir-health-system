@@ -147,14 +147,20 @@ describe('PatientContext', () => {
       entry: mockPatients.map(patient => ({ resource: patient })),
     };
 
-    vi.mocked(fhirClient.searchPatients).mockResolvedValue(mockBundle);
+    // Add a delay to the mock to ensure we can test loading state
+    vi.mocked(fhirClient.searchPatients).mockImplementation(() => 
+      new Promise(resolve => setTimeout(() => resolve(mockBundle), 100))
+    );
 
     renderWithProviders(<TestComponent />);
 
-    await user.click(screen.getByText('Search Patients'));
+    const searchButton = screen.getByText('Search Patients');
+    await user.click(searchButton);
 
     // Should show loading state initially
-    expect(screen.getByTestId('search-loading')).toHaveTextContent('true');
+    await waitFor(() => {
+      expect(screen.getByTestId('search-loading')).toHaveTextContent('true');
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('search-loading')).toHaveTextContent('false');
@@ -238,14 +244,20 @@ describe('PatientContext', () => {
       birthDate: '1990-01-01',
     };
 
-    vi.mocked(fhirClient.createPatient).mockResolvedValue(mockCreatedPatient);
+    // Add a delay to the mock to ensure we can test loading state
+    vi.mocked(fhirClient.createPatient).mockImplementation(() => 
+      new Promise(resolve => setTimeout(() => resolve(mockCreatedPatient), 100))
+    );
 
     renderWithProviders(<TestComponent />);
 
-    await user.click(screen.getByText('Create Patient'));
+    const createButton = screen.getByText('Create Patient');
+    await user.click(createButton);
 
     // Should show loading state initially
-    expect(screen.getByTestId('create-loading')).toHaveTextContent('true');
+    await waitFor(() => {
+      expect(screen.getByTestId('create-loading')).toHaveTextContent('true');
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('create-loading')).toHaveTextContent('false');
@@ -261,16 +273,33 @@ describe('PatientContext', () => {
       name: [{ given: ['John'], family: 'Doe' }],
       gender: 'male',
       birthDate: '1990-01-01',
+      managingOrganization: {
+        reference: 'Organization/org-1',
+        display: 'Test Hospital',
+      },
     });
   });
 
   it('should handle patient creation error', async () => {
     const errorMessage = 'Creation failed';
-    vi.mocked(fhirClient.createPatient).mockRejectedValue(new Error(errorMessage));
+    // Add a delay to the mock to ensure we can test loading state
+    vi.mocked(fhirClient.createPatient).mockImplementation(() => 
+      new Promise((_, reject) => setTimeout(() => reject(new Error(errorMessage)), 100))
+    );
 
     renderWithProviders(<TestComponent />);
 
-    await user.click(screen.getByText('Create Patient'));
+    // First open the modal (as would happen in real UI flow)
+    await user.click(screen.getByText('Open Create Modal'));
+    expect(screen.getByTestId('create-modal-open')).toHaveTextContent('true');
+
+    const createButton = screen.getByText('Create Patient');
+    await user.click(createButton);
+
+    // Should show loading state initially
+    await waitFor(() => {
+      expect(screen.getByTestId('create-loading')).toHaveTextContent('true');
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('create-loading')).toHaveTextContent('false');
