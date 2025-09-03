@@ -187,6 +187,20 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
     event.preventDefault();
 
     if (!validateForm()) {
+      // Mark all fields as touched when validation fails
+      setTouched({
+        givenName: true,
+        familyName: true,
+        gender: true,
+        birthDate: true,
+        email: true,
+        phone: true,
+        addressLine: true,
+        city: true,
+        state: true,
+        postalCode: true,
+        country: true,
+      });
       return;
     }
 
@@ -252,7 +266,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
           </button>
         </div>
 
-        <form className="patient-create-modal__form" data-testid={TestIds.PATIENT_FORM} onSubmit={handleSubmit}>
+        <form className="patient-create-modal__form" data-testid={TestIds.PATIENT_FORM} onSubmit={handleSubmit} noValidate>
           {/* Basic Information */}
           <fieldset className="patient-create-modal__fieldset">
             <legend>Basic Information</legend>
@@ -473,6 +487,12 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
           </fieldset>
 
           {/* Error Display */}
+          {state.createError && (
+            <div className="patient-create-modal__error" role="alert">
+              Error creating patient: {state.createError}
+            </div>
+          )}
+          
           {Object.keys(validationErrors).length > 0 && (
             <ErrorList 
               errors={validationErrors}

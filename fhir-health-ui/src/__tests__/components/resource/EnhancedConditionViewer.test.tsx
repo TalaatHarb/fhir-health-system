@@ -1,6 +1,5 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { vi, describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { ConditionViewer } from '../../../components/resource/ConditionViewer';
 import type { Condition } from '../../../types/fhir';
 
@@ -40,9 +39,9 @@ const createMockCondition = (
   severity: severity ? {
     coding: [{
       system: 'http://snomed.info/sct',
-      code: severity === 'mild' ? '255604002' : 
-            severity === 'moderate' ? '6736007' :
-            severity === 'severe' ? '24484000' :
+      code: severity === 'mild' ? '255604002' :
+        severity === 'moderate' ? '6736007' :
+          severity === 'severe' ? '24484000' :
             severity === 'fatal' ? '399166001' : '255604002',
       display: severity
     }]
@@ -57,17 +56,17 @@ describe('Enhanced ConditionViewer', () => {
       const condition = createMockCondition('1', 'mild', 'active');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="detailed"
         />
       );
 
       expect(screen.getByText('Mild Severity')).toBeInTheDocument();
-      
+
       const severityIndicator = screen.getByText('Mild Severity').closest('.condition-severity-indicator');
       expect(severityIndicator).toHaveClass('255604002'); // SNOMED code for mild
-      
+
       // Check for severity icon
       const severityIcon = severityIndicator?.querySelector('.severity-icon');
       expect(severityIcon).toBeInTheDocument();
@@ -78,17 +77,17 @@ describe('Enhanced ConditionViewer', () => {
       const condition = createMockCondition('1', 'moderate', 'active');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="detailed"
         />
       );
 
       expect(screen.getByText('Moderate Severity')).toBeInTheDocument();
-      
+
       const severityIndicator = screen.getByText('Moderate Severity').closest('.condition-severity-indicator');
       expect(severityIndicator).toHaveClass('6736007'); // SNOMED code for moderate
-      
+
       const severityIcon = severityIndicator?.querySelector('.severity-icon');
       expect(severityIcon).toHaveTextContent('●●');
     });
@@ -97,17 +96,17 @@ describe('Enhanced ConditionViewer', () => {
       const condition = createMockCondition('1', 'severe', 'active');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="detailed"
         />
       );
 
       expect(screen.getByText('Severe Severity')).toBeInTheDocument();
-      
+
       const severityIndicator = screen.getByText('Severe Severity').closest('.condition-severity-indicator');
       expect(severityIndicator).toHaveClass('24484000'); // SNOMED code for severe
-      
+
       const severityIcon = severityIndicator?.querySelector('.severity-icon');
       expect(severityIcon).toHaveTextContent('●●●');
     });
@@ -116,7 +115,7 @@ describe('Enhanced ConditionViewer', () => {
       const condition = createMockCondition('1', 'fatal', 'active');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="detailed"
         />
@@ -124,10 +123,10 @@ describe('Enhanced ConditionViewer', () => {
 
       expect(screen.getByText('Fatal Severity')).toBeInTheDocument();
       expect(screen.getByText('Requires immediate attention')).toBeInTheDocument();
-      
+
       const severityIndicator = screen.getByText('Fatal Severity').closest('.condition-severity-indicator');
-      expect(severityIndicator).toHaveClass('fatal');
-      
+      expect(severityIndicator).toHaveClass('399166001'); // SNOMED code for fatal
+
       const severityIcon = severityIndicator?.querySelector('.severity-icon');
       expect(severityIcon).toHaveTextContent('⚠');
     });
@@ -136,7 +135,7 @@ describe('Enhanced ConditionViewer', () => {
       const condition = createMockCondition('1', undefined, 'active');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="detailed"
         />
@@ -152,45 +151,63 @@ describe('Enhanced ConditionViewer', () => {
       const condition = createMockCondition('1', 'mild', 'active');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="detailed"
         />
       );
 
-      const statusElement = screen.getByText('Active');
-      expect(statusElement).toBeInTheDocument();
-      expect(statusElement).toHaveClass('status-active');
+      const statusElements = screen.getAllByText('Active');
+      expect(statusElements.length).toBeGreaterThan(0);
+
+      // Check the detail section status element specifically
+      const detailStatusElement = statusElements.find(el =>
+        el.classList.contains('detail-value') && el.classList.contains('status-active')
+      );
+      expect(detailStatusElement).toBeInTheDocument();
+      expect(detailStatusElement).toHaveClass('status-active');
     });
 
     it('renders inactive clinical status correctly', () => {
       const condition = createMockCondition('1', 'mild', 'inactive');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="detailed"
         />
       );
 
-      const statusElement = screen.getByText('Inactive');
-      expect(statusElement).toBeInTheDocument();
-      expect(statusElement).toHaveClass('status-inactive');
+      const statusElements = screen.getAllByText('Inactive');
+      expect(statusElements.length).toBeGreaterThan(0);
+
+      // Check the detail section status element specifically
+      const detailStatusElement = statusElements.find(el =>
+        el.classList.contains('detail-value') && el.classList.contains('status-inactive')
+      );
+      expect(detailStatusElement).toBeInTheDocument();
+      expect(detailStatusElement).toHaveClass('status-inactive');
     });
 
     it('renders resolved clinical status correctly', () => {
       const condition = createMockCondition('1', 'mild', 'resolved');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="detailed"
         />
       );
 
-      const statusElement = screen.getByText('Resolved');
-      expect(statusElement).toBeInTheDocument();
-      expect(statusElement).toHaveClass('status-completed');
+      const statusElements = screen.getAllByText('Resolved');
+      expect(statusElements.length).toBeGreaterThan(0);
+
+      // Check the detail section status element specifically
+      const detailStatusElement = statusElements.find(el =>
+        el.classList.contains('detail-value') && el.classList.contains('status-completed')
+      );
+      expect(detailStatusElement).toBeInTheDocument();
+      expect(detailStatusElement).toHaveClass('status-completed');
     });
   });
 
@@ -199,7 +216,7 @@ describe('Enhanced ConditionViewer', () => {
       const condition = createMockCondition('1', 'severe', 'active');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="summary"
         />
@@ -207,7 +224,7 @@ describe('Enhanced ConditionViewer', () => {
 
       expect(screen.getByText('Active')).toBeInTheDocument();
       expect(screen.getByText('Severe')).toBeInTheDocument();
-      
+
       const summaryStatus = screen.getByText('Active').closest('.condition-summary-status');
       expect(summaryStatus).toBeInTheDocument();
     });
@@ -216,7 +233,7 @@ describe('Enhanced ConditionViewer', () => {
       const condition = createMockCondition('1', undefined, 'active');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="summary"
         />
@@ -232,7 +249,7 @@ describe('Enhanced ConditionViewer', () => {
       const condition = createMockCondition('1', 'moderate', 'active');
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={condition}
           viewMode="detailed"
         />
@@ -240,22 +257,22 @@ describe('Enhanced ConditionViewer', () => {
 
       const severitySection = screen.getByText('Moderate Severity').closest('.condition-severity-indicator');
       const timelineSection = screen.getByText('Timeline').closest('.detail-section');
-      
+
       expect(severitySection).toBeInTheDocument();
       expect(timelineSection).toBeInTheDocument();
-      
+
       // Check that severity comes before timeline in DOM order
       const container = screen.getByText('Hypertension').closest('.condition-details');
       const sections = container?.children;
-      
+
       if (sections) {
-        const severityIndex = Array.from(sections).findIndex(section => 
+        const severityIndex = Array.from(sections).findIndex(section =>
           section.querySelector('.condition-severity-indicator')
         );
-        const timelineIndex = Array.from(sections).findIndex(section => 
+        const timelineIndex = Array.from(sections).findIndex(section =>
           section.querySelector('h5')?.textContent === 'Timeline'
         );
-        
+
         expect(severityIndex).toBeLessThan(timelineIndex);
       }
     });
@@ -286,7 +303,7 @@ describe('Enhanced ConditionViewer', () => {
       };
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={conditionWithBodySites}
           viewMode="detailed"
         />
@@ -295,7 +312,7 @@ describe('Enhanced ConditionViewer', () => {
       expect(screen.getByText('Body Sites')).toBeInTheDocument();
       expect(screen.getByText('Left arm')).toBeInTheDocument();
       expect(screen.getByText('Right arm')).toBeInTheDocument();
-      
+
       // Check for body site tags styling
       const leftArmTag = screen.getByText('Left arm');
       expect(leftArmTag).toHaveClass('body-site-tag');
@@ -327,7 +344,7 @@ describe('Enhanced ConditionViewer', () => {
       };
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={conditionWithStage}
           viewMode="detailed"
         />
@@ -362,7 +379,7 @@ describe('Enhanced ConditionViewer', () => {
       };
 
       render(
-        <ConditionViewer 
+        <ConditionViewer
           condition={conditionWithEvidence}
           viewMode="detailed"
         />

@@ -1,6 +1,5 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { vi, describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { DiagnosticReportViewer } from '../../../components/resource/DiagnosticReportViewer';
 import type { DiagnosticReport } from '../../../types/fhir';
 
@@ -83,7 +82,7 @@ describe('Enhanced DiagnosticReportViewer', () => {
       
       // Check metadata section
       expect(screen.getByText('Report Status')).toBeInTheDocument();
-      expect(screen.getByText('Performed By')).toBeInTheDocument();
+      expect(screen.getAllByText('Performed By')).toHaveLength(2); // Appears in both metadata and detail sections
       expect(screen.getByText('Results Summary')).toBeInTheDocument();
       
       // Check content section
@@ -103,7 +102,8 @@ describe('Enhanced DiagnosticReportViewer', () => {
       const statusCard = screen.getByText('Report Status').closest('.report-status-card');
       expect(statusCard).toHaveClass('final');
       
-      const statusIndicator = screen.getByText('Final');
+      // Get the status indicator within the metadata section specifically
+      const statusIndicator = statusCard?.querySelector('.status-indicator');
       expect(statusIndicator).toHaveClass('status-final');
     });
 
@@ -120,7 +120,8 @@ describe('Enhanced DiagnosticReportViewer', () => {
       const statusCard = screen.getByText('Report Status').closest('.report-status-card');
       expect(statusCard).toHaveClass('preliminary');
       
-      const statusIndicator = screen.getByText('Preliminary');
+      // Get the status indicator within the metadata section specifically
+      const statusIndicator = statusCard?.querySelector('.status-indicator');
       expect(statusIndicator).toHaveClass('status-preliminary');
     });
 
@@ -137,7 +138,8 @@ describe('Enhanced DiagnosticReportViewer', () => {
       const statusCard = screen.getByText('Report Status').closest('.report-status-card');
       expect(statusCard).toHaveClass('cancelled');
       
-      const statusIndicator = screen.getByText('Cancelled');
+      // Get the status indicator within the metadata section specifically
+      const statusIndicator = statusCard?.querySelector('.status-indicator');
       expect(statusIndicator).toHaveClass('status-cancelled');
     });
   });
@@ -156,7 +158,9 @@ describe('Enhanced DiagnosticReportViewer', () => {
       const conclusionHighlight = screen.getByText('Clinical Conclusion').closest('.report-conclusion-highlight');
       expect(conclusionHighlight).toBeInTheDocument();
       
-      expect(screen.getByText('Complete blood count shows mild anemia. Recommend iron supplementation and follow-up in 3 months.')).toBeInTheDocument();
+      // Check that the conclusion text appears in the highlighted section
+      const conclusionText = conclusionHighlight?.querySelector('.conclusion-highlight-text');
+      expect(conclusionText).toHaveTextContent('Complete blood count shows mild anemia. Recommend iron supplementation and follow-up in 3 months.');
     });
 
     it('renders conclusion codes separately', () => {
@@ -169,9 +173,9 @@ describe('Enhanced DiagnosticReportViewer', () => {
         />
       );
 
-      expect(screen.getByText('Conclusion Codes')).toBeInTheDocument();
-      expect(screen.getByText('Mild anemia')).toBeInTheDocument();
-      expect(screen.getByText('http://snomed.info/sct#271737000')).toBeInTheDocument();
+      expect(screen.getAllByText('Conclusion Codes')).toHaveLength(2); // Appears in both metadata and detail sections
+      expect(screen.getAllByText('Mild anemia')).toHaveLength(2); // Appears in both sections
+      expect(screen.getAllByText('http://snomed.info/sct#271737000')).toHaveLength(2); // Appears in both sections
     });
 
     it('does not render conclusion section when no conclusion', () => {
@@ -200,9 +204,9 @@ describe('Enhanced DiagnosticReportViewer', () => {
         />
       );
 
-      expect(screen.getByText('Performed By')).toBeInTheDocument();
-      expect(screen.getByText('Dr. John Smith')).toBeInTheDocument();
-      expect(screen.getByText('Dr. Sarah Jones')).toBeInTheDocument();
+      expect(screen.getAllByText('Performed By')).toHaveLength(2); // Appears in both metadata and detail sections
+      expect(screen.getAllByText('Dr. John Smith')).toHaveLength(2); // Appears in both sections
+      expect(screen.getAllByText('Dr. Sarah Jones')).toHaveLength(2); // Appears in both sections
     });
 
     it('does not render performers section when no performers', () => {

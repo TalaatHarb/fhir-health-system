@@ -87,13 +87,13 @@ describe('PatientCreateModal', () => {
     expect(screen.getByText('Basic Information')).toBeInTheDocument();
     expect(screen.getByText('Contact Information')).toBeInTheDocument();
     expect(screen.getByText('Address Information')).toBeInTheDocument();
-    
+
     // Check required fields
     expect(screen.getByLabelText('Given Name *')).toBeInTheDocument();
     expect(screen.getByLabelText('Family Name *')).toBeInTheDocument();
     expect(screen.getByLabelText('Gender *')).toBeInTheDocument();
     expect(screen.getByLabelText('Birth Date *')).toBeInTheDocument();
-    
+
     // Check optional fields
     expect(screen.getByLabelText('Email')).toBeInTheDocument();
     expect(screen.getByLabelText('Phone')).toBeInTheDocument();
@@ -102,7 +102,7 @@ describe('PatientCreateModal', () => {
     expect(screen.getByLabelText('State/Province')).toBeInTheDocument();
     expect(screen.getByLabelText('Postal Code')).toBeInTheDocument();
     expect(screen.getByLabelText('Country')).toBeInTheDocument();
-    
+
     // Check buttons
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByText('Create Patient')).toBeInTheDocument();
@@ -146,11 +146,14 @@ describe('PatientCreateModal', () => {
     const submitButton = screen.getByText('Create Patient');
     await user.click(submitButton);
 
-    // Should show validation errors
-    expect(screen.getByText('Given name is required')).toBeInTheDocument();
-    expect(screen.getByText('Family name is required')).toBeInTheDocument();
-    expect(screen.getByText('Gender is required')).toBeInTheDocument();
-    expect(screen.getByText('Birth date is required')).toBeInTheDocument();
+    // Wait for validation errors to appear
+    await waitFor(() => {
+      expect(screen.getAllByText('Given name is required')).toHaveLength(2);
+    });
+
+    expect(screen.getAllByText('Family name is required')).toHaveLength(2);
+    expect(screen.getAllByText('Gender is required')).toHaveLength(2);
+    expect(screen.getAllByText('Birth date is required')).toHaveLength(2);
 
     // Should not call createPatient
     expect(mockPatientContext.createPatient).not.toHaveBeenCalled();
@@ -170,7 +173,9 @@ describe('PatientCreateModal', () => {
     const submitButton = screen.getByText('Create Patient');
     await user.click(submitButton);
 
-    expect(screen.getByText('Please enter a valid email address')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getAllByText('Please enter a valid email address')).toHaveLength(2);
+    });
   });
 
   it('should validate birth date is not in future', async () => {
@@ -191,7 +196,9 @@ describe('PatientCreateModal', () => {
     const submitButton = screen.getByText('Create Patient');
     await user.click(submitButton);
 
-    expect(screen.getByText('Birth date cannot be in the future')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getAllByText('Birth date cannot be in the future')).toHaveLength(2);
+    });
   });
 
   it('should clear validation errors when field is corrected', async () => {
@@ -207,11 +214,15 @@ describe('PatientCreateModal', () => {
 
     // Trigger validation error
     await user.click(submitButton);
-    expect(screen.getByText('Given name is required')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getAllByText('Given name is required')).toHaveLength(2);
+    });
 
     // Fix the error
     await user.type(givenNameInput, 'John');
-    expect(screen.queryByText('Given name is required')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryAllByText('Given name is required')).toHaveLength(0);
+    });
   });
 
   it('should submit valid form', async () => {
@@ -364,7 +375,7 @@ describe('PatientCreateModal', () => {
     );
 
     expect(screen.getByText('Creating...')).toBeInTheDocument();
-    
+
     // All form inputs should be disabled
     expect(screen.getByLabelText('Given Name *')).toBeDisabled();
     expect(screen.getByLabelText('Family Name *')).toBeDisabled();
@@ -475,7 +486,9 @@ describe('PatientCreateModal', () => {
     const submitButton = screen.getByText('Create Patient');
     await user.click(submitButton);
 
-    expect(screen.getByText('Please enter a valid phone number')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getAllByText('Please enter a valid phone number')).toHaveLength(2);
+    });
   });
 
   it('should handle country field default value', () => {

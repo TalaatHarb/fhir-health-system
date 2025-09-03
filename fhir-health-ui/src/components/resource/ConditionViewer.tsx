@@ -89,10 +89,28 @@ export function ConditionViewer({
   const getSeverityInfo = () => {
     if (!condition.severity) return null;
 
-    const severity = condition.severity.coding?.[0]?.code || 'unknown';
+    const severityCode = condition.severity.coding?.[0]?.code || 'unknown';
     const display = condition.severity.text || 
                    condition.severity.coding?.[0]?.display || 
-                   severity;
+                   severityCode;
+
+    // Map SNOMED codes to severity levels
+    const codeToLevel: Record<string, string> = {
+      '255604002': 'mild',    // Mild
+      '6736007': 'moderate',  // Moderate  
+      '24484000': 'severe',   // Severe
+      '399166001': 'fatal',   // Fatal
+    };
+
+    // Also support direct text mapping as fallback
+    const textToLevel: Record<string, string> = {
+      'mild': 'mild',
+      'moderate': 'moderate',
+      'severe': 'severe',
+      'fatal': 'fatal',
+    };
+
+    const severityLevel = codeToLevel[severityCode] || textToLevel[display.toLowerCase()] || 'unknown';
 
     const severityClasses: Record<string, string> = {
       'mild': 'severity-mild',
@@ -110,9 +128,9 @@ export function ConditionViewer({
 
     return {
       text: display.charAt(0).toUpperCase() + display.slice(1),
-      className: severityClasses[severity] || 'severity-unknown',
-      icon: severityIcons[severity] || '●',
-      level: severity,
+      className: severityClasses[severityLevel] || 'severity-unknown',
+      icon: severityIcons[severityLevel] || '●',
+      level: severityLevel,
     };
   };
 
@@ -121,8 +139,10 @@ export function ConditionViewer({
     const severityInfo = getSeverityInfo();
     if (!severityInfo) return null;
 
+    const severityCode = condition.severity?.coding?.[0]?.code || severityInfo.level;
+
     return (
-      <div className={`condition-severity-indicator ${severityInfo.level}`}>
+      <div className={`condition-severity-indicator ${severityCode}`}>
         <div className="severity-icon">
           {severityInfo.icon}
         </div>
