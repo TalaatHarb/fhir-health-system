@@ -127,6 +127,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0; /* Important for proper flex behavior */
 }
 
 /* Encounter Overview */
@@ -167,6 +168,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0; /* Important for flex child to respect parent height */
 }
 
 .tab-list {
@@ -174,6 +176,7 @@
   border-bottom: 1px solid #e5e7eb;
   background: #f9fafb;
   overflow-x: auto;
+  flex-shrink: 0; /* Prevent tab list from shrinking */
 }
 
 .tab-button {
@@ -208,7 +211,9 @@
 .tab-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 24px;
+  min-height: 0; /* Important for proper scrolling */
 }
 
 /* Loading and Error States */
@@ -263,6 +268,9 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .resource-summary h3 {
@@ -351,11 +359,37 @@
   border-radius: 12px;
 }
 
+/* Individual Tab Content Areas */
+.observations-tab,
+.conditions-tab,
+.medications-tab,
+.reports-tab,
+.procedures-tab {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure resource lists within tabs scroll properly */
+.observations-tab .resource-list,
+.conditions-tab .resource-list,
+.medications-tab .resource-list,
+.reports-tab .resource-list,
+.procedures-tab .resource-list {
+  flex: 1;
+  min-height: 0;
+}
+
 /* Resource Lists */
 .resource-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .empty-resources {
@@ -364,6 +398,7 @@
   justify-content: center;
   padding: 48px 24px;
   text-align: center;
+  height: 100%;
 }
 
 .empty-resources p {

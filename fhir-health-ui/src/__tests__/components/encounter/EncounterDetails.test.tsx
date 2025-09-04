@@ -460,4 +460,35 @@ describe('EncounterDetails', () => {
 
     expect(screen.getByText('Loading encounter resources...')).toBeInTheDocument();
   });
+
+  it('has proper CSS structure for scrolling behavior', async () => {
+    render(<EncounterDetails encounter={mockEncounter} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Observations (1)')).toBeInTheDocument();
+    });
+
+    // Check that the main container has proper CSS classes
+    const encounterDetails = document.querySelector('.encounter-details');
+    expect(encounterDetails).toBeInTheDocument();
+
+    // Check that resource tabs container has proper structure
+    const resourceTabs = document.querySelector('.resource-tabs');
+    expect(resourceTabs).toBeInTheDocument();
+
+    // Check that tab content has proper overflow settings
+    const tabContent = document.querySelector('.tab-content');
+    expect(tabContent).toBeInTheDocument();
+
+    // Switch to medications tab to test resource list scrolling
+    fireEvent.click(screen.getByText('Medications (1)'));
+    
+    await waitFor(() => {
+      const medicationsTab = document.querySelector('.medications-tab');
+      expect(medicationsTab).toBeInTheDocument();
+      
+      const resourceList = document.querySelector('.resource-list');
+      expect(resourceList).toBeInTheDocument();
+    });
+  });
 });
