@@ -48,6 +48,7 @@ export interface OrganizationContextValue {
   fetchOrganizations: () => Promise<void>;
   showOrganizationModal: () => void;
   hideOrganizationModal: () => void;
+  modalOpen: boolean;
   loading: boolean;
   error: string | null;
 }

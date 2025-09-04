@@ -5,7 +5,8 @@ import { MainApplication } from '../../components/MainApplication';
 import { AuthProvider } from '../../contexts/AuthContext';
 import { OrganizationProvider } from '../../contexts/OrganizationContext';
 import { PatientProvider } from '../../contexts/PatientContext';
-import type { Patient, Bundle } from '../../types/fhir';
+import { NotificationProvider } from '../../contexts/NotificationContext';
+import type { Patient, Organization, Bundle } from '../../types/fhir';
 
 // Mock the FHIR client
 vi.mock('../../services/fhirClient', () => ({
@@ -14,6 +15,8 @@ vi.mock('../../services/fhirClient', () => ({
     searchPatients: vi.fn(),
     createPatient: vi.fn(),
     getOrganizations: vi.fn(),
+    searchOrganizations: vi.fn(),
+    getPatientEncounters: vi.fn(),
   },
 }));
 
@@ -39,6 +42,15 @@ const mockOrganization = {
   resourceType: 'Organization' as const,
 };
 
+const mockOrganizationBundle: Bundle<Organization> = {
+  resourceType: 'Bundle',
+  type: 'searchset',
+  total: 1,
+  entry: [
+    { resource: mockOrganization },
+  ],
+};
+
 const mockSearchBundle: Bundle<Patient> = {
   resourceType: 'Bundle',
   type: 'searchset',
@@ -51,33 +63,44 @@ const mockSearchBundle: Bundle<Patient> = {
 
 function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
-      <OrganizationProvider>
-        <PatientProvider>
-          {children}
-        </PatientProvider>
-      </OrganizationProvider>
-    </AuthProvider>
+    <NotificationProvider>
+      <AuthProvider>
+        <OrganizationProvider>
+          <PatientProvider>
+            {children}
+          </PatientProvider>
+        </OrganizationProvider>
+      </AuthProvider>
+    </NotificationProvider>
   );
 }
 
 describe('Tab Management Integration', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
-    
+
     // Import the mocked fhirClient
     const { fhirClient } = await import('../../services/fhirClient');
-    
+
     // Mock successful organization fetch
-    vi.mocked(fhirClient.getOrganizations).mockResolvedValue([mockOrganization]);
-    
+    vi.mocked(fhirClient.getOrganizations).mockResolvedValue(mockOrganizationBundle);
+    vi.mocked(fhirClient.searchOrganizations).mockResolvedValue(mockOrganizationBundle);
+
     // Mock successful patient search
     vi.mocked(fhirClient.searchPatients).mockResolvedValue(mockSearchBundle);
-    
+
     // Mock successful patient creation
-    vi.mocked(fhirClient.createPatient).mockImplementation((patient) => 
+    vi.mocked(fhirClient.createPatient).mockImplementation((patient) =>
       Promise.resolve({ ...patient, id: 'new-patient-id' })
     );
+
+    // Mock patient encounters
+    vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue({
+      resourceType: 'Bundle',
+      type: 'searchset',
+      total: 0,
+      entry: [],
+    });
   });
 
   it('should show patient search when no patients are open', async () => {
@@ -87,17 +110,22 @@ describe('Tab Management Integration', () => {
       </TestWrapper>
     );
 
-    // Login first
-    const loginButton = screen.getByRole('button', { name: /login/i });
-    fireEvent.click(loginButton);
+    // App should be automatically logged in and show organization selection
+    await waitFor(() => {
+      expect(screen.getByText('Select an Organization')).toBeInTheDocument();
+    });
+
+    // Click the "Select Organization" button to open modal
+    const selectOrgButton = screen.getByRole('button', { name: /select organization/i });
+    fireEvent.click(selectOrgButton);
 
     // Wait for organization modal and select organization
     await waitFor(() => {
       expect(screen.getByText('Test Organization')).toBeInTheDocument();
     });
 
-    const selectOrgButton = screen.getByRole('button', { name: /select/i });
-    fireEvent.click(selectOrgButton);
+    const orgItem = screen.getByText('Test Organization');
+    fireEvent.click(orgItem);
 
     // Should show patient search
     await waitFor(() => {
@@ -112,16 +140,22 @@ describe('Tab Management Integration', () => {
       </TestWrapper>
     );
 
-    // Login and select organization
-    const loginButton = screen.getByRole('button', { name: /login/i });
-    fireEvent.click(loginButton);
+    // App should be automatically logged in and show organization selection
+    await waitFor(() => {
+      expect(screen.getByText('Select an Organization')).toBeInTheDocument();
+    });
 
+    // Click the "Select Organization" button to open modal
+    const selectOrgButton = screen.getByRole('button', { name: /select organization/i });
+    fireEvent.click(selectOrgButton);
+
+    // Wait for organization modal and select organization
     await waitFor(() => {
       expect(screen.getByText('Test Organization')).toBeInTheDocument();
     });
 
-    const selectOrgButton = screen.getByRole('button', { name: /select/i });
-    fireEvent.click(selectOrgButton);
+    const orgItem = screen.getByText('Test Organization');
+    fireEvent.click(orgItem);
 
     // Search for patients
     await waitFor(() => {
@@ -140,9 +174,9 @@ describe('Tab Management Integration', () => {
     const patientResult = screen.getByText('John Doe');
     fireEvent.click(patientResult);
 
-    // Should show tab interface
+    // Should show tab interface with patient name in header
     await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'John Doe' })).toBeInTheDocument();
       // The tab interface should be visible
     });
   });
@@ -177,11 +211,11 @@ describe('Tab Management Core Functionality', () => {
   it('should integrate PatientContext with TabManager', () => {
     // This is a simplified test that verifies the basic integration
     // More complex tests would require setting up the full application state
-    
+
     const TestComponent = () => {
       const [isLoggedIn, setIsLoggedIn] = React.useState(false);
       const [hasOrganization, setHasOrganization] = React.useState(false);
-      
+
       if (!isLoggedIn) {
         return (
           <button onClick={() => setIsLoggedIn(true)}>
@@ -189,7 +223,7 @@ describe('Tab Management Core Functionality', () => {
           </button>
         );
       }
-      
+
       if (!hasOrganization) {
         return (
           <button onClick={() => setHasOrganization(true)}>
@@ -197,7 +231,7 @@ describe('Tab Management Core Functionality', () => {
           </button>
         );
       }
-      
+
       return <div>Tab Manager would be here</div>;
     };
 
@@ -208,10 +242,10 @@ describe('Tab Management Core Functionality', () => {
     );
 
     expect(screen.getByText('Login')).toBeInTheDocument();
-    
+
     fireEvent.click(screen.getByText('Login'));
     expect(screen.getByText('Select Organization')).toBeInTheDocument();
-    
+
     fireEvent.click(screen.getByText('Select Organization'));
     expect(screen.getByText('Tab Manager would be here')).toBeInTheDocument();
   });

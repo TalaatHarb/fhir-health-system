@@ -112,10 +112,10 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
 
   // Show organization modal if no current organization is selected
   useEffect(() => {
-    if (state.available.length > 0 && !state.current && !state.modalOpen) {
+    if (!state.current && !state.modalOpen && (state.available.length > 0 || state.error || state.loading)) {
       dispatch({ type: 'SHOW_ORGANIZATION_MODAL' });
     }
-  }, [state.available, state.current, state.modalOpen]);
+  }, [state.available, state.current, state.modalOpen, state.error, state.loading]);
 
   const contextValue: OrganizationContextValue = {
     currentOrganization: state.current,
@@ -124,6 +124,7 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
     fetchOrganizations,
     showOrganizationModal,
     hideOrganizationModal,
+    modalOpen: state.modalOpen,
     loading: state.loading,
     error: state.error,
   };

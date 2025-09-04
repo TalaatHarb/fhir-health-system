@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { PatientProvider } from '../../contexts/PatientContext';
+import { NotificationProvider } from '../../contexts/NotificationContext';
 import { PatientSearch } from '../../components/patient/PatientSearch';
 import { PatientCreateModal } from '../../components/patient/PatientCreateModal';
 import { fhirClient } from '../../services/fhirClient';
@@ -41,7 +42,7 @@ const PatientManagementTest = () => {
         onPatientSelect={(patient) => setSelectedPatient(patient)}
         onCreatePatient={() => setShowCreateModal(true)}
       />
-      
+
       <PatientCreateModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
@@ -50,7 +51,7 @@ const PatientManagementTest = () => {
           setShowCreateModal(false);
         }}
       />
-      
+
       {selectedPatient && (
         <div data-testid="selected-patient">
           Selected: {selectedPatient.name?.[0]?.given?.[0]} {selectedPatient.name?.[0]?.family}
@@ -59,6 +60,15 @@ const PatientManagementTest = () => {
     </div>
   );
 };
+
+// Test wrapper with all required providers
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+  <NotificationProvider>
+    <PatientProvider>
+      {children}
+    </PatientProvider>
+  </NotificationProvider>
+);
 
 describe('Patient Integration - Basic Tests', () => {
   const user = userEvent.setup();
@@ -69,9 +79,9 @@ describe('Patient Integration - Basic Tests', () => {
 
   it('should render patient search interface', () => {
     render(
-      <PatientProvider>
+      <TestWrapper>
         <PatientManagementTest />
-      </PatientProvider>
+      </TestWrapper>
     );
 
     expect(screen.getByText('Patient Search')).toBeInTheDocument();
@@ -99,9 +109,9 @@ describe('Patient Integration - Basic Tests', () => {
     vi.mocked(fhirClient.searchPatients).mockResolvedValue(mockBundle);
 
     render(
-      <PatientProvider>
+      <TestWrapper>
         <PatientManagementTest />
-      </PatientProvider>
+      </TestWrapper>
     );
 
     // Perform search
@@ -136,9 +146,9 @@ describe('Patient Integration - Basic Tests', () => {
     vi.mocked(fhirClient.createPatient).mockResolvedValue(mockCreatedPatient);
 
     render(
-      <PatientProvider>
+      <TestWrapper>
         <PatientManagementTest />
-      </PatientProvider>
+      </TestWrapper>
     );
 
     // Open create modal
@@ -173,9 +183,9 @@ describe('Patient Integration - Basic Tests', () => {
     vi.mocked(fhirClient.searchPatients).mockRejectedValue(new Error('Network error'));
 
     render(
-      <PatientProvider>
+      <TestWrapper>
         <PatientManagementTest />
-      </PatientProvider>
+      </TestWrapper>
     );
 
     const searchInput = screen.getByPlaceholderText('Search by name, family name, or identifier...');
@@ -199,9 +209,9 @@ describe('Patient Integration - Basic Tests', () => {
     vi.mocked(fhirClient.searchPatients).mockResolvedValue(emptyBundle);
 
     render(
-      <PatientProvider>
+      <TestWrapper>
         <PatientManagementTest />
-      </PatientProvider>
+      </TestWrapper>
     );
 
     const searchInput = screen.getByPlaceholderText('Search by name, family name, or identifier...');
@@ -217,9 +227,9 @@ describe('Patient Integration - Basic Tests', () => {
 
   it('should handle modal close', async () => {
     render(
-      <PatientProvider>
+      <TestWrapper>
         <PatientManagementTest />
-      </PatientProvider>
+      </TestWrapper>
     );
 
     // Open modal

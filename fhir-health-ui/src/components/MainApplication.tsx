@@ -13,13 +13,14 @@ export function MainApplication(): React.JSX.Element {
     selectOrganization, 
     showOrganizationModal,
     hideOrganizationModal,
+    modalOpen,
     loading,
     error
   } = useOrganization();
   const { state: patientState, closeCreateModal } = usePatient();
 
-  // Check if organization modal should be shown
-  const isModalOpen = !currentOrganization || organizations.length > 0 && !currentOrganization;
+  // Use the modal state from the context
+  const isModalOpen = modalOpen;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', minWidth: '80vw' }}>

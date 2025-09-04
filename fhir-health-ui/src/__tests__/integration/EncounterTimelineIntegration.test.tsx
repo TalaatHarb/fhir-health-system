@@ -3,6 +3,7 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PatientTab } from '../../components/patient/PatientTab';
 import { fhirClient } from '../../services/fhirClient';
+import { NotificationProvider } from '../../contexts/NotificationContext';
 import type { Patient, Encounter, Bundle } from '../../types/fhir';
 
 // Mock the FHIR client
@@ -18,6 +19,15 @@ vi.mock('../../components/common/Loading', () => ({
 }));
 
 describe('Encounter Timeline Integration', () => {
+  // Helper function to render components with required providers
+  const renderWithProviders = (component: React.ReactElement) => {
+    return render(
+      <NotificationProvider>
+        {component}
+      </NotificationProvider>
+    );
+  };
+
   const mockPatient: Patient = {
     resourceType: 'Patient',
     id: 'patient-123',
@@ -128,7 +138,7 @@ describe('Encounter Timeline Integration', () => {
   it('integrates encounter timeline within patient tab', async () => {
     vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue(mockBundle);
 
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={true} 
@@ -156,7 +166,7 @@ describe('Encounter Timeline Integration', () => {
   it('handles encounter selection within patient tab', async () => {
     vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue(mockBundle);
 
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={true} 
@@ -188,7 +198,7 @@ describe('Encounter Timeline Integration', () => {
   it('handles create encounter within patient tab', async () => {
     vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue(mockBundle);
 
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={true} 
@@ -204,8 +214,11 @@ describe('Encounter Timeline Integration', () => {
     // Click create encounter button
     fireEvent.click(screen.getByText('Create New Encounter'));
 
-    // Should log the create encounter action (mocked console.log)
-    expect(console.log).toHaveBeenCalledWith('Create new encounter for patient:', 'patient-123');
+    // Should open the encounter creation modal
+    await waitFor(() => {
+      expect(screen.getByText('Encounter Details')).toBeInTheDocument();
+      expect(screen.getByText('Patient: John Doe (ID: patient-123)')).toBeInTheDocument();
+    });
   });
 
   it('shows encounter timeline loading state in patient tab', () => {
@@ -213,7 +226,7 @@ describe('Encounter Timeline Integration', () => {
       () => new Promise(() => {}) // Never resolves
     );
 
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={true} 
@@ -233,7 +246,7 @@ describe('Encounter Timeline Integration', () => {
     const errorMessage = 'Failed to load encounters';
     vi.mocked(fhirClient.getPatientEncounters).mockRejectedValue(new Error(errorMessage));
 
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={true} 
@@ -261,7 +274,7 @@ describe('Encounter Timeline Integration', () => {
 
     vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue(emptyBundle);
 
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={true} 
@@ -290,7 +303,7 @@ describe('Encounter Timeline Integration', () => {
 
     vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue(emptyBundle);
 
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={true} 
@@ -306,14 +319,17 @@ describe('Encounter Timeline Integration', () => {
     // Click create first encounter button
     fireEvent.click(screen.getByText('Create First Encounter'));
 
-    // Should log the create encounter action
-    expect(console.log).toHaveBeenCalledWith('Create new encounter for patient:', 'patient-123');
+    // Should open the encounter creation modal
+    await waitFor(() => {
+      expect(screen.getByText('Encounter Details')).toBeInTheDocument();
+      expect(screen.getByText('Patient: John Doe (ID: patient-123)')).toBeInTheDocument();
+    });
   });
 
   it('displays encounter details correctly in expanded state', async () => {
     vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue(mockBundle);
 
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={true} 
@@ -349,7 +365,7 @@ describe('Encounter Timeline Integration', () => {
     const onClose = vi.fn();
     vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue(mockBundle);
 
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={true} 
@@ -374,7 +390,7 @@ describe('Encounter Timeline Integration', () => {
   });
 
   it('handles patient tab inactive state correctly', () => {
-    render(
+    renderWithProviders(
       <PatientTab 
         patient={mockPatient} 
         isActive={false} 
