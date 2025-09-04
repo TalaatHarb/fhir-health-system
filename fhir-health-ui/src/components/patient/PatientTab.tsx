@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import type { Patient, Encounter } from '../../types/fhir';
 import { EncounterTimeline } from '../encounter/EncounterTimeline';
 import { EncounterCreateModal } from '../encounter/EncounterCreateModal';
+import { EncounterDetails } from '../encounter/EncounterDetails';
 import './PatientTab.css';
 
 export interface PatientTabProps {
@@ -12,6 +13,7 @@ export interface PatientTabProps {
 
 export function PatientTab({ patient, isActive, onClose }: PatientTabProps): React.JSX.Element {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedEncounter, setSelectedEncounter] = useState<Encounter | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   if (!isActive) {
@@ -19,10 +21,9 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
   }
 
   // Handle encounter selection
-  const handleEncounterSelect = (encounter: Encounter) => {
-    // TODO: Implement encounter details view in future task
-    console.log('Selected encounter:', encounter);
-  };
+  const handleEncounterSelect = useCallback((encounter: Encounter) => {
+    setSelectedEncounter(encounter);
+  }, []);
 
   // Handle create encounter
   const handleCreateEncounter = useCallback(() => {
@@ -34,6 +35,11 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
     console.log('Encounter created successfully:', encounter);
     // Trigger refresh of the encounter timeline
     setRefreshTrigger(prev => prev + 1);
+  }, []);
+
+  // Handle encounter details close
+  const handleEncounterDetailsClose = useCallback(() => {
+    setSelectedEncounter(null);
   }, []);
 
   // Extract patient information
@@ -142,6 +148,18 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
         onClose={() => setShowCreateModal(false)}
         onSuccess={handleEncounterCreated}
       />
+
+      {/* Encounter Details Modal */}
+      {selectedEncounter && (
+        <div className="encounter-details-modal-overlay" onClick={handleEncounterDetailsClose}>
+          <div className="encounter-details-modal" onClick={(e) => e.stopPropagation()}>
+            <EncounterDetails
+              encounter={selectedEncounter}
+              onClose={handleEncounterDetailsClose}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

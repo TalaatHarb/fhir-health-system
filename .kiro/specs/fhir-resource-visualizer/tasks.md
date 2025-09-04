@@ -186,3 +186,14 @@
   - Create seed data with multiple organizations, patients with encounters and resources
   - Add startup scripts and documentation for running the mock server
   - _Requirements: 9.1, 9.2 (development support)_
+
+- [x] 14. Fix encounter timeline "View Full Details" button functionality
+
+
+
+  - Connect EncounterTimelineItem "View Full Details" button to show EncounterDetails component
+  - Implement modal or navigation mechanism to display detailed encounter view
+  - Ensure proper state management for showing/hiding encounter details
+  - Add proper event handling for encounter selection from timeline
+  - Test the complete flow from timeline item to detailed encounter view
+  - _Requirements: 6.1, 6.4_

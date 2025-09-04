@@ -10,6 +10,7 @@ import type { Patient, Encounter, Bundle } from '../../types/fhir';
 vi.mock('../../services/fhirClient', () => ({
   fhirClient: {
     getPatientEncounters: vi.fn(),
+    getEncounterResources: vi.fn(),
   },
 }));
 
@@ -124,6 +125,14 @@ describe('Encounter Timeline Integration', () => {
     })),
   };
 
+  const mockEncounterResources = {
+    observations: { resourceType: 'Bundle', type: 'searchset', total: 0, entry: [] },
+    conditions: { resourceType: 'Bundle', type: 'searchset', total: 0, entry: [] },
+    medicationRequests: { resourceType: 'Bundle', type: 'searchset', total: 0, entry: [] },
+    diagnosticReports: { resourceType: 'Bundle', type: 'searchset', total: 0, entry: [] },
+    procedures: { resourceType: 'Bundle', type: 'searchset', total: 0, entry: [] },
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     // Mock console.log to avoid noise in tests
@@ -165,6 +174,7 @@ describe('Encounter Timeline Integration', () => {
 
   it('handles encounter selection within patient tab', async () => {
     vi.mocked(fhirClient.getPatientEncounters).mockResolvedValue(mockBundle);
+    vi.mocked(fhirClient.getEncounterResources).mockResolvedValue(mockEncounterResources);
 
     renderWithProviders(
       <PatientTab 
@@ -191,8 +201,18 @@ describe('Encounter Timeline Integration', () => {
     // Click view details button
     fireEvent.click(screen.getByText('View Full Details'));
 
-    // Should log the encounter selection (mocked console.log)
-    expect(console.log).toHaveBeenCalledWith('Selected encounter:', mockEncounters[1]);
+    // Should show the encounter details modal
+    await waitFor(() => {
+      expect(screen.getByText('Encounter Details')).toBeInTheDocument();
+    });
+
+    // Should show the encounter details modal
+    const encounterDetailsModal = document.querySelector('.encounter-details');
+    expect(encounterDetailsModal).toBeInTheDocument();
+    
+    // Should show the modal overlay
+    const modalOverlay = document.querySelector('.encounter-details-modal-overlay');
+    expect(modalOverlay).toBeInTheDocument();
   });
 
   it('handles create encounter within patient tab', async () => {
