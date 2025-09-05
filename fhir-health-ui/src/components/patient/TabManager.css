@@ -19,21 +19,7 @@
   align-items: center;
   gap: 0.25rem;
   flex: 1;
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
-.tab-list::-webkit-scrollbar {
-  height: 4px;
-}
-
-.tab-list::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-.tab-list::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 2px;
+  overflow: hidden;
 }
 
 .tab-item {
@@ -111,7 +97,7 @@
 .tab-content {
   flex: 1;
   position: relative;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* Responsive design */

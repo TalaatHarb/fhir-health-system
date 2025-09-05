@@ -177,6 +177,7 @@
   background: #f9fafb;
   overflow-x: auto;
   flex-shrink: 0; /* Prevent tab list from shrinking */
+  min-height: 45px;
 }
 
 .tab-button {
@@ -379,7 +380,7 @@
 .reports-tab .resource-list,
 .procedures-tab .resource-list {
   flex: 1;
-  min-height: 0;
+  min-height: 44px;
 }
 
 /* Resource Lists */
