@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { OrganizationProvider, PatientProvider, NotificationProvider, ModalProvider } from '../../contexts';
+import { OrganizationProvider, PatientProvider, NotificationProvider, ModalProvider, ThemeProvider, I18nProvider } from '../../contexts';
 import { MainApplication } from '../../components/MainApplication';
 import { fhirClient } from '../../services/fhirClient';
 import type { Organization, Bundle, User } from '../../types';
@@ -76,15 +76,19 @@ const mockBundle: Bundle<Organization> = {
 
 // Test wrapper component with all required providers
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
-  <NotificationProvider>
-    <ModalProvider>
-      <OrganizationProvider>
-        <PatientProvider>
-          {children}
-        </PatientProvider>
-      </OrganizationProvider>
-    </ModalProvider>
-  </NotificationProvider>
+  <ThemeProvider>
+    <I18nProvider>
+      <NotificationProvider>
+        <ModalProvider>
+          <OrganizationProvider>
+            <PatientProvider>
+              {children}
+            </PatientProvider>
+          </OrganizationProvider>
+        </ModalProvider>
+      </NotificationProvider>
+    </I18nProvider>
+  </ThemeProvider>
 );
 
 describe('Organization Integration', () => {

@@ -2,10 +2,9 @@ import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
 // Mock window.matchMedia for tests
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation((query: string) => ({
-    matches: false,
+const mockMatchMedia = vi.fn().mockImplementation((query: string) => {
+  const mediaQueryList = {
+    matches: query.includes('prefers-color-scheme: dark') ? false : true, // Default to light theme
     media: query,
     onchange: null,
     addListener: vi.fn(), // deprecated
@@ -13,8 +12,17 @@ Object.defineProperty(window, 'matchMedia', {
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
-  })),
+  };
+  return mediaQueryList;
 });
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: mockMatchMedia,
+});
+
+// Ensure window.matchMedia is available globally
+(globalThis as any).matchMedia = mockMatchMedia;
 
 // Mock ResizeObserver for tests
 (globalThis as any).ResizeObserver = vi.fn().mockImplementation(() => ({

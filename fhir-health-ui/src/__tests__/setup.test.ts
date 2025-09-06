@@ -14,6 +14,11 @@ describe('Test Setup', () => {
   it('should have mocked window.matchMedia', () => {
     expect(window.matchMedia).toBeDefined()
     const mediaQuery = window.matchMedia('(min-width: 768px)')
-    expect(mediaQuery.matches).toBe(false)
+    // The mock returns true for non-dark-mode queries
+    expect(mediaQuery.matches).toBe(true)
+    
+    // Test dark mode query returns false
+    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    expect(darkModeQuery.matches).toBe(false)
   })
 })

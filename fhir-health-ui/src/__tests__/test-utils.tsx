@@ -7,6 +7,8 @@ import { OrganizationProvider } from '../contexts/OrganizationContext';
 import { PatientProvider } from '../contexts/PatientContext';
 import { NotificationProvider } from '../contexts/NotificationContext';
 import { ModalProvider } from '../contexts/ModalContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
+import { I18nProvider } from '../contexts/I18nContext';
 import type { User, Organization, Patient, Notification } from '../types';
 import type { Bundle, FHIRResource, Encounter, Observation, Condition, MedicationRequest } from '../types/fhir';
 
@@ -1248,17 +1250,21 @@ function createTestWrapper(options: EnhancedTestWrapperOptions = {}) {
 
     return (
       <RouterComponent {...routerProps}>
-        <NotificationProvider>
-          <ModalProvider>
-            <AuthProvider>
-              <OrganizationProvider>
-                <PatientProvider>
-                  {children}
-                </PatientProvider>
-              </OrganizationProvider>
-            </AuthProvider>
-          </ModalProvider>
-        </NotificationProvider>
+        <ThemeProvider>
+          <I18nProvider>
+            <NotificationProvider>
+              <ModalProvider>
+                <AuthProvider>
+                  <OrganizationProvider>
+                    <PatientProvider>
+                      {children}
+                    </PatientProvider>
+                  </OrganizationProvider>
+                </AuthProvider>
+              </ModalProvider>
+            </NotificationProvider>
+          </I18nProvider>
+        </ThemeProvider>
       </RouterComponent>
     );
   };

@@ -16,9 +16,9 @@
 
 /* Modal Container - Fixed sizes for stability */
 .modal-container {
-  background: white;
+  background: var(--color-surface);
   border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px var(--color-shadow);
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 40px);
@@ -82,8 +82,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-background);
   flex-shrink: 0;
 }
 
@@ -98,7 +98,7 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
   line-height: 1.2;
 }
 
@@ -109,29 +109,28 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: white;
-  color: #6b7280;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   font-size: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .modal-back-button:hover {
-  background: #f3f4f6;
-  border-color: #9ca3af;
-  color: #374151;
+  background: var(--theme-secondary);
+  border-color: var(--theme-secondary);
+  color: var(--color-surface);
 }
 
 .modal-back-button:focus {
   outline: none;
-  ring: 2px solid #3b82f6;
-  ring-offset: 2px;
+  box-shadow: 0 0 0 2px var(--theme-accent);
 }
 
 .modal-back-button:active {
-  background: #e5e7eb;
+  background: var(--theme-accent);
 }
 
 /* Close Button */
@@ -144,7 +143,7 @@
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   font-size: 24px;
   line-height: 1;
   cursor: pointer;
@@ -152,19 +151,18 @@
 }
 
 .modal-close-button:hover {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--theme-secondary);
+  color: var(--color-surface);
 }
 
 .modal-close-button:focus {
   outline: none;
-  background: #f3f4f6;
-  ring: 2px solid #3b82f6;
-  ring-offset: 2px;
+  background: var(--theme-secondary);
+  box-shadow: 0 0 0 2px var(--theme-accent);
 }
 
 .modal-close-button:active {
-  background: #e5e7eb;
+  background: var(--theme-accent);
 }
 
 /* Modal Content */
@@ -181,17 +179,17 @@
 }
 
 .modal-content::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--color-background);
   border-radius: 4px;
 }
 
 .modal-content::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--theme-accent);
   border-radius: 4px;
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--theme-secondary);
 }
 
 /* Modal Navigation Utility */
@@ -228,59 +226,7 @@
   }
 }
 
-/* Dark theme support */
-@media (prefers-color-scheme: dark) {
-  .modal-container {
-    background: #1f2937;
-    color: #f9fafb;
-  }
-  
-  .modal-header {
-    background: #111827;
-    border-bottom-color: #374151;
-  }
-  
-  .modal-title {
-    color: #f9fafb;
-  }
-  
-  .modal-back-button {
-    background: #374151;
-    border-color: #4b5563;
-    color: #d1d5db;
-  }
-  
-  .modal-back-button:hover {
-    background: #4b5563;
-    border-color: #6b7280;
-    color: #f3f4f6;
-  }
-  
-  .modal-close-button {
-    color: #d1d5db;
-  }
-  
-  .modal-close-button:hover {
-    background: #374151;
-    color: #f3f4f6;
-  }
-  
-  .modal-close-button:focus {
-    background: #374151;
-  }
-  
-  .modal-content::-webkit-scrollbar-track {
-    background: #374151;
-  }
-  
-  .modal-content::-webkit-scrollbar-thumb {
-    background: #6b7280;
-  }
-  
-  .modal-content::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
-  }
-}
+/* Theme support is now handled by CSS custom properties */
 
 /* Focus management */
 .modal-overlay[role="dialog"] {

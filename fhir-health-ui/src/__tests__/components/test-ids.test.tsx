@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { LoginPage } from '../../components/auth/LoginPage';
@@ -120,10 +120,14 @@ describe('Component Test IDs', () => {
   });
 
   describe('MainApplication', () => {
-    it('should have all required test-id attributes in header', () => {
+    it('should have all required test-id attributes in header', async () => {
       renderWithAuth(<MainApplication />);
 
-      expect(screen.getByTestId(TestIds.MAIN_HEADER)).toBeInTheDocument();
+      // Wait for the component to render and organization to be selected
+      await waitFor(() => {
+        expect(screen.getByTestId(TestIds.MAIN_HEADER)).toBeInTheDocument();
+      });
+
       expect(screen.getByTestId(TestIds.APP_TITLE)).toBeInTheDocument();
       expect(screen.getByTestId(TestIds.USER_WELCOME)).toBeInTheDocument();
       expect(screen.getByTestId(TestIds.LOGOUT_BUTTON)).toBeInTheDocument();

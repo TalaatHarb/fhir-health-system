@@ -63,15 +63,28 @@ export interface ThemeContextValue {
 
 // Detect system theme preference
 function getSystemTheme(): Theme {
-  if (typeof window !== 'undefined' && window.matchMedia) {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  try {
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      return mediaQuery.matches ? 'dark' : 'light';
+    }
+  } catch (error) {
+    console.warn('Failed to detect system theme:', error);
   }
   return 'light';
 }
 
 // Check if system theme detection is supported
 function isSystemThemeSupported(): boolean {
-  return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').media !== 'not all';
+  try {
+    return typeof window !== 'undefined' && 
+           window.matchMedia && 
+           typeof window.matchMedia === 'function' &&
+           window.matchMedia('(prefers-color-scheme: dark)').media !== 'not all';
+  } catch (error) {
+    console.warn('System theme detection not supported:', error);
+    return false;
+  }
 }
 
 // Get user preference from localStorage
@@ -177,18 +190,22 @@ export function ThemeProvider({ children }: ThemeProviderProps): React.JSX.Eleme
   useEffect(() => {
     if (!isSystemThemeSupported()) return;
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    try {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
-    const handleChange = (e: MediaQueryListEvent) => {
-      const newSystemPreference = e.matches ? 'dark' : 'light';
-      dispatch({ type: 'SET_SYSTEM_PREFERENCE', payload: newSystemPreference });
-    };
+      const handleChange = (e: MediaQueryListEvent) => {
+        const newSystemPreference = e.matches ? 'dark' : 'light';
+        dispatch({ type: 'SET_SYSTEM_PREFERENCE', payload: newSystemPreference });
+      };
 
-    mediaQuery.addEventListener('change', handleChange);
-    
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
+      mediaQuery.addEventListener('change', handleChange);
+      
+      return () => {
+        mediaQuery.removeEventListener('change', handleChange);
+      };
+    } catch (error) {
+      console.warn('Failed to set up system theme listener:', error);
+    }
   }, []);
 
   // Apply theme to DOM whenever current theme changes

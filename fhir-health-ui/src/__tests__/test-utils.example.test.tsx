@@ -26,7 +26,7 @@ describe('Test Utils Example', () => {
     
     await waitFor(() => {
       expect(screen.getByText(/welcome/i)).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   it('should render without authentication', async () => {

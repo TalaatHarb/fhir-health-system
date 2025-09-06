@@ -53,7 +53,7 @@
   - Implement patient selection from search results to open new tabs
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-- [ ] 6. Integrate theme system into existing components
+- [x] 6. Integrate theme system into existing components
   - Update MainApplication component to use theme context
   - Add theme toggle control to the header
   - Apply theme-aware styling to TabManager and patient components

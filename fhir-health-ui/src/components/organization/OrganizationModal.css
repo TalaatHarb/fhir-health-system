@@ -15,9 +15,9 @@
 }
 
 .organization-modal {
-  background: white;
+  background: var(--color-surface);
   border-radius: 12px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px var(--color-shadow), 0 10px 10px -5px var(--color-shadow);
   max-width: 600px;
   width: 100%;
   max-height: 80vh;
@@ -31,15 +31,15 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem 2rem;
-  border-bottom: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-background);
 }
 
 .organization-modal-header h2 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 .organization-modal-close {
@@ -47,7 +47,7 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   padding: 0.25rem;
   border-radius: 4px;
   transition: color 0.2s, background-color 0.2s;
@@ -59,8 +59,8 @@
 }
 
 .organization-modal-close:hover {
-  color: #374151;
-  background-color: #f3f4f6;
+  color: var(--color-text-primary);
+  background-color: var(--theme-secondary);
 }
 
 .organization-modal-content {
@@ -86,8 +86,8 @@
 }
 
 .organization-modal-retry {
-  background-color: #3b82f6;
-  color: white;
+  background-color: var(--theme-accent);
+  color: var(--color-surface);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -97,16 +97,16 @@
 }
 
 .organization-modal-retry:hover {
-  background-color: #2563eb;
+  background-color: var(--theme-secondary);
 }
 
 .organization-modal-empty p {
-  color: #6b7280;
+  color: var(--color-text-secondary);
   font-size: 1.1rem;
 }
 
 .organization-modal-description {
-  color: #6b7280;
+  color: var(--color-text-secondary);
   margin-bottom: 1.5rem;
   line-height: 1.5;
 }
@@ -118,12 +118,12 @@
 }
 
 .organization-item {
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   padding: 1.25rem;
   cursor: pointer;
   transition: all 0.2s;
-  background-color: white;
+  background-color: var(--color-surface);
   position: relative;
   display: flex;
   align-items: flex-start;
@@ -131,19 +131,23 @@
 }
 
 .organization-item:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-color: var(--theme-accent);
+  box-shadow: 0 4px 6px -1px var(--color-shadow), 0 2px 4px -1px var(--color-shadow);
 }
 
 .organization-item:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 3px rgba(38, 102, 127, 0.1);
+}
+
+:root[data-theme="dark"] .organization-item:focus {
+  box-shadow: 0 0 0 3px rgba(165, 91, 75, 0.1);
 }
 
 .organization-item.selected {
-  border-color: #10b981;
-  background-color: #f0fdf4;
+  border-color: var(--theme-secondary);
+  background-color: var(--theme-primary);
 }
 
 .organization-item-content {
@@ -154,26 +158,26 @@
   margin: 0 0 0.5rem 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 .organization-id {
   margin: 0 0 0.25rem 0;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   font-family: 'Courier New', monospace;
 }
 
 .organization-type {
   margin: 0 0 0.5rem 0;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .organization-address {
   margin: 0 0 0.5rem 0;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   line-height: 1.4;
 }
 
@@ -186,14 +190,14 @@
 
 .organization-contact-item {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
   gap: 0.25rem;
 }
 
 .organization-selected-indicator {
-  color: #10b981;
+  color: var(--theme-secondary);
   font-weight: 600;
   font-size: 0.875rem;
   display: flex;
@@ -205,14 +209,14 @@
 
 .organization-modal-footer {
   padding: 1rem 2rem;
-  border-top: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-background);
 }
 
 .organization-modal-note {
   margin: 0;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   text-align: center;
   line-height: 1.4;
 }
