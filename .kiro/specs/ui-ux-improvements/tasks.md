@@ -46,7 +46,7 @@
   - Add modal history and back navigation functionality
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [ ] 5. Enhance patient search and tab management
+- [-] 5. Enhance patient search and tab management
   - Extend PatientContext with search functionality
   - Create PatientSearchModal component with search interface
   - Add "Search Patient" button to TabManager alongside "Add Patient"

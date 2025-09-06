@@ -50,6 +50,6 @@ describe('Test Utils Example', () => {
     renderWithAuth(<TestComponent />);
     
     expect(screen.getByTestId('user-name')).toHaveTextContent('Demo User');
-    expect(screen.getByTestId('org-name')).toHaveTextContent('Test Healthcare Organization');
+    expect(screen.getByTestId('org-name')).toHaveTextContent('General Hospital');
   });
 });

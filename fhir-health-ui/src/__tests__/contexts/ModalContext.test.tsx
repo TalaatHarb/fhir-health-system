@@ -293,7 +293,7 @@ describe('ModalContext', () => {
       );
     }
 
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     render(
       <TestWrapper>
@@ -320,7 +320,7 @@ describe('ModalContext', () => {
   });
 
   it('should call onClose callback when modal is closed', async () => {
-    const onCloseMock = jest.fn();
+    const onCloseMock = vi.fn();
 
     function CallbackTestComponent() {
       const { openModal } = useModal();
@@ -368,7 +368,7 @@ describe('useModal hook', () => {
       return <div>Test</div>;
     }
 
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => render(<TestComponent />)).toThrow(
       'useModal must be used within a ModalProvider'

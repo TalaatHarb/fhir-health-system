@@ -6,7 +6,7 @@ import { useModal } from '../contexts/ModalContext';
  * Provides convenient methods for common modal navigation patterns
  */
 export function useModalNavigation(modalId: string) {
-  const { navigateToPage, goBack, closeModal, getModalState, updatePageData } = useModal();
+  const { openModal, navigateToPage, goBack, closeModal, getModalState, updatePageData } = useModal();
   
   const modalState = getModalState(modalId);
   
@@ -59,6 +59,9 @@ export function useModalNavigation(modalId: string) {
   const pageHistory = modalState?.pageHistory || [];
   
   return {
+    // Modal management
+    openModal,
+    
     // Navigation methods
     navigate,
     back,

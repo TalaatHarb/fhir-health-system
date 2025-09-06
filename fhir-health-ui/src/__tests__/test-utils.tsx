@@ -32,8 +32,8 @@ export const mockUser: User = {
 
 export const mockOrganization: Organization = {
   resourceType: 'Organization',
-  id: 'org-123',
-  name: 'Test Healthcare Organization',
+  id: 'org-1',
+  name: 'General Hospital',
   active: true,
   type: [
     {
@@ -54,7 +54,7 @@ export const mockOrganization: Organization = {
     },
     {
       system: 'email',
-      value: 'contact@testhealthcare.org',
+      value: 'contact@generalhospital.org',
       use: 'work',
     },
   ],
@@ -66,6 +66,42 @@ export const mockOrganization: Organization = {
       city: 'Medical City',
       state: 'HC',
       postalCode: '12345',
+      country: 'US',
+    },
+  ],
+};
+
+export const mockOrganization2: Organization = {
+  resourceType: 'Organization',
+  id: 'org-2',
+  name: 'Community Clinic',
+  active: true,
+  type: [
+    {
+      coding: [
+        {
+          system: 'http://terminology.hl7.org/CodeSystem/organization-type',
+          code: 'prov',
+          display: 'Healthcare Provider',
+        },
+      ],
+    },
+  ],
+  telecom: [
+    {
+      system: 'phone',
+      value: '+1-555-987-6543',
+      use: 'work',
+    },
+  ],
+  address: [
+    {
+      use: 'work',
+      type: 'physical',
+      line: ['456 Community St'],
+      city: 'Health City',
+      state: 'HC',
+      postalCode: '54321',
       country: 'US',
     },
   ],
@@ -258,8 +294,8 @@ export const createMockEncounter = (patientId: string, overrides: Partial<Encoun
     end: '2024-01-15T11:00:00Z'
   },
   serviceProvider: {
-    reference: 'Organization/org-123',
-    display: 'Test Healthcare Organization'
+    reference: `Organization/${mockOrganization.id}`,
+    display: mockOrganization.name
   },
   ...overrides
 });
@@ -379,10 +415,12 @@ export const createCompleteFhirClientMock = (): MockFhirClient => ({
   ),
 
   // Organization operations
-  searchOrganizations: vi.fn().mockResolvedValue(createMockBundle([mockOrganization])),
-  getOrganization: vi.fn().mockImplementation((id: string) =>
-    Promise.resolve(id === 'org-123' ? mockOrganization : { ...mockOrganization, id })
-  ),
+  searchOrganizations: vi.fn().mockResolvedValue(createMockBundle([mockOrganization, mockOrganization2])),
+  getOrganization: vi.fn().mockImplementation((id: string) => {
+    if (id === 'org-1') return Promise.resolve(mockOrganization);
+    if (id === 'org-2') return Promise.resolve(mockOrganization2);
+    return Promise.resolve({ ...mockOrganization, id });
+  }),
   setOrganization: vi.fn(),
 
   // Encounter operations
@@ -867,11 +905,13 @@ vi.mock('../services/fhirClient', () => ({
 
     // Organization operations
     searchOrganizations: vi.fn().mockImplementation(() =>
-      Promise.resolve(createMockBundle([mockOrganization]))
+      Promise.resolve(createMockBundle([mockOrganization, mockOrganization2]))
     ),
-    getOrganization: vi.fn().mockImplementation((id: string) =>
-      Promise.resolve(id === 'org-123' ? mockOrganization : { ...mockOrganization, id })
-    ),
+    getOrganization: vi.fn().mockImplementation((id: string) => {
+      if (id === 'org-1') return Promise.resolve(mockOrganization);
+      if (id === 'org-2') return Promise.resolve(mockOrganization2);
+      return Promise.resolve({ ...mockOrganization, id });
+    }),
     setOrganization: vi.fn(),
 
     // Encounter operations
