@@ -35,6 +35,8 @@ export { Toast, ToastContainer } from './common/Toast';
 export { InlineError, FieldError, ErrorList } from './common/InlineError';
 
 // UI components
+export { ThemeToggle } from './ui/ThemeToggle';
+export { ThemeDemo } from './ui/ThemeDemo';
 // export { Modal } from './ui/Modal';
 // export { Button } from './ui/Button';
 
