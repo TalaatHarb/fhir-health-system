@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, OrganizationProvider, PatientProvider, ThemeProvider, I18nProvider } from './contexts';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { ModalProvider } from './contexts/ModalContext';
 import { ProtectedRoute } from './components';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { ToastContainer } from './components/common/Toast';
@@ -90,9 +91,10 @@ function App(): React.JSX.Element {
         <ThemeProvider>
           <I18nProvider>
             <NotificationProvider>
-              <AuthProvider>
-                <OrganizationProvider>
-                  <PatientProvider>
+              <ModalProvider>
+                <AuthProvider>
+                  <OrganizationProvider>
+                    <PatientProvider>
                 <Suspense fallback={
                   <div style={{ 
                     display: 'flex', 
@@ -118,9 +120,10 @@ function App(): React.JSX.Element {
                   </Routes>
                 </Suspense>
                 <AppNotifications />
-                  </PatientProvider>
-                </OrganizationProvider>
-              </AuthProvider>
+                    </PatientProvider>
+                  </OrganizationProvider>
+                </AuthProvider>
+              </ModalProvider>
             </NotificationProvider>
           </I18nProvider>
         </ThemeProvider>

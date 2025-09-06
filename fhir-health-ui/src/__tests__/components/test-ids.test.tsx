@@ -8,7 +8,7 @@ import { PatientSearch } from '../../components/patient/PatientSearch';
 import { PatientCreateModal } from '../../components/patient/PatientCreateModal';
 import { MainApplication } from '../../components/MainApplication';
 import { TestIds } from '../../types/testable';
-import { renderWithProviders } from '../test-utils';
+import { renderWithProviders, renderWithAuth } from '../test-utils';
 
 // Create mock functions that can be overridden in tests
 const mockUseAuth = vi.fn();
@@ -121,7 +121,7 @@ describe('Component Test IDs', () => {
 
   describe('MainApplication', () => {
     it('should have all required test-id attributes in header', () => {
-      renderWithProviders(<MainApplication />);
+      renderWithAuth(<MainApplication />);
 
       expect(screen.getByTestId(TestIds.MAIN_HEADER)).toBeInTheDocument();
       expect(screen.getByTestId(TestIds.APP_TITLE)).toBeInTheDocument();

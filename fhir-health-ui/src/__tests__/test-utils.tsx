@@ -6,6 +6,7 @@ import { AuthProvider } from '../contexts/AuthContext';
 import { OrganizationProvider } from '../contexts/OrganizationContext';
 import { PatientProvider } from '../contexts/PatientContext';
 import { NotificationProvider } from '../contexts/NotificationContext';
+import { ModalProvider } from '../contexts/ModalContext';
 import type { User, Organization, Patient, Notification } from '../types';
 import type { Bundle, FHIRResource, Encounter, Observation, Condition, MedicationRequest } from '../types/fhir';
 
@@ -1248,13 +1249,15 @@ function createTestWrapper(options: EnhancedTestWrapperOptions = {}) {
     return (
       <RouterComponent {...routerProps}>
         <NotificationProvider>
-          <AuthProvider>
-            <OrganizationProvider>
-              <PatientProvider>
-                {children}
-              </PatientProvider>
-            </OrganizationProvider>
-          </AuthProvider>
+          <ModalProvider>
+            <AuthProvider>
+              <OrganizationProvider>
+                <PatientProvider>
+                  {children}
+                </PatientProvider>
+              </OrganizationProvider>
+            </AuthProvider>
+          </ModalProvider>
         </NotificationProvider>
       </RouterComponent>
     );

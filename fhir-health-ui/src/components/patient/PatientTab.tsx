@@ -12,13 +12,14 @@ export interface PatientTabProps {
 }
 
 export function PatientTab({ patient, isActive, onClose }: PatientTabProps): React.JSX.Element {
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedEncounter, setSelectedEncounter] = useState<Encounter | null>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
+  // Early return must happen before any hooks are called
   if (!isActive) {
     return <div className="patient-tab hidden" />;
   }
+
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedEncounter, setSelectedEncounter] = useState<Encounter | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Handle encounter selection
   const handleEncounterSelect = useCallback((encounter: Encounter) => {

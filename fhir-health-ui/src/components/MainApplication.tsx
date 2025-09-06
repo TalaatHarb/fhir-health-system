@@ -3,6 +3,7 @@ import { useAuth, useOrganization, usePatient } from '../contexts';
 import { OrganizationModal } from './organization/OrganizationModal';
 import { TabManager } from './patient/TabManager';
 import { PatientCreateModal } from './patient/PatientCreateModal';
+import { ModalManager } from './common/Modal';
 import { TestIds } from '../types/testable';
 
 export function MainApplication(): React.JSX.Element {
@@ -151,6 +152,9 @@ export function MainApplication(): React.JSX.Element {
         isOpen={patientState.createModalOpen}
         onClose={closeCreateModal}
       />
+
+      {/* Modal Manager for new modal system */}
+      <ModalManager />
     </div>
   );
 }

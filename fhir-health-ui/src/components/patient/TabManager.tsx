@@ -1,14 +1,39 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { usePatient } from '../../contexts/PatientContext';
+import { useModal } from '../../contexts/ModalContext';
 import { PatientTab } from './PatientTab';
 import { PatientSearch } from './PatientSearch';
+import { PatientSearchModal } from './PatientSearchModal';
 import './TabManager.css';
 
 export function TabManager(): React.JSX.Element {
-  const { state, closePatient, setActivePatient } = usePatient();
+  const { state, closePatient, setActivePatient, openCreateModal } = usePatient();
+  const { openModal } = useModal();
   const { openPatients, activePatientId } = state;
 
   const openPatientsList = Array.from(openPatients.entries());
+
+  // Handle opening the patient search modal
+  const handleOpenSearchModal = useCallback(() => {
+    openModal('patient-search', {
+      size: 'large',
+      pages: [
+        {
+          id: 'search',
+          title: 'Search Patients',
+          component: PatientSearchModal,
+        },
+      ],
+      initialPage: 'search',
+      closeOnOverlayClick: true,
+      closeOnEscape: true,
+    });
+  }, [openModal]);
+
+  // Handle opening the create patient modal
+  const handleOpenCreateModal = useCallback(() => {
+    openCreateModal();
+  }, [openCreateModal]);
 
   // If no patients are open, show the search interface
   if (openPatientsList.length === 0) {
@@ -43,9 +68,23 @@ export function TabManager(): React.JSX.Element {
           ))}
         </div>
         
-        {/* Add New Patient Button */}
+        {/* Patient Action Buttons */}
         <div className="tab-actions">
-          <PatientSearch showAsButton />
+          <button
+            className="tab-action-button tab-action-button--search"
+            onClick={handleOpenSearchModal}
+            title="Search for existing patients"
+          >
+            Search Patient
+          </button>
+          <button
+            className="tab-action-button tab-action-button--add"
+            onClick={handleOpenCreateModal}
+            disabled={state.createLoading}
+            title="Create a new patient"
+          >
+            + Add Patient
+          </button>
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import { AuthProvider } from '../../contexts/AuthContext';
 import { OrganizationProvider } from '../../contexts/OrganizationContext';
 import { PatientProvider } from '../../contexts/PatientContext';
 import { NotificationProvider } from '../../contexts/NotificationContext';
+import { ModalProvider } from '../../contexts/ModalContext';
 import type { Patient, Organization, Bundle } from '../../types/fhir';
 
 // Mock the FHIR client
@@ -64,13 +65,15 @@ const mockSearchBundle: Bundle<Patient> = {
 function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
     <NotificationProvider>
-      <AuthProvider>
-        <OrganizationProvider>
-          <PatientProvider>
-            {children}
-          </PatientProvider>
-        </OrganizationProvider>
-      </AuthProvider>
+      <ModalProvider>
+        <AuthProvider>
+          <OrganizationProvider>
+            <PatientProvider>
+              {children}
+            </PatientProvider>
+          </OrganizationProvider>
+        </AuthProvider>
+      </ModalProvider>
     </NotificationProvider>
   );
 }

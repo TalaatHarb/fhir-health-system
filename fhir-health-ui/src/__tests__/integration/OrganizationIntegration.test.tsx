@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { OrganizationProvider, PatientProvider, NotificationProvider } from '../../contexts';
+import { OrganizationProvider, PatientProvider, NotificationProvider, ModalProvider } from '../../contexts';
 import { MainApplication } from '../../components/MainApplication';
 import { fhirClient } from '../../services/fhirClient';
 import type { Organization, Bundle, User } from '../../types';
@@ -77,11 +77,13 @@ const mockBundle: Bundle<Organization> = {
 // Test wrapper component with all required providers
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <NotificationProvider>
-    <OrganizationProvider>
-      <PatientProvider>
-        {children}
-      </PatientProvider>
-    </OrganizationProvider>
+    <ModalProvider>
+      <OrganizationProvider>
+        <PatientProvider>
+          {children}
+        </PatientProvider>
+      </OrganizationProvider>
+    </ModalProvider>
   </NotificationProvider>
 );
 

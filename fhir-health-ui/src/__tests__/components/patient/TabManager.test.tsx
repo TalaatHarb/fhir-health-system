@@ -4,6 +4,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { TabManager } from '../../../components/patient/TabManager';
 import { PatientProvider } from '../../../contexts/PatientContext';
 import { OrganizationProvider } from '../../../contexts/OrganizationContext';
+import { ModalProvider } from '../../../contexts/ModalContext';
 import type { Patient } from '../../../types/fhir';
 
 // Mock the FHIR client
@@ -64,11 +65,13 @@ const mockOrganization = {
 
 function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <OrganizationProvider>
-      <PatientProvider>
-        {children}
-      </PatientProvider>
-    </OrganizationProvider>
+    <ModalProvider>
+      <OrganizationProvider>
+        <PatientProvider>
+          {children}
+        </PatientProvider>
+      </OrganizationProvider>
+    </ModalProvider>
   );
 }
 
