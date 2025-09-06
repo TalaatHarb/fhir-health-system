@@ -7,4 +7,5 @@ export { PatientProvider, usePatient } from './PatientContext';
 export { NotificationProvider, useNotifications } from './NotificationContext';
 export { ThemeProvider, useTheme } from './ThemeContext';
 export { I18nProvider, useI18n } from './I18nContext';
+export { ModalProvider, useModal, useModalInstance } from './ModalContext';
 // export { UIProvider, useUI } from './UIContext';

@@ -37,8 +37,19 @@ export { InlineError, FieldError, ErrorList } from './common/InlineError';
 // UI components
 export { ThemeToggle } from './ui/ThemeToggle';
 export { ThemeDemo } from './ui/ThemeDemo';
-// export { Modal } from './ui/Modal';
 // export { Button } from './ui/Button';
+
+// Modal components
+export { Modal, ModalManager, withModalPage, ModalNavigation } from './common/Modal';
+export { ModalSystemDemo } from './common/ModalSystemDemo';
+export { 
+  ConfirmationPage, 
+  FormPage, 
+  ListSelectionPage, 
+  LoadingPage, 
+  SuccessPage, 
+  ErrorPage 
+} from './common/ExampleModalPages';
 
 // Layout components
 // export { Layout } from './common/Layout';
