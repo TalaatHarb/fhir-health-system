@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, act, waitFor } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PatientSearch } from '../../../components/patient/PatientSearch';
@@ -90,8 +90,8 @@ describe('PatientSearch', () => {
   it('should render search interface', () => {
     render(<PatientSearch />);
 
-    expect(screen.getByText('Patient Search')).toBeInTheDocument();
-    expect(screen.getByText('Search for existing patients or create a new patient record.')).toBeInTheDocument();
+    expect(screen.getByText('Search Patient')).toBeInTheDocument();
+    expect(screen.getByText('Search for existing patients or create a new patient record')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search by name, family name, or identifier...')).toBeInTheDocument();
     expect(screen.getByText('Search')).toBeInTheDocument();
     expect(screen.getByText('Create New Patient')).toBeInTheDocument();
@@ -233,12 +233,11 @@ describe('PatientSearch', () => {
 
     render(<PatientSearch />);
 
-    expect(screen.getByText('Searching patients...')).toBeInTheDocument();
-    expect(screen.getByText('Searching...')).toBeInTheDocument();
+    expect(screen.getAllByText('Searching...')).toHaveLength(2); // Button and loading message
 
     // Search input and button should be disabled
     const searchInput = screen.getByPlaceholderText('Search by name, family name, or identifier...');
-    const searchButton = screen.getByText('Searching...');
+    const searchButton = screen.getByRole('button', { name: 'Searching...' });
 
     expect(searchInput).toBeDisabled();
     expect(searchButton).toBeDisabled();
@@ -275,7 +274,7 @@ describe('PatientSearch', () => {
     render(<PatientSearch />);
 
     expect(screen.getByText('No patients found matching "NonexistentPatient"')).toBeInTheDocument();
-    expect(screen.getByText('Try a different search term or create a new patient.')).toBeInTheDocument();
+    expect(screen.getByText('Try a different search term or create a new patient')).toBeInTheDocument();
   });
 
   it('should format patient names correctly', () => {

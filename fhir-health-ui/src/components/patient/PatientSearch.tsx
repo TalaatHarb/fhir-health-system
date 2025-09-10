@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { usePatient } from '../../contexts/PatientContext';
+import { useTranslation, useDateFormatter } from '../../hooks/useTranslation';
 import type { Patient } from '../../types/fhir';
 import { TestIds } from '../../types/testable';
 import './PatientSearch.css';
@@ -18,6 +19,8 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
     openCreateModal,
     openPatient,
   } = usePatient();
+  const { t } = useTranslation();
+  const { formatDate } = useDateFormatter();
 
   const [searchInput, setSearchInput] = useState('');
   const [searchTimeout, setSearchTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
@@ -84,7 +87,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
   // Format patient display name
   const formatPatientName = (patient: Patient): string => {
     if (!patient.name || patient.name.length === 0) {
-      return 'Unknown Patient';
+      return t('patient.unknownPatient');
     }
 
     const primaryName = patient.name[0];
@@ -98,7 +101,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
       parts.push(primaryName.family);
     }
 
-    return parts.length > 0 ? parts.join(' ') : 'Unknown Patient';
+    return parts.length > 0 ? parts.join(' ') : t('patient.unknownPatient');
   };
 
   // Format patient identifier
@@ -121,13 +124,14 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
     const parts: string[] = [];
 
     if (patient.gender) {
-      parts.push(patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1));
+      const genderKey = `patient.${patient.gender}` as const;
+      parts.push(t(genderKey));
     }
 
     if (patient.birthDate) {
       const birthDate = new Date(patient.birthDate);
       const age = Math.floor((Date.now() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-      parts.push(`Age ${age}`);
+      parts.push(`${t('patient.age')} ${age}`);
     }
 
     return parts.join(', ');
@@ -140,9 +144,9 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
         className="patient-search__add-button"
         onClick={handleCreatePatient}
         disabled={state.createLoading}
-        title="Search or create new patient"
+        title={t('patient.addPatient')}
       >
-        + Add Patient
+        + {t('patient.addPatient')}
       </button>
     );
   }
@@ -150,8 +154,8 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
   return (
     <div className="patient-search" data-testid={TestIds.PATIENT_SEARCH}>
       <div className="patient-search__header">
-        <h2>Patient Search</h2>
-        <p>Search for existing patients or create a new patient record.</p>
+        <h2>{t('patient.searchPatient')}</h2>
+        <p>{t('patient.searchDescription')}</p>
       </div>
 
       <form className="patient-search__form" onSubmit={handleSearchSubmit}>
@@ -160,7 +164,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
             type="text"
             className="patient-search__input"
             data-testid={TestIds.PATIENT_SEARCH_INPUT}
-            placeholder="Search by name, family name, or identifier..."
+            placeholder={t('patient.searchPlaceholder')}
             value={searchInput}
             onChange={handleSearchInputChange}
             disabled={state.searchLoading}
@@ -171,7 +175,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
             data-testid={TestIds.PATIENT_SEARCH_BUTTON}
             disabled={state.searchLoading || !searchInput.trim()}
           >
-            {state.searchLoading ? 'Searching...' : 'Search'}
+            {state.searchLoading ? t('patient.searching') : t('common.search')}
           </button>
         </div>
       </form>
@@ -184,34 +188,34 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
           onClick={handleCreatePatient}
           disabled={state.createLoading}
         >
-          Create New Patient
+          {t('patient.createNew')}
         </button>
       </div>
 
       {/* Search Results */}
       {state.searchError && (
         <div className="patient-search__error" data-testid={TestIds.PATIENT_SEARCH_ERROR}>
-          <p>Error searching patients: {state.searchError}</p>
+          <p>{t('errors.searchError')}: {state.searchError}</p>
           <button
             type="button"
             className="patient-search__retry-button"
             data-testid={TestIds.RETRY_BUTTON}
             onClick={() => searchPatients(searchInput)}
           >
-            Retry
+            {t('common.retry')}
           </button>
         </div>
       )}
 
       {state.searchLoading && (
         <div className="patient-search__loading" data-testid={TestIds.PATIENT_SEARCH_LOADING}>
-          <p>Searching patients...</p>
+          <p>{t('patient.searching')}</p>
         </div>
       )}
 
       {state.searchResults.length > 0 && (
         <div className="patient-search__results" data-testid={TestIds.PATIENT_RESULTS}>
-          <h3 data-testid={TestIds.RESULTS_COUNT}>Search Results ({state.searchResults.length})</h3>
+          <h3 data-testid={TestIds.RESULTS_COUNT}>{t('patient.searchResults')} ({state.searchResults.length})</h3>
           <div className="patient-search__results-list" data-testid={TestIds.RESULTS_LIST}>
             {state.searchResults.map((patient) => (
               <div
@@ -257,7 +261,7 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
 
                 <div className="patient-search__result-actions">
                   <span className="patient-search__result-action-hint">
-                    Click to open patient
+                    {t('patient.clickToOpen')}
                   </span>
                 </div>
               </div>
@@ -268,8 +272,8 @@ export function PatientSearch({ onPatientSelect, onCreatePatient, showAsButton =
 
       {!state.searchLoading && state.searchQuery && state.searchResults.length === 0 && !state.searchError && (
         <div className="patient-search__no-results" data-testid={TestIds.PATIENT_NO_RESULTS}>
-          <p>No patients found matching "{state.searchQuery}"</p>
-          <p>Try a different search term or create a new patient.</p>
+          <p>{t('patient.noResults')} "{state.searchQuery}"</p>
+          <p>{t('patient.tryDifferent')}</p>
         </div>
       )}
     </div>

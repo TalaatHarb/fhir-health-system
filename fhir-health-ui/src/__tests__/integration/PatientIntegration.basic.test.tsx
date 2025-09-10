@@ -1,12 +1,11 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { PatientProvider } from '../../contexts/PatientContext';
-import { NotificationProvider } from '../../contexts/NotificationContext';
 import { PatientSearch } from '../../components/patient/PatientSearch';
 import { PatientCreateModal } from '../../components/patient/PatientCreateModal';
 import { fhirClient } from '../../services/fhirClient';
+import { renderWithProviders } from '../test-utils';
 import type { Patient, Bundle } from '../../types/fhir';
 
 // Mock the FHIR client
@@ -19,17 +18,21 @@ vi.mock('../../services/fhirClient', () => ({
 }));
 
 // Mock the organization context
-vi.mock('../../contexts/OrganizationContext', () => ({
-  useOrganization: () => ({
-    currentOrganization: { id: 'org-1', name: 'Test Hospital' },
-    organizations: [],
-    selectOrganization: vi.fn(),
-    showOrganizationModal: vi.fn(),
-    hideOrganizationModal: vi.fn(),
-    loading: false,
-    error: null,
-  }),
-}));
+vi.mock('../../contexts/OrganizationContext', async () => {
+  const actual = await vi.importActual('../../contexts/OrganizationContext');
+  return {
+    ...actual,
+    useOrganization: () => ({
+      currentOrganization: { id: 'org-1', name: 'Test Hospital' },
+      organizations: [],
+      selectOrganization: vi.fn(),
+      showOrganizationModal: vi.fn(),
+      hideOrganizationModal: vi.fn(),
+      loading: false,
+      error: null,
+    }),
+  };
+});
 
 // Test component that includes both search and create modal
 const PatientManagementTest = () => {
@@ -61,14 +64,7 @@ const PatientManagementTest = () => {
   );
 };
 
-// Test wrapper with all required providers
-const TestWrapper = ({ children }: { children: React.ReactNode }) => (
-  <NotificationProvider>
-    <PatientProvider>
-      {children}
-    </PatientProvider>
-  </NotificationProvider>
-);
+
 
 describe('Patient Integration - Basic Tests', () => {
   const user = userEvent.setup();
@@ -78,13 +74,9 @@ describe('Patient Integration - Basic Tests', () => {
   });
 
   it('should render patient search interface', () => {
-    render(
-      <TestWrapper>
-        <PatientManagementTest />
-      </TestWrapper>
-    );
+    renderWithProviders(<PatientManagementTest />);
 
-    expect(screen.getByText('Patient Search')).toBeInTheDocument();
+    expect(screen.getByText('Search Patient')).toBeInTheDocument();
     expect(screen.getByText('Create New Patient')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search by name, family name, or identifier...')).toBeInTheDocument();
   });
@@ -108,11 +100,7 @@ describe('Patient Integration - Basic Tests', () => {
 
     vi.mocked(fhirClient.searchPatients).mockResolvedValue(mockBundle);
 
-    render(
-      <TestWrapper>
-        <PatientManagementTest />
-      </TestWrapper>
-    );
+    renderWithProviders(<PatientManagementTest />);
 
     // Perform search
     const searchInput = screen.getByPlaceholderText('Search by name, family name, or identifier...');
@@ -145,11 +133,7 @@ describe('Patient Integration - Basic Tests', () => {
 
     vi.mocked(fhirClient.createPatient).mockResolvedValue(mockCreatedPatient);
 
-    render(
-      <TestWrapper>
-        <PatientManagementTest />
-      </TestWrapper>
-    );
+    renderWithProviders(<PatientManagementTest />);
 
     // Open create modal
     await user.click(screen.getByText('Create New Patient'));
@@ -163,10 +147,10 @@ describe('Patient Integration - Basic Tests', () => {
     await user.type(screen.getByLabelText('Given Name *'), 'Alice');
     await user.type(screen.getByLabelText('Family Name *'), 'Johnson');
     await user.selectOptions(screen.getByLabelText('Gender *'), 'female');
-    await user.type(screen.getByLabelText('Birth Date *'), '1992-03-10');
+    await user.type(screen.getByLabelText('Date of Birth *'), '1992-03-10');
 
     // Submit form
-    await user.click(screen.getByText('Create Patient'));
+    await user.click(screen.getByTestId('patient-form-submit'));
 
     // Wait for FHIR client to be called
     await waitFor(() => {
@@ -182,11 +166,7 @@ describe('Patient Integration - Basic Tests', () => {
   it('should handle search errors', async () => {
     vi.mocked(fhirClient.searchPatients).mockRejectedValue(new Error('Network error'));
 
-    render(
-      <TestWrapper>
-        <PatientManagementTest />
-      </TestWrapper>
-    );
+    renderWithProviders(<PatientManagementTest />);
 
     const searchInput = screen.getByPlaceholderText('Search by name, family name, or identifier...');
     await user.type(searchInput, 'John');
@@ -208,11 +188,7 @@ describe('Patient Integration - Basic Tests', () => {
 
     vi.mocked(fhirClient.searchPatients).mockResolvedValue(emptyBundle);
 
-    render(
-      <TestWrapper>
-        <PatientManagementTest />
-      </TestWrapper>
-    );
+    renderWithProviders(<PatientManagementTest />);
 
     const searchInput = screen.getByPlaceholderText('Search by name, family name, or identifier...');
     await user.type(searchInput, 'NonexistentPatient');
@@ -226,11 +202,7 @@ describe('Patient Integration - Basic Tests', () => {
   });
 
   it('should handle modal close', async () => {
-    render(
-      <TestWrapper>
-        <PatientManagementTest />
-      </TestWrapper>
-    );
+    renderWithProviders(<PatientManagementTest />);
 
     // Open modal
     await user.click(screen.getByText('Create New Patient'));

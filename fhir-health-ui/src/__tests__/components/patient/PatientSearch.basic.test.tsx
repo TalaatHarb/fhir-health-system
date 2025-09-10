@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { PatientSearch } from '../../../components/patient/PatientSearch';
@@ -57,7 +57,7 @@ describe('PatientSearch - Basic Tests', () => {
   it('should render search interface', () => {
     render(<PatientSearch />);
 
-    expect(screen.getByText('Patient Search')).toBeInTheDocument();
+    expect(screen.getByText('Search Patient')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search by name, family name, or identifier...')).toBeInTheDocument();
     expect(screen.getByText('Search')).toBeInTheDocument();
     expect(screen.getByText('Create New Patient')).toBeInTheDocument();
@@ -125,8 +125,8 @@ describe('PatientSearch - Basic Tests', () => {
 
     render(<PatientSearch />);
 
-    expect(screen.getByText('Searching patients...')).toBeInTheDocument();
-    expect(screen.getByText('Searching...')).toBeInTheDocument();
+    expect(screen.getByTestId('patient-search-loading')).toBeInTheDocument();
+    expect(screen.getAllByText('Searching...')).toHaveLength(2); // Button and loading message
   });
 
   it('should display error state', () => {

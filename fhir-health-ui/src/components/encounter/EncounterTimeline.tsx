@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Patient, Encounter, Bundle } from '../../types/fhir';
 import { fhirClient } from '../../services/fhirClient';
+import { useTranslation } from '../../hooks/useTranslation';
 import { Loading } from '../common/Loading';
 import { EncounterTimelineItem } from './EncounterTimelineItem';
 import './EncounterTimeline.css';
@@ -25,6 +26,7 @@ export function EncounterTimeline({
   onCreateEncounter,
   refreshTrigger 
 }: EncounterTimelineProps): React.JSX.Element {
+  const { t } = useTranslation();
   const [state, setState] = useState<EncounterTimelineState>({
     encounters: [],
     loading: false,
@@ -59,7 +61,7 @@ export function EncounterTimeline({
         loading: false,
       }));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load encounters';
+      const errorMessage = error instanceof Error ? error.message : t('encounter.loadFailed');
       setState(prev => ({
         ...prev,
         loading: false,
@@ -96,14 +98,14 @@ export function EncounterTimeline({
     const primaryName = patient.name?.[0];
     return primaryName ? 
       `${primaryName.given?.join(' ') || ''} ${primaryName.family || ''}`.trim() : 
-      'Unknown Patient';
+      t('patient.unknownPatient');
   };
 
   return (
     <div className="encounter-timeline">
       <div className="encounter-timeline-header">
         <h3 className="timeline-title">
-          Encounter Timeline - {getPatientName()}
+          {t('encounter.encounterTimeline')} - {getPatientName()}
         </h3>
         {onCreateEncounter && (
           <button
@@ -111,7 +113,7 @@ export function EncounterTimeline({
             onClick={onCreateEncounter}
             disabled={state.loading}
           >
-            Create New Encounter
+            {t('encounter.createEncounter')}
           </button>
         )}
       </div>
@@ -120,21 +122,21 @@ export function EncounterTimeline({
         {state.loading && (
           <div className="timeline-loading">
             <Loading />
-            <p>Loading encounters...</p>
+            <p>{t('encounter.loadingEncounters')}</p>
           </div>
         )}
 
         {state.error && (
           <div className="timeline-error">
             <div className="error-message">
-              <h4>Error Loading Encounters</h4>
+              <h4>{t('encounter.errorLoadingEncounters')}</h4>
               <p>{state.error}</p>
             </div>
             <button 
               className="retry-button"
               onClick={handleRetry}
             >
-              Retry
+              {t('common.retry')}
             </button>
           </div>
         )}
@@ -142,14 +144,14 @@ export function EncounterTimeline({
         {!state.loading && !state.error && state.encounters.length === 0 && (
           <div className="timeline-empty">
             <div className="empty-state">
-              <h4>No Encounters Found</h4>
-              <p>This patient has no recorded encounters.</p>
+              <h4>{t('encounter.noEncounters')}</h4>
+              <p>{t('encounter.noEncountersDescription')}</p>
               {onCreateEncounter && (
                 <button
                   className="create-first-encounter-button"
                   onClick={onCreateEncounter}
                 >
-                  Create First Encounter
+                  {t('encounter.createFirstEncounter')}
                 </button>
               )}
             </div>

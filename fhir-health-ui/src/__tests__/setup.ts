@@ -16,6 +16,36 @@ const mockMatchMedia = vi.fn().mockImplementation((query: string) => {
   return mediaQueryList;
 });
 
+// Mock window object for tests
+Object.defineProperty(globalThis, 'window', {
+  value: {
+    matchMedia: mockMatchMedia,
+    location: { 
+      href: 'http://localhost:3000',
+      origin: 'http://localhost:3000',
+      pathname: '/',
+      search: '',
+      hash: '',
+      host: 'localhost:3000',
+      hostname: 'localhost',
+      port: '3000',
+      protocol: 'http:',
+      assign: vi.fn(),
+      replace: vi.fn(),
+      reload: vi.fn(),
+    },
+    navigator: { 
+      userAgent: 'test',
+      onLine: true,
+    },
+    document: globalThis.document,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  },
+  writable: true,
+});
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: mockMatchMedia,
@@ -133,6 +163,46 @@ class MockAbortController {
   })
 );
 
+// Mock localStorage for tests
+const createLocalStorageMock = () => {
+  let store: Record<string, string> = {};
+
+  return {
+    getItem: vi.fn((key: string) => store[key] || null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value.toString();
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
+    key: vi.fn((index: number) => {
+      const keys = Object.keys(store);
+      return keys[index] || null;
+    }),
+    get length() {
+      return Object.keys(store).length;
+    },
+  };
+};
+
+const localStorageMock = createLocalStorageMock();
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
+
+Object.defineProperty(globalThis, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
+
+// Make localStorage mock available globally for tests
+(globalThis as any).localStorageMock = localStorageMock;
+
 // Setup global test utilities
 (globalThis as any).console = {
   ...console,
@@ -140,6 +210,6 @@ class MockAbortController {
   log: vi.fn(),
   debug: vi.fn(),
   info: vi.fn(),
-  warn: console.warn,
+  warn: vi.fn(), // Also suppress warnings in tests
   error: console.error,
 };

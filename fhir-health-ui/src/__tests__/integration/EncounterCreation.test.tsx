@@ -13,6 +13,14 @@ import type { Encounter, Bundle, Observation } from '../../types/fhir';
 
 // Use the mock patient from test utils
 
+// Helper function to click the submit button in the modal (not the timeline button)
+const clickSubmitButton = async (user: ReturnType<typeof userEvent.setup>) => {
+  const submitButtons = screen.getAllByRole('button', { name: 'Create Encounter' });
+  // The submit button is typically the last one or the one in the modal
+  const submitButton = submitButtons.find(btn => btn.closest('.modal-actions')) || submitButtons[submitButtons.length - 1];
+  await user.click(submitButton);
+};
+
 const mockEncounterBundle: Bundle<Encounter> = createMockBundle([]);
 
 const mockCreatedEncounter: Encounter = {
@@ -91,13 +99,13 @@ describe('Encounter Creation Integration', () => {
     });
 
     // Click create encounter button (use role to be more specific)
-    const createButton = screen.getByRole('button', { name: 'Create New Encounter' });
+    const createButton = screen.getByRole('button', { name: 'Create Encounter' });
     await user.click(createButton);
 
     // Modal should open
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Create New Encounter' })).toBeInTheDocument();
-      expect(screen.getByText('Patient: John Doe (ID: patient-123)')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
+      expect(screen.getByText('Patient Name: John Doe (Patient ID: patient-123)')).toBeInTheDocument();
     });
 
     // Fill in encounter details
@@ -120,7 +128,7 @@ describe('Encounter Creation Integration', () => {
     }
 
     // Submit the encounter
-    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
+    await clickSubmitButton(user);
 
     // Verify API calls
     await waitFor(() => {
@@ -144,7 +152,7 @@ describe('Encounter Creation Integration', () => {
 
     // Modal should close after successful creation
     await waitFor(() => {
-      expect(screen.queryByRole('heading', { name: 'Create New Encounter' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: 'Create Encounter' })).not.toBeInTheDocument();
     });
 
     // Verify encounter was created successfully
@@ -197,10 +205,10 @@ describe('Encounter Creation Integration', () => {
     });
 
     // Open encounter creation modal
-    await user.click(screen.getByRole('button', { name: 'Create New Encounter' }));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Create New Encounter' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
     });
 
     // Fill in basic encounter details
@@ -211,7 +219,7 @@ describe('Encounter Creation Integration', () => {
     // In a real scenario, the user would interact with each resource form
     // but the modal should handle the creation of multiple resources
 
-    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
+    await clickSubmitButton(user);
 
     await waitFor(() => {
       expect(fhirClient.createEncounter).toHaveBeenCalled();
@@ -219,7 +227,7 @@ describe('Encounter Creation Integration', () => {
 
     // Verify modal closes and timeline refreshes
     await waitFor(() => {
-      expect(screen.queryByRole('heading', { name: 'Create New Encounter' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: 'Create Encounter' })).not.toBeInTheDocument();
     });
   });
 
@@ -234,24 +242,24 @@ describe('Encounter Creation Integration', () => {
     });
 
     // Open modal and fill form
-    await user.click(screen.getByRole('button', { name: 'Create New Encounter' }));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Create New Encounter' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
     });
 
     await user.selectOptions(screen.getByLabelText('Status *'), 'finished');
     await user.selectOptions(screen.getByLabelText('Class *'), 'AMB');
 
     // Submit and expect error
-    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
+    await clickSubmitButton(user);
 
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
     // Modal should remain open
-    expect(screen.getByRole('heading', { name: 'Create New Encounter' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
   });
 
   it('should prevent submission with invalid data', async () => {
@@ -262,10 +270,10 @@ describe('Encounter Creation Integration', () => {
     });
 
     // Open modal
-    await user.click(screen.getByRole('button', { name: 'Create New Encounter' }));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Create New Encounter' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
     });
 
     // Fill in required fields first, then clear one
@@ -280,14 +288,15 @@ describe('Encounter Creation Integration', () => {
     await user.selectOptions(screen.getByLabelText('Class *'), 'AMB');
 
     // Try to submit with valid data (this test should actually test form validation differently)
-    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
+    const submitButtons = screen.getAllByRole('button', { name: 'Create Encounter' });
+    await user.click(submitButtons[1]); // The second button is the submit button in the modal
 
     // Should call API since form is actually valid
     expect(fhirClient.createEncounter).toHaveBeenCalled();
 
     // Modal should close after successful creation
     await waitFor(() => {
-      expect(screen.queryByRole('heading', { name: 'Create New Encounter' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: 'Create Encounter' })).not.toBeInTheDocument();
     });
   });
 
@@ -304,26 +313,26 @@ describe('Encounter Creation Integration', () => {
     });
 
     // Open modal and fill form
-    await user.click(screen.getByRole('button', { name: 'Create New Encounter' }));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Create New Encounter' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
     });
 
     await user.selectOptions(screen.getByLabelText('Status *'), 'finished');
     await user.selectOptions(screen.getByLabelText('Class *'), 'AMB');
 
     // Submit
-    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
+    await clickSubmitButton(user);
 
     // Should show loading state - button text changes to "Loading..."
     expect(screen.getByRole('button', { name: 'Loading...' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
-    expect(screen.getByLabelText('Close modal')).toBeDisabled();
+    expect(screen.getByLabelText('Close')).toBeDisabled();
 
     // Wait for completion
     await waitFor(() => {
-      expect(screen.queryByRole('heading', { name: 'Create New Encounter' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: 'Create Encounter' })).not.toBeInTheDocument();
     }, { timeout: 200 });
   });
 
@@ -352,19 +361,19 @@ describe('Encounter Creation Integration', () => {
     });
 
     // Create encounter
-    await user.click(screen.getByRole('button', { name: 'Create New Encounter' }));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Create New Encounter' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
     });
 
     await user.selectOptions(screen.getByLabelText('Status *'), 'finished');
     await user.selectOptions(screen.getByLabelText('Class *'), 'AMB');
-    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
+    await clickSubmitButton(user);
 
     // Wait for modal to close and timeline to refresh
     await waitFor(() => {
-      expect(screen.queryByRole('heading', { name: 'Create New Encounter' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: 'Create Encounter' })).not.toBeInTheDocument();
     });
 
     // Verify encounter creation was called
@@ -379,17 +388,17 @@ describe('Encounter Creation Integration', () => {
     });
 
     // Open modal
-    await user.click(screen.getByRole('button', { name: 'Create New Encounter' }));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Create New Encounter' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
     });
 
     // Close via X button
-    await user.click(screen.getByLabelText('Close modal'));
+    await user.click(screen.getByLabelText('Close'));
 
     await waitFor(() => {
-      expect(screen.queryByRole('heading', { name: 'Create New Encounter' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: 'Create Encounter' })).not.toBeInTheDocument();
     });
   });
 
@@ -401,10 +410,10 @@ describe('Encounter Creation Integration', () => {
     });
 
     // Open modal
-    await user.click(screen.getByRole('button', { name: 'Create New Encounter' }));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Create New Encounter' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
     });
 
     // Set end date before start date
@@ -417,7 +426,7 @@ describe('Encounter Creation Integration', () => {
     await user.clear(endInput);
     await user.type(endInput, '2024-01-15T09:00'); // Before start
 
-    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
+    await clickSubmitButton(user);
 
     // Should show validation error or prevent submission
     // Note: This test may need to be adjusted based on actual validation implementation

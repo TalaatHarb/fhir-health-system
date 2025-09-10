@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Organization } from '../../types';
 import { Loading } from '../common/Loading';
+import { useTranslation } from '../../hooks/useTranslation';
 import { TestIds } from '../../types/testable';
 import './OrganizationModal.css';
 
@@ -23,6 +24,8 @@ export function OrganizationModal({
   loading = false,
   error = null
 }: OrganizationModalProps) {
+  const { t } = useTranslation();
+  
   if (!isOpen) {
     return null;
   }
@@ -55,12 +58,12 @@ export function OrganizationModal({
     >
       <div className="organization-modal" data-testid={TestIds.ORG_MODAL}>
         <div className="organization-modal-header">
-          <h2 id="organization-modal-title" data-testid={TestIds.ORG_MODAL_TITLE}>Select Organization</h2>
+          <h2 id="organization-modal-title" data-testid={TestIds.ORG_MODAL_TITLE}>{t('organization.selectOrganization')}</h2>
           <button
             className="organization-modal-close"
             data-testid={TestIds.ORG_MODAL_CLOSE}
             onClick={onClose}
-            aria-label="Close organization selection"
+            aria-label={t('organization.closeSelection')}
             type="button"
           >
             ×
@@ -70,34 +73,34 @@ export function OrganizationModal({
         <div className="organization-modal-content">
           {loading && (
             <div className="organization-modal-loading" data-testid={TestIds.ORG_LOADING}>
-              <Loading size="medium" text="Loading organizations..." />
+              <Loading size="medium" text={t('organization.loadingOrganizations')} />
             </div>
           )}
 
           {error && (
             <div className="organization-modal-error" data-testid={TestIds.ORG_ERROR}>
-              <p>Error loading organizations: {error}</p>
+              <p>{t('organization.errorLoading')}: {error}</p>
               <button 
                 className="organization-modal-retry"
                 data-testid={TestIds.RETRY_BUTTON}
                 onClick={() => window.location.reload()}
                 type="button"
               >
-                Retry
+                {t('common.retry')}
               </button>
             </div>
           )}
 
           {!loading && !error && organizations.length === 0 && (
             <div className="organization-modal-empty">
-              <p>No organizations available.</p>
+              <p>{t('organization.noOrganizationsAvailable')}</p>
             </div>
           )}
 
           {!loading && !error && organizations.length > 0 && (
             <div className="organization-modal-list">
               <p className="organization-modal-description">
-                Please select an organization to continue. This will determine which patients and resources you can access.
+                {t('organization.selectDescription')}
               </p>
               
               <div className="organization-list" data-testid={TestIds.ORG_LIST}>
@@ -119,16 +122,16 @@ export function OrganizationModal({
                   >
                     <div className="organization-item-content">
                       <h3 className="organization-name">
-                        {org.name || 'Unnamed Organization'}
+                        {org.name || t('organization.unnamedOrganization')}
                       </h3>
                       
                       {org.id && (
-                        <p className="organization-id">ID: {org.id}</p>
+                        <p className="organization-id">{t('organization.id')}: {org.id}</p>
                       )}
                       
                       {org.type && org.type.length > 0 && (
                         <p className="organization-type">
-                          Type: {org.type.map(t => t.text || t.coding?.[0]?.display || 'Unknown').join(', ')}
+                          {t('organization.organizationType')}: {org.type.map(type => type.text || type.coding?.[0]?.display || t('patient.unknown')).join(', ')}
                         </p>
                       )}
                       
@@ -157,7 +160,7 @@ export function OrganizationModal({
                     
                     {currentOrg?.id === org.id && (
                       <div className="organization-selected-indicator" data-testid={TestIds.SELECTED_INDICATOR}>
-                        ✓ Selected
+                        ✓ {t('organization.selected')}
                       </div>
                     )}
                   </div>
@@ -169,7 +172,7 @@ export function OrganizationModal({
 
         <div className="organization-modal-footer">
           <p className="organization-modal-note">
-            You can change your organization selection at any time from the main interface.
+            {t('organization.changeNote')}
           </p>
         </div>
       </div>

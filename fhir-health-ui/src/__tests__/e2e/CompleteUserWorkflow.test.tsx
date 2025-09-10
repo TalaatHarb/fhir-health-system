@@ -17,6 +17,12 @@ describe('Complete User Workflow E2E Tests', () => {
     vi.clearAllMocks();
     // Clear localStorage to ensure clean state
     localStorage.clear();
+    // Reset navigator mock with all required properties
+    vi.stubGlobal('navigator', { 
+      onLine: true,
+      language: 'en-US',
+      languages: ['en-US', 'en']
+    });
     // The FHIR client is already mocked in test-utils with default data
     // We can override specific methods if needed for individual tests
   });
@@ -39,7 +45,7 @@ describe('Complete User Workflow E2E Tests', () => {
 
     // Step 3: Should see organization selection
     await waitFor(() => {
-      expect(screen.getByText('Select an Organization')).toBeInTheDocument();
+      expect(screen.getByTestId('organization-select-button')).toBeInTheDocument();
     });
 
     // Use test-id to avoid conflicts with multiple elements
@@ -66,7 +72,7 @@ describe('Complete User Workflow E2E Tests', () => {
 
     // Step 6: Verify that the app loaded successfully and basic navigation works
     expect(screen.getByTestId('app-title')).toBeInTheDocument();
-    expect(screen.getByText('FHIR Resource Visualizer')).toBeInTheDocument();
+    expect(screen.getByText('Dashboard - FHIR Resource Visualizer')).toBeInTheDocument();
     expect(screen.getByTestId('user-welcome')).toBeInTheDocument();
     expect(screen.getByTestId('logout-button')).toBeInTheDocument();
 
@@ -96,7 +102,7 @@ describe('Complete User Workflow E2E Tests', () => {
 
     // Should reach organization selection
     await waitFor(() => {
-      expect(screen.getByText('Select an Organization')).toBeInTheDocument();
+      expect(screen.getByTestId('organization-select-button')).toBeInTheDocument();
     });
 
     // Open organization modal
@@ -186,10 +192,7 @@ describe('Complete User Workflow E2E Tests', () => {
     }
 
     // Simulate going offline
-    Object.defineProperty(navigator, 'onLine', {
-      writable: true,
-      value: false,
-    });
+    vi.stubGlobal('navigator', { onLine: false });
 
     // Trigger offline event
     fireEvent(window, new Event('offline'));
@@ -199,10 +202,7 @@ describe('Complete User Workflow E2E Tests', () => {
     });
 
     // Simulate coming back online
-    Object.defineProperty(navigator, 'onLine', {
-      writable: true,
-      value: true,
-    });
+    vi.stubGlobal('navigator', { onLine: true });
 
     // Trigger online event
     fireEvent(window, new Event('online'));

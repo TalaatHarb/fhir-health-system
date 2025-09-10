@@ -83,11 +83,11 @@ describe('PatientTab', () => {
     expect(screen.getByText('John Michael Doe')).toBeInTheDocument();
     
     // Check patient details
-    expect(screen.getByText(/DOB:/)).toBeInTheDocument();
-    expect(screen.getByText('1/1/1990')).toBeInTheDocument();
+    expect(screen.getByText(/Date of Birth:/)).toBeInTheDocument();
+    expect(screen.getByText('January 1, 1990')).toBeInTheDocument();
     expect(screen.getByText(/Gender:/)).toBeInTheDocument();
     expect(screen.getByText('Male')).toBeInTheDocument();
-    expect(screen.getByText(/ID:/)).toBeInTheDocument();
+    expect(screen.getByText(/Patient ID:/)).toBeInTheDocument();
     expect(screen.getByText('patient-1')).toBeInTheDocument();
   });
 
@@ -210,7 +210,7 @@ describe('PatientTab', () => {
       />
     );
 
-    expect(screen.getByText('12/25/1985')).toBeInTheDocument();
+    expect(screen.getByText('December 25, 1985')).toBeInTheDocument();
   });
 
   it('should handle multiple addresses by showing the first one', () => {

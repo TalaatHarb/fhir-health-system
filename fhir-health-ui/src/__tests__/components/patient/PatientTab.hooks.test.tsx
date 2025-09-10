@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render } from '../../test-utils';
 import { vi, describe, it, expect } from 'vitest';
 import { PatientTab } from '../../../components/patient/PatientTab';
 import { PatientProvider } from '../../../contexts/PatientContext';

@@ -100,7 +100,7 @@ describe('OrganizationModal', () => {
 
     // Check for organization details
     expect(screen.getByText('ID: org-1')).toBeInTheDocument();
-    expect(screen.getAllByText('Type: Healthcare Provider')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Organization Type: Healthcare Provider')[0]).toBeInTheDocument();
     expect(screen.getByText('123 Main St, Test City, TS 12345')).toBeInTheDocument();
     expect(screen.getByText('📞 555-0123')).toBeInTheDocument();
     expect(screen.getByText('📧 contact@testhospital.com')).toBeInTheDocument();
@@ -287,7 +287,7 @@ describe('OrganizationModal', () => {
       />
     );
 
-    expect(screen.getByText('No organizations available.')).toBeInTheDocument();
+    expect(screen.getByText('No organizations available')).toBeInTheDocument();
   });
 
   it('should handle organizations without complete data', () => {
@@ -336,7 +336,7 @@ describe('OrganizationModal', () => {
     );
 
     expect(screen.getByText('Complex Organization')).toBeInTheDocument();
-    expect(screen.getByText('Type: Healthcare Provider, Custom Type')).toBeInTheDocument();
+    expect(screen.getByText('Organization Type: Healthcare Provider, Custom Type')).toBeInTheDocument();
   });
 
   it('should have proper accessibility attributes', () => {

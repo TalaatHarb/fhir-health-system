@@ -2,13 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { ThemeProvider, useTheme, themeConfig } from '../../contexts/ThemeContext';
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
+// Use the global localStorage mock from setup
+const localStorageMock = (globalThis as any).localStorageMock;
 
 // Mock matchMedia
 const matchMediaMock = vi.fn();

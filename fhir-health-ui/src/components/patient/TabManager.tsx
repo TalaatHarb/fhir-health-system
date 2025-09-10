@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { usePatient } from '../../contexts/PatientContext';
 import { useModal } from '../../contexts/ModalContext';
+import { useTranslation } from '../../hooks/useTranslation';
 import { PatientTab } from './PatientTab';
 import { PatientSearch } from './PatientSearch';
 import { PatientSearchModal } from './PatientSearchModal';
@@ -9,6 +10,7 @@ import './TabManager.css';
 export function TabManager(): React.JSX.Element {
   const { state, closePatient, setActivePatient, openCreateModal } = usePatient();
   const { openModal } = useModal();
+  const { t } = useTranslation();
   const { openPatients, activePatientId } = state;
 
   const openPatientsList = Array.from(openPatients.entries());
@@ -20,7 +22,7 @@ export function TabManager(): React.JSX.Element {
       pages: [
         {
           id: 'search',
-          title: 'Search Patients',
+          title: t('patient.searchPatient'),
           component: PatientSearchModal,
         },
       ],
@@ -60,7 +62,7 @@ export function TabManager(): React.JSX.Element {
                   e.stopPropagation();
                   closePatient(patientId);
                 }}
-                aria-label={`Close ${patient.name?.[0]?.given?.[0]} ${patient.name?.[0]?.family} tab`}
+                aria-label={`${t('common.close')} ${patient.name?.[0]?.given?.[0]} ${patient.name?.[0]?.family} tab`}
               >
                 ×
               </button>
@@ -73,17 +75,17 @@ export function TabManager(): React.JSX.Element {
           <button
             className="tab-action-button tab-action-button--search"
             onClick={handleOpenSearchModal}
-            title="Search for existing patients"
+            title={t('patient.searchPatient')}
           >
-            Search Patient
+            {t('patient.searchPatient')}
           </button>
           <button
             className="tab-action-button tab-action-button--add"
             onClick={handleOpenCreateModal}
             disabled={state.createLoading}
-            title="Create a new patient"
+            title={t('patient.createPatient')}
           >
-            + Add Patient
+            + {t('patient.addPatient')}
           </button>
         </div>
       </div>

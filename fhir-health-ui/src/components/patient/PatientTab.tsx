@@ -3,6 +3,7 @@ import type { Patient, Encounter } from '../../types/fhir';
 import { EncounterTimeline } from '../encounter/EncounterTimeline';
 import { EncounterCreateModal } from '../encounter/EncounterCreateModal';
 import { EncounterDetails } from '../encounter/EncounterDetails';
+import { useTranslation, useDateFormatter } from '../../hooks/useTranslation';
 import './PatientTab.css';
 
 export interface PatientTabProps {
@@ -17,6 +18,8 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
     return <div className="patient-tab hidden" />;
   }
 
+  const { t } = useTranslation();
+  const { formatDate } = useDateFormatter();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedEncounter, setSelectedEncounter] = useState<Encounter | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -47,10 +50,10 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
   const primaryName = patient.name?.[0];
   const fullName = primaryName ? 
     `${primaryName.given?.join(' ') || ''} ${primaryName.family || ''}`.trim() : 
-    'Unknown Patient';
+    t('patient.unknownPatient');
   
-  const birthDate = patient.birthDate ? new Date(patient.birthDate).toLocaleDateString() : 'Unknown';
-  const gender = patient.gender ? patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1) : 'Unknown';
+  const birthDate = patient.birthDate ? formatDate(patient.birthDate) : t('patient.unknown');
+  const gender = patient.gender ? t(`patient.${patient.gender}`) : t('patient.unknown');
   
   // Extract contact information
   const primaryAddress = patient.address?.[0];
@@ -60,7 +63,7 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
       primaryAddress.city,
       primaryAddress.state,
       primaryAddress.postalCode
-    ].filter(Boolean).join(', ') : 'No address on file';
+    ].filter(Boolean).join(', ') : t('patient.noAddress');
   
   const primaryPhone = patient.telecom?.find(contact => contact.system === 'phone')?.value;
   const primaryEmail = patient.telecom?.find(contact => contact.system === 'email')?.value;
@@ -72,13 +75,13 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
           <h2 className="patient-name">{fullName}</h2>
           <div className="patient-details">
             <span className="patient-detail">
-              <strong>DOB:</strong> {birthDate}
+              <strong>{t('patient.dateOfBirth')}:</strong> {birthDate}
             </span>
             <span className="patient-detail">
-              <strong>Gender:</strong> {gender}
+              <strong>{t('patient.gender')}:</strong> {gender}
             </span>
             <span className="patient-detail">
-              <strong>ID:</strong> {patient.id}
+              <strong>{t('patient.patientId')}:</strong> {patient.id}
             </span>
           </div>
         </div>
@@ -86,7 +89,7 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
         <button
           className="close-tab-button"
           onClick={onClose}
-          aria-label={`Close ${fullName} tab`}
+          aria-label={`${t('common.close')} ${fullName} tab`}
         >
           ×
         </button>
@@ -96,21 +99,21 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
         <div className="patient-sections">
           {/* Contact Information Section */}
           <section className="patient-section">
-            <h3 className="section-title">Contact Information</h3>
+            <h3 className="section-title">{t('patient.contactInfo')}</h3>
             <div className="section-content">
               <div className="contact-item">
-                <strong>Address:</strong>
+                <strong>{t('patient.address')}:</strong>
                 <span>{addressText}</span>
               </div>
               {primaryPhone && (
                 <div className="contact-item">
-                  <strong>Phone:</strong>
+                  <strong>{t('patient.phone')}:</strong>
                   <span>{primaryPhone}</span>
                 </div>
               )}
               {primaryEmail && (
                 <div className="contact-item">
-                  <strong>Email:</strong>
+                  <strong>{t('patient.email')}:</strong>
                   <span>{primaryEmail}</span>
                 </div>
               )}
@@ -131,11 +134,11 @@ export function PatientTab({ patient, isActive, onClose }: PatientTabProps): Rea
 
           {/* Resources Section - Placeholder for future implementation */}
           <section className="patient-section">
-            <h3 className="section-title">Resources</h3>
+            <h3 className="section-title">{t('patient.resources')}</h3>
             <div className="section-content">
               <div className="placeholder-content">
-                <p>Resource visualization will be implemented in a future task.</p>
-                <p>This section will show observations, conditions, medications, and other FHIR resources.</p>
+                <p>{t('patient.resourcesPlaceholder1')}</p>
+                <p>{t('patient.resourcesPlaceholder2')}</p>
               </div>
             </div>
           </section>

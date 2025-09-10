@@ -4,16 +4,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { AuthProvider, useAuth } from '../../contexts/AuthContext';
 import { LoginCredentials } from '../../types';
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
+// Use the global localStorage mock from setup
+const localStorageMock = (globalThis as any).localStorageMock;
 
 // Test component to access auth context
 function TestComponent() {

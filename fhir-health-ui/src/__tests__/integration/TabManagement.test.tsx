@@ -121,7 +121,7 @@ describe('Tab Management Integration', () => {
 
     // App should be automatically logged in and show organization selection
     await waitFor(() => {
-      expect(screen.getByText('Select an Organization')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Select Organization' })).toBeInTheDocument();
     });
 
     // Click the "Select Organization" button to open modal
@@ -138,7 +138,7 @@ describe('Tab Management Integration', () => {
 
     // Should show patient search
     await waitFor(() => {
-      expect(screen.getByText('Patient Search')).toBeInTheDocument();
+      expect(screen.getByText('Search Patient')).toBeInTheDocument();
     });
   });
 
@@ -151,7 +151,7 @@ describe('Tab Management Integration', () => {
 
     // App should be automatically logged in and show organization selection
     await waitFor(() => {
-      expect(screen.getByText('Select an Organization')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Select Organization' })).toBeInTheDocument();
     });
 
     // Click the "Select Organization" button to open modal

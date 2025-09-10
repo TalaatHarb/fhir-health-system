@@ -33,9 +33,9 @@ describe('Authentication Integration', () => {
 
     // Wait for authentication and main app to load
     await waitFor(() => {
-      expect(screen.getByText(/welcome/i)).toBeInTheDocument();
+      expect(screen.getByText(/login successful/i)).toBeInTheDocument();
       // The app shows organization selection after login when no org is selected
-      expect(screen.getByRole('heading', { name: /select an organization/i })).toBeInTheDocument();
+      expect(screen.getByText(/no organization selected/i)).toBeInTheDocument();
     }, { timeout: 3000 });
   });
 
@@ -44,7 +44,7 @@ describe('Authentication Integration', () => {
 
     // Should show main application directly
     await waitFor(() => {
-      expect(screen.getByText(/welcome, demo user/i)).toBeInTheDocument();
+      expect(screen.getByText(/login successful/i)).toBeInTheDocument();
     });
   });
 
@@ -53,7 +53,7 @@ describe('Authentication Integration', () => {
 
     // Wait for main app to load
     await waitFor(() => {
-      expect(screen.getByText(/welcome, demo user/i)).toBeInTheDocument();
+      expect(screen.getByText(/login successful/i)).toBeInTheDocument();
     });
 
     // Click logout

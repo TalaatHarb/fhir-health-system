@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '../../test-utils';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { EncounterTimeline } from '../../../components/encounter/EncounterTimeline';
 import { fhirClient } from '../../../services/fhirClient';
@@ -147,7 +147,7 @@ describe('EncounterTimeline', () => {
     render(<EncounterTimeline patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText('No Encounters Found')).toBeInTheDocument();
+      expect(screen.getByText('No encounters found')).toBeInTheDocument();
       expect(screen.getByText('This patient has no recorded encounters.')).toBeInTheDocument();
     });
   });
@@ -233,10 +233,10 @@ describe('EncounterTimeline', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Create New Encounter')).toBeInTheDocument();
+      expect(screen.getByText('Create Encounter')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText('Create New Encounter'));
+    fireEvent.click(screen.getByText('Create Encounter'));
 
     expect(onCreateEncounter).toHaveBeenCalled();
   });
@@ -307,7 +307,7 @@ describe('EncounterTimeline', () => {
       />
     );
 
-    const createButton = screen.getByText('Create New Encounter');
+    const createButton = screen.getByText('Create Encounter');
     expect(createButton).toBeDisabled();
   });
 

@@ -55,6 +55,9 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 // Create context
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+// Export context for testing
+export { AuthContext };
+
 // Auth provider component
 interface AuthProviderProps {
   children: React.ReactNode;

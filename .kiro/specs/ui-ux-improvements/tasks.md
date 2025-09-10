@@ -60,7 +60,7 @@
   - Update modal components to use theme-aware colors
   - _Requirements: 5.2, 5.5, 5.6_
 
-- [ ] 7. Integrate internationalization into existing components
+- [x] 7. Integrate internationalization into existing components
   - Add translation keys for all existing UI text
   - Update MainApplication header with language selector
   - Translate patient-related components and forms

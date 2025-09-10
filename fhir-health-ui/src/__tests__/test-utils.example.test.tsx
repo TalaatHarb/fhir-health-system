@@ -25,7 +25,7 @@ describe('Test Utils Example', () => {
     renderWithAuth(<MainApplication />);
     
     await waitFor(() => {
-      expect(screen.getByText(/welcome/i)).toBeInTheDocument();
+      expect(screen.getByText(/login successful/i)).toBeInTheDocument();
     }, { timeout: 3000 });
   });
 

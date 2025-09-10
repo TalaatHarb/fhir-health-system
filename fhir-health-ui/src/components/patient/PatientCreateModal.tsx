@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { usePatient } from '../../contexts/PatientContext';
 import { useNotifications } from '../../contexts/NotificationContext';
+import { useTranslation, useDateFormatter } from '../../hooks/useTranslation';
 import { InlineError, ErrorList } from '../common/InlineError';
 import type { Patient, HumanName, Address, ContactPoint } from '../../types/fhir';
 import { TestIds } from '../../types/testable';
@@ -43,6 +44,8 @@ const initialFormData: PatientFormData = {
 export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: PatientCreateModalProps) {
   const { state, createPatient, closeCreateModal } = usePatient();
   const { showSuccess, showError } = useNotifications();
+  const { t } = useTranslation();
+  const { formatDate } = useDateFormatter();
   const [formData, setFormData] = useState<PatientFormData>(initialFormData);
   const [validationErrors, setValidationErrors] = useState<Partial<PatientFormData>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof PatientFormData, boolean>>>({});
@@ -66,36 +69,36 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
 
     // Required fields
     if (!formData.givenName.trim()) {
-      errors.givenName = 'Given name is required';
+      errors.givenName = t('validation.givenNameRequired');
     }
 
     if (!formData.familyName.trim()) {
-      errors.familyName = 'Family name is required';
+      errors.familyName = t('validation.familyNameRequired');
     }
 
     if (!formData.gender) {
-      errors.gender = 'Gender is required' as any;
+      errors.gender = t('validation.genderRequired') as any;
     }
 
     if (!formData.birthDate) {
-      errors.birthDate = 'Birth date is required';
+      errors.birthDate = t('validation.birthDateRequired');
     } else {
       // Validate birth date is not in the future
       const birthDate = new Date(formData.birthDate);
       const today = new Date();
       if (birthDate > today) {
-        errors.birthDate = 'Birth date cannot be in the future';
+        errors.birthDate = t('validation.birthDateFuture');
       }
     }
 
     // Email validation (if provided)
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Please enter a valid email address';
+      errors.email = t('validation.emailInvalid');
     }
 
     // Phone validation (if provided)
     if (formData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
-      errors.phone = 'Please enter a valid phone number';
+      errors.phone = t('validation.phoneInvalid');
     }
 
     setValidationErrors(errors);
@@ -209,7 +212,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
       await createPatient(patientData);
       
       // Show success notification
-      showSuccess('Patient Created', `Patient ${formData.givenName} ${formData.familyName} has been created successfully.`);
+      showSuccess(t('patient.patientCreated'), `${t('patient.patientName')} ${formData.givenName} ${formData.familyName} ${t('patient.createdSuccessfully')}.`);
       
       // Reset form
       setFormData(initialFormData);
@@ -227,7 +230,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
       }
     } catch (error) {
       // Show error notification
-      showError('Failed to Create Patient', error instanceof Error ? error.message : 'An unexpected error occurred');
+      showError(t('errors.createPatientFailed'), error instanceof Error ? error.message : t('errors.unknownError'));
     }
   }, [validateForm, convertToFHIRPatient, createPatient, onPatientCreated, state.openPatients]);
 
@@ -254,13 +257,13 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
     <div className="patient-create-modal__overlay" data-testid={TestIds.MODAL_OVERLAY} onClick={handleClose}>
       <div className="patient-create-modal__content" data-testid={TestIds.PATIENT_CREATE_MODAL} onClick={(e) => e.stopPropagation()}>
         <div className="patient-create-modal__header">
-          <h2>Create New Patient</h2>
+          <h2>{t('patient.createPatient')}</h2>
           <button
             type="button"
             className="patient-create-modal__close-button"
             data-testid={TestIds.MODAL_CLOSE}
             onClick={handleClose}
-            aria-label="Close modal"
+            aria-label={t('common.close')}
           >
             ×
           </button>
@@ -269,12 +272,12 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
         <form className="patient-create-modal__form" data-testid={TestIds.PATIENT_FORM} onSubmit={handleSubmit} noValidate>
           {/* Basic Information */}
           <fieldset className="patient-create-modal__fieldset">
-            <legend>Basic Information</legend>
+            <legend>{t('patient.basicInfo')}</legend>
             
             <div className="patient-create-modal__form-row">
               <div className="patient-create-modal__form-group">
                 <label htmlFor="givenName" className="patient-create-modal__label">
-                  Given Name *
+                  {t('patient.givenName')} *
                 </label>
                 <input
                   type="text"
@@ -294,7 +297,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
 
               <div className="patient-create-modal__form-group">
                 <label htmlFor="familyName" className="patient-create-modal__label">
-                  Family Name *
+                  {t('patient.familyName')} *
                 </label>
                 <input
                   type="text"
@@ -316,7 +319,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
             <div className="patient-create-modal__form-row">
               <div className="patient-create-modal__form-group">
                 <label htmlFor="gender" className="patient-create-modal__label">
-                  Gender *
+                  {t('patient.gender')} *
                 </label>
                 <select
                   id="gender"
@@ -327,11 +330,11 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
                   disabled={state.createLoading}
                   required
                 >
-                  <option value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                  <option value="unknown">Unknown</option>
+                  <option value="">{t('patient.selectGender')}</option>
+                  <option value="male">{t('patient.male')}</option>
+                  <option value="female">{t('patient.female')}</option>
+                  <option value="other">{t('patient.other')}</option>
+                  <option value="unknown">{t('patient.unknown')}</option>
                 </select>
                 <InlineError 
                   error={validationErrors.gender} 
@@ -341,7 +344,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
 
               <div className="patient-create-modal__form-group">
                 <label htmlFor="birthDate" className="patient-create-modal__label">
-                  Birth Date *
+                  {t('patient.dateOfBirth')} *
                 </label>
                 <input
                   type="date"
@@ -364,12 +367,12 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
 
           {/* Contact Information */}
           <fieldset className="patient-create-modal__fieldset">
-            <legend>Contact Information</legend>
+            <legend>{t('patient.contactInfo')}</legend>
             
             <div className="patient-create-modal__form-row">
               <div className="patient-create-modal__form-group">
                 <label htmlFor="email" className="patient-create-modal__label">
-                  Email
+                  {t('patient.email')}
                 </label>
                 <input
                   type="email"
@@ -388,7 +391,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
 
               <div className="patient-create-modal__form-group">
                 <label htmlFor="phone" className="patient-create-modal__label">
-                  Phone
+                  {t('patient.phone')}
                 </label>
                 <input
                   type="tel"
@@ -409,11 +412,11 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
 
           {/* Address Information */}
           <fieldset className="patient-create-modal__fieldset">
-            <legend>Address Information</legend>
+            <legend>{t('patient.addressInfo')}</legend>
             
             <div className="patient-create-modal__form-group">
               <label htmlFor="addressLine" className="patient-create-modal__label">
-                Street Address
+                {t('patient.streetAddress')}
               </label>
               <input
                 type="text"
@@ -428,7 +431,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
             <div className="patient-create-modal__form-row">
               <div className="patient-create-modal__form-group">
                 <label htmlFor="city" className="patient-create-modal__label">
-                  City
+                  {t('patient.city')}
                 </label>
                 <input
                   type="text"
@@ -442,7 +445,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
 
               <div className="patient-create-modal__form-group">
                 <label htmlFor="state" className="patient-create-modal__label">
-                  State/Province
+                  {t('patient.stateProvince')}
                 </label>
                 <input
                   type="text"
@@ -458,7 +461,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
             <div className="patient-create-modal__form-row">
               <div className="patient-create-modal__form-group">
                 <label htmlFor="postalCode" className="patient-create-modal__label">
-                  Postal Code
+                  {t('patient.postalCode')}
                 </label>
                 <input
                   type="text"
@@ -472,7 +475,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
 
               <div className="patient-create-modal__form-group">
                 <label htmlFor="country" className="patient-create-modal__label">
-                  Country
+                  {t('patient.country')}
                 </label>
                 <input
                   type="text"
@@ -489,14 +492,14 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
           {/* Error Display */}
           {state.createError && (
             <div className="patient-create-modal__error" role="alert">
-              Error creating patient: {state.createError}
+              {t('errors.createPatientFailed')}: {state.createError}
             </div>
           )}
           
           {Object.keys(validationErrors).length > 0 && (
             <ErrorList 
               errors={validationErrors}
-              title="Please fix the following errors before submitting:"
+              title={t('validation.fixErrors')}
               maxErrors={5}
             />
           )}
@@ -510,7 +513,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
               onClick={handleClose}
               disabled={state.createLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
@@ -518,7 +521,7 @@ export function PatientCreateModal({ isOpen, onClose, onPatientCreated }: Patien
               data-testid={TestIds.PATIENT_FORM_SUBMIT}
               disabled={state.createLoading}
             >
-              {state.createLoading ? 'Creating...' : 'Create Patient'}
+              {state.createLoading ? t('patient.creating') : t('patient.createPatient')}
             </button>
           </div>
         </form>

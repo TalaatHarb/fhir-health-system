@@ -248,7 +248,7 @@ describe('Organization Integration', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('No organizations available.')).toBeInTheDocument();
+      expect(screen.getByText('No organizations available')).toBeInTheDocument();
     });
   });
 

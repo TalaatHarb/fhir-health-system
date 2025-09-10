@@ -1,10 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { TabManager } from '../../../components/patient/TabManager';
 import { PatientProvider } from '../../../contexts/PatientContext';
 import { OrganizationProvider } from '../../../contexts/OrganizationContext';
 import { ModalProvider } from '../../../contexts/ModalContext';
+import { renderWithProviders } from '../../test-utils';
 import type { Patient } from '../../../types/fhir';
 
 // Mock the FHIR client
@@ -81,22 +82,14 @@ describe('TabManager', () => {
   });
 
   it('should render PatientSearch when no patients are open', () => {
-    render(
-      <TestWrapper>
-        <TabManager />
-      </TestWrapper>
-    );
+    renderWithProviders(<TabManager />);
 
     expect(screen.getByTestId('patient-search')).toBeInTheDocument();
     expect(screen.getByText('Patient Search Component')).toBeInTheDocument();
   });
 
   it('should render tab navigation when patients are open', async () => {
-    render(
-      <TestWrapper>
-        <TabManager />
-      </TestWrapper>
-    );
+    renderWithProviders(<TabManager />);
 
     // We need to simulate opening patients through the context
     // This would typically be done through user interactions
@@ -165,11 +158,7 @@ describe('TabManager Integration', () => {
       );
     };
 
-    render(
-      <TestWrapper>
-        <TestComponent />
-      </TestWrapper>
-    );
+    renderWithProviders(<TestComponent />);
 
     // Initially should show search
     expect(screen.getByTestId('patient-search')).toBeInTheDocument();

@@ -18,7 +18,8 @@ const mockUsePatient = vi.fn();
 // Mock contexts with default values
 vi.mock('../../contexts/AuthContext', () => ({
   useAuth: () => mockUseAuth(),
-  AuthProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+  AuthProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  AuthContext: React.createContext(null)
 }));
 
 vi.mock('../../contexts/OrganizationContext', () => ({
@@ -143,7 +144,7 @@ describe('Component Test IDs', () => {
     ];
 
     it('should have all required test-id attributes', () => {
-      render(
+      renderWithProviders(
         <OrganizationModal
           isOpen={true}
           organizations={mockOrganizations}
@@ -163,7 +164,7 @@ describe('Component Test IDs', () => {
     });
 
     it('should show loading state with test-id', () => {
-      render(
+      renderWithProviders(
         <OrganizationModal
           isOpen={true}
           organizations={[]}
@@ -178,7 +179,7 @@ describe('Component Test IDs', () => {
     });
 
     it('should show error state with test-id', () => {
-      render(
+      renderWithProviders(
         <OrganizationModal
           isOpen={true}
           organizations={[]}
@@ -194,7 +195,7 @@ describe('Component Test IDs', () => {
     });
 
     it('should show selected indicator with test-id', () => {
-      render(
+      renderWithProviders(
         <OrganizationModal
           isOpen={true}
           organizations={mockOrganizations}

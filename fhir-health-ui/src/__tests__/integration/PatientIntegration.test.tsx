@@ -1,12 +1,12 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { PatientProvider, usePatient } from '../../contexts/PatientContext';
-import { NotificationProvider } from '../../contexts/NotificationContext';
+import { usePatient } from '../../contexts/PatientContext';
 import { PatientSearch } from '../../components/patient/PatientSearch';
 import { PatientCreateModal } from '../../components/patient/PatientCreateModal';
 import { fhirClient } from '../../services/fhirClient';
+import { renderWithProviders } from '../test-utils';
 import type { Patient, Bundle, Organization } from '../../types/fhir';
 
 // Mock the FHIR client
@@ -88,16 +88,7 @@ const PatientManagementTest = () => {
   );
 };
 
-const renderWithProviders = (ui: React.ReactElement) => {
-  return render(
-    <NotificationProvider>
-      <MockOrganizationProvider>
-        <PatientProvider>
-          {ui}
-        </PatientProvider>
-      </MockOrganizationProvider>
-    </NotificationProvider>
-  );
+// Use the proper test utilities that include all providers
 };
 
 describe('Patient Integration Tests', () => {

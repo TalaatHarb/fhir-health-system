@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PatientTab } from '../../components/patient/PatientTab';
 import { fhirClient } from '../../services/fhirClient';
-import { NotificationProvider } from '../../contexts/NotificationContext';
+import { renderWithProviders } from '../test-utils';
 import type { Patient, Encounter, Bundle } from '../../types/fhir';
 
 // Mock the FHIR client
@@ -20,14 +20,7 @@ vi.mock('../../components/common/Loading', () => ({
 }));
 
 describe('Encounter Timeline Integration', () => {
-  // Helper function to render components with required providers
-  const renderWithProviders = (component: React.ReactElement) => {
-    return render(
-      <NotificationProvider>
-        {component}
-      </NotificationProvider>
-    );
-  };
+  // Use the proper test utilities that include all providers
 
   const mockPatient: Patient = {
     resourceType: 'Patient',
@@ -157,8 +150,8 @@ describe('Encounter Timeline Integration', () => {
 
     // Should show patient information
     expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText(/DOB:/)).toBeInTheDocument();
-    expect(screen.getByText(/1\/1\/1980/)).toBeInTheDocument();
+    expect(screen.getByText(/Date of Birth:/)).toBeInTheDocument();
+    expect(screen.getByText(/January 1, 1980/)).toBeInTheDocument();
 
     // Should show encounter timeline
     await waitFor(() => {
@@ -228,16 +221,16 @@ describe('Encounter Timeline Integration', () => {
 
     // Wait for timeline to load
     await waitFor(() => {
-      expect(screen.getByText('Create New Encounter')).toBeInTheDocument();
+      expect(screen.getByText('Create Encounter')).toBeInTheDocument();
     });
 
     // Click create encounter button
-    fireEvent.click(screen.getByText('Create New Encounter'));
+    fireEvent.click(screen.getByText('Create Encounter'));
 
     // Should open the encounter creation modal
     await waitFor(() => {
       expect(screen.getByText('Encounter Details')).toBeInTheDocument();
-      expect(screen.getByText('Patient: John Doe (ID: patient-123)')).toBeInTheDocument();
+      expect(screen.getByText('Patient Name: John Doe (Patient ID: patient-123)')).toBeInTheDocument();
     });
   });
 
@@ -307,7 +300,7 @@ describe('Encounter Timeline Integration', () => {
 
     // Should show empty state for encounters
     await waitFor(() => {
-      expect(screen.getByText('No Encounters Found')).toBeInTheDocument();
+      expect(screen.getByText('No encounters found')).toBeInTheDocument();
       expect(screen.getByText('This patient has no recorded encounters.')).toBeInTheDocument();
       expect(screen.getByText('Create First Encounter')).toBeInTheDocument();
     });
@@ -342,7 +335,7 @@ describe('Encounter Timeline Integration', () => {
     // Should open the encounter creation modal
     await waitFor(() => {
       expect(screen.getByText('Encounter Details')).toBeInTheDocument();
-      expect(screen.getByText('Patient: John Doe (ID: patient-123)')).toBeInTheDocument();
+      expect(screen.getByText('Patient Name: John Doe (Patient ID: patient-123)')).toBeInTheDocument();
     });
   });
 

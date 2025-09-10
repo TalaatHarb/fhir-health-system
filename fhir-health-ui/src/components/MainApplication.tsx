@@ -1,16 +1,19 @@
 import React from 'react';
 import { useAuth, useOrganization, usePatient } from '../contexts';
 import { useTheme } from '../contexts/ThemeContext';
+import { useTranslation } from '../hooks/useTranslation';
 import { OrganizationModal } from './organization/OrganizationModal';
 import { TabManager } from './patient/TabManager';
 import { PatientCreateModal } from './patient/PatientCreateModal';
 import { ModalManager } from './common/Modal';
 import { ThemeToggle } from './ui/ThemeToggle';
+import { LanguageSelector } from './ui/LanguageSelector';
 import { TestIds } from '../types/testable';
 
 export function MainApplication(): React.JSX.Element {
   const { user, logout } = useAuth();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const { 
     currentOrganization, 
     organizations, 
@@ -46,7 +49,7 @@ export function MainApplication(): React.JSX.Element {
             data-testid={TestIds.APP_TITLE}
             style={{ margin: 0, color: 'var(--color-text-primary)', fontSize: '1.5rem', fontWeight: '700' }}
           >
-            FHIR Resource Visualizer
+            {t('navigation.dashboard')} - FHIR Resource Visualizer
           </h1>
           {currentOrganization && (
             <p 
@@ -63,8 +66,11 @@ export function MainApplication(): React.JSX.Element {
             data-testid={TestIds.USER_WELCOME}
             style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}
           >
-            Welcome, {user?.name || 'User'}
+            {t('auth.loginSuccess')}, {user?.name || t('common.user')}
           </span>
+          
+          {/* Language Selector */}
+          <LanguageSelector variant="button" showLabel={false} />
           
           {/* Theme Toggle Control */}
           <ThemeToggle showLabel={false} />
@@ -81,7 +87,7 @@ export function MainApplication(): React.JSX.Element {
                 minHeight: 'auto'
               }}
             >
-              Switch Org
+              {t('organization.selectOrganization')}
             </button>
           )}
           
@@ -100,7 +106,7 @@ export function MainApplication(): React.JSX.Element {
               minHeight: 'auto'
             }}
           >
-            Logout
+            {t('auth.logout')}
           </button>
         </div>
       </header>
@@ -122,9 +128,11 @@ export function MainApplication(): React.JSX.Element {
             borderRadius: '0.75rem',
             border: '1px solid var(--color-border)'
           }}>
-            <h2 style={{ color: 'var(--color-text-primary)', marginBottom: '1rem' }}>Select an Organization</h2>
+            <h2 style={{ color: 'var(--color-text-primary)', marginBottom: '1rem' }}>
+              {t('organization.selectOrganization')}
+            </h2>
             <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>
-              Please select an organization to begin working with patient data.
+              {t('organization.noOrganization')}. {t('patient.selectToBegin')}.
             </p>
             <button
               data-testid={TestIds.ORG_SELECT_BUTTON}
@@ -136,7 +144,7 @@ export function MainApplication(): React.JSX.Element {
                 fontWeight: '600'
               }}
             >
-              Select Organization
+              {t('organization.selectOrganization')}
             </button>
           </div>
         )}

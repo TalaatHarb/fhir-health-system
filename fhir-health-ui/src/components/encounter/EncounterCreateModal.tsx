@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import type { Patient, Encounter, Observation, Condition, MedicationRequest, DiagnosticReport, Procedure } from '../../types/fhir';
 import { fhirClient } from '../../services/fhirClient';
 import { useNotifications } from '../../contexts/NotificationContext';
+import { useTranslation } from '../../hooks/useTranslation';
 import { Loading } from '../common/Loading';
 import { InlineError, ErrorList } from '../common/InlineError';
 import { ObservationForm } from './forms/ObservationForm';
@@ -54,6 +55,7 @@ export function EncounterCreateModal({
   onSuccess 
 }: EncounterCreateModalProps): React.JSX.Element {
   const { showSuccess, showError } = useNotifications();
+  const { t } = useTranslation();
   const [state, setState] = useState<EncounterCreateState>({
     loading: false,
     error: null,
@@ -113,20 +115,20 @@ export function EncounterCreateModal({
     const errors: string[] = [];
     
     if (!state.encounterData.status) {
-      errors.push('Encounter status is required');
+      errors.push(t('encounter.statusRequired'));
     }
     
     if (!state.encounterData.class) {
-      errors.push('Encounter class is required');
+      errors.push(t('encounter.classRequired'));
     }
     
     if (!state.encounterData.period.start) {
-      errors.push('Encounter start date is required');
+      errors.push(t('encounter.startDateRequired'));
     }
     
     if (state.encounterData.period.end && 
         new Date(state.encounterData.period.end) < new Date(state.encounterData.period.start)) {
-      errors.push('Encounter end date must be after start date');
+      errors.push(t('encounter.endDateAfterStart'));
     }
     
     return errors;
@@ -249,16 +251,18 @@ export function EncounterCreateModal({
       // Show success notification
       const resourceCount = getResourceCount();
       showSuccess(
-        'Encounter Created', 
-        `Encounter created successfully${resourceCount > 0 ? ` with ${resourceCount} associated resource(s)` : ''}.`
+        t('encounter.encounterCreated'), 
+        resourceCount > 0 
+          ? t('encounter.encounterCreatedWithResources', { count: resourceCount.toString() })
+          : t('encounter.encounterCreated')
       );
       
       onSuccess(createdEncounter);
       onClose();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create encounter';
+      const errorMessage = error instanceof Error ? error.message : t('encounter.createFailed');
       setState(prev => ({ ...prev, loading: false, error: errorMessage }));
-      showError('Failed to Create Encounter', errorMessage);
+      showError(t('encounter.createFailed'), errorMessage);
     }
   }, [patient, state.encounterData, state.resourceData, onSuccess, onClose]);
 
@@ -274,7 +278,7 @@ export function EncounterCreateModal({
     const primaryName = patient.name?.[0];
     return primaryName ? 
       `${primaryName.given?.join(' ') || ''} ${primaryName.family || ''}`.trim() : 
-      'Unknown Patient';
+      t('patient.unknownPatient');
   };
 
   const getEncounterClassDisplay = (classCode: string): string => {
@@ -318,15 +322,15 @@ export function EncounterCreateModal({
     <div className="encounter-create-modal-overlay" onClick={handleClose}>
       <div className="encounter-create-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Create New Encounter</h2>
+          <h2>{t('encounter.createEncounter')}</h2>
           <p className="patient-info">
-            Patient: {getPatientDisplayName(patient)} (ID: {patient.id})
+            {t('patient.patientName')}: {getPatientDisplayName(patient)} ({t('patient.patientId')}: {patient.id})
           </p>
           <button
             className="close-button"
             onClick={handleClose}
             disabled={state.loading}
-            aria-label="Close modal"
+            aria-label={t('common.close')}
           >
             ×
           </button>
@@ -339,42 +343,42 @@ export function EncounterCreateModal({
               onClick={() => setState(prev => ({ ...prev, activeTab: 'encounter' }))}
               disabled={state.loading}
             >
-              Encounter Details
+              {t('encounter.encounterDetails')}
             </button>
             <button
               className={`tab-button ${state.activeTab === 'observations' ? 'active' : ''}`}
               onClick={() => setState(prev => ({ ...prev, activeTab: 'observations' }))}
               disabled={state.loading}
             >
-              Observations ({state.resourceData.observations.length})
+              {t('encounter.observations')} ({state.resourceData.observations.length})
             </button>
             <button
               className={`tab-button ${state.activeTab === 'conditions' ? 'active' : ''}`}
               onClick={() => setState(prev => ({ ...prev, activeTab: 'conditions' }))}
               disabled={state.loading}
             >
-              Conditions ({state.resourceData.conditions.length})
+              {t('encounter.conditions')} ({state.resourceData.conditions.length})
             </button>
             <button
               className={`tab-button ${state.activeTab === 'medications' ? 'active' : ''}`}
               onClick={() => setState(prev => ({ ...prev, activeTab: 'medications' }))}
               disabled={state.loading}
             >
-              Medications ({state.resourceData.medicationRequests.length})
+              {t('encounter.medications')} ({state.resourceData.medicationRequests.length})
             </button>
             <button
               className={`tab-button ${state.activeTab === 'diagnostics' ? 'active' : ''}`}
               onClick={() => setState(prev => ({ ...prev, activeTab: 'diagnostics' }))}
               disabled={state.loading}
             >
-              Diagnostics ({state.resourceData.diagnosticReports.length})
+              {t('encounter.diagnostics')} ({state.resourceData.diagnosticReports.length})
             </button>
             <button
               className={`tab-button ${state.activeTab === 'procedures' ? 'active' : ''}`}
               onClick={() => setState(prev => ({ ...prev, activeTab: 'procedures' }))}
               disabled={state.loading}
             >
-              Procedures ({state.resourceData.procedures.length})
+              {t('encounter.procedures')} ({state.resourceData.procedures.length})
             </button>
           </div>
 
@@ -382,7 +386,7 @@ export function EncounterCreateModal({
             {state.activeTab === 'encounter' && (
               <div className="encounter-form">
                 <div className="form-group">
-                  <label htmlFor="encounter-status">Status *</label>
+                  <label htmlFor="encounter-status">{t('encounter.encounterStatus')} *</label>
                   <select
                     id="encounter-status"
                     value={state.encounterData.status}
@@ -390,18 +394,18 @@ export function EncounterCreateModal({
                     disabled={state.loading}
                     required
                   >
-                    <option value="planned">Planned</option>
-                    <option value="arrived">Arrived</option>
-                    <option value="triaged">Triaged</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="onleave">On Leave</option>
-                    <option value="finished">Finished</option>
-                    <option value="cancelled">Cancelled</option>
+                    <option value="planned">{t('encounter.statusPlanned')}</option>
+                    <option value="arrived">{t('encounter.statusArrived')}</option>
+                    <option value="triaged">{t('encounter.statusTriaged')}</option>
+                    <option value="in-progress">{t('encounter.statusInProgress')}</option>
+                    <option value="onleave">{t('encounter.statusOnLeave')}</option>
+                    <option value="finished">{t('encounter.statusFinished')}</option>
+                    <option value="cancelled">{t('encounter.statusCancelled')}</option>
                   </select>
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="encounter-class">Class *</label>
+                  <label htmlFor="encounter-class">{t('encounter.encounterClass')} *</label>
                   <select
                     id="encounter-class"
                     value={state.encounterData.class}
@@ -409,40 +413,40 @@ export function EncounterCreateModal({
                     disabled={state.loading}
                     required
                   >
-                    <option value="AMB">Ambulatory</option>
-                    <option value="EMER">Emergency</option>
-                    <option value="FLD">Field</option>
-                    <option value="HH">Home Health</option>
-                    <option value="IMP">Inpatient</option>
-                    <option value="ACUTE">Inpatient Acute</option>
-                    <option value="NONAC">Inpatient Non-Acute</option>
-                    <option value="OBSENC">Observation Encounter</option>
-                    <option value="PRENC">Pre-Admission</option>
-                    <option value="SS">Short Stay</option>
-                    <option value="VR">Virtual</option>
+                    <option value="AMB">{t('encounter.classAmbulatory')}</option>
+                    <option value="EMER">{t('encounter.classEmergency')}</option>
+                    <option value="FLD">{t('encounter.classField')}</option>
+                    <option value="HH">{t('encounter.classHomeHealth')}</option>
+                    <option value="IMP">{t('encounter.classInpatient')}</option>
+                    <option value="ACUTE">{t('encounter.classInpatientAcute')}</option>
+                    <option value="NONAC">{t('encounter.classInpatientNonAcute')}</option>
+                    <option value="OBSENC">{t('encounter.classObservation')}</option>
+                    <option value="PRENC">{t('encounter.classPreAdmission')}</option>
+                    <option value="SS">{t('encounter.classShortStay')}</option>
+                    <option value="VR">{t('encounter.classVirtual')}</option>
                   </select>
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="encounter-type">Type</label>
+                  <label htmlFor="encounter-type">{t('encounter.encounterType')}</label>
                   <select
                     id="encounter-type"
                     value={state.encounterData.type || ''}
                     onChange={(e) => handleEncounterChange('type', e.target.value || undefined)}
                     disabled={state.loading}
                   >
-                    <option value="">Select type (optional)</option>
-                    <option value="185349003">Check up</option>
-                    <option value="270427003">Patient-initiated encounter</option>
-                    <option value="390906007">Follow-up encounter</option>
-                    <option value="406547006">Urgent follow-up</option>
-                    <option value="185347001">Encounter for problem</option>
+                    <option value="">{t('encounter.selectTypeOptional')}</option>
+                    <option value="185349003">{t('encounter.typeCheckup')}</option>
+                    <option value="270427003">{t('encounter.typePatientInitiated')}</option>
+                    <option value="390906007">{t('encounter.typeFollowUp')}</option>
+                    <option value="406547006">{t('encounter.typeUrgentFollowUp')}</option>
+                    <option value="185347001">{t('encounter.typeProblem')}</option>
                   </select>
                 </div>
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label htmlFor="encounter-start">Start Date/Time *</label>
+                    <label htmlFor="encounter-start">{t('encounter.startDateTime')} *</label>
                     <input
                       type="datetime-local"
                       id="encounter-start"
@@ -457,7 +461,7 @@ export function EncounterCreateModal({
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="encounter-end">End Date/Time</label>
+                    <label htmlFor="encounter-end">{t('encounter.endDateTime')}</label>
                     <input
                       type="datetime-local"
                       id="encounter-end"
@@ -472,25 +476,25 @@ export function EncounterCreateModal({
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="encounter-reason-code">Reason Code</label>
+                  <label htmlFor="encounter-reason-code">{t('encounter.reasonCode')}</label>
                   <input
                     type="text"
                     id="encounter-reason-code"
                     value={state.encounterData.reasonCode || ''}
                     onChange={(e) => handleEncounterChange('reasonCode', e.target.value || undefined)}
                     disabled={state.loading}
-                    placeholder="SNOMED CT code (optional)"
+                    placeholder={t('encounter.reasonCodePlaceholder')}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="encounter-reason-text">Reason Description</label>
+                  <label htmlFor="encounter-reason-text">{t('encounter.reasonDescription')}</label>
                   <textarea
                     id="encounter-reason-text"
                     value={state.encounterData.reasonText || ''}
                     onChange={(e) => handleEncounterChange('reasonText', e.target.value || undefined)}
                     disabled={state.loading}
-                    placeholder="Describe the reason for this encounter"
+                    placeholder={t('encounter.reasonDescriptionPlaceholder')}
                     rows={3}
                   />
                 </div>
@@ -547,7 +551,7 @@ export function EncounterCreateModal({
         {state.validationErrors.length > 0 && (
           <ErrorList 
             errors={state.validationErrors}
-            title="Please fix the following errors before submitting:"
+            title={t('validation.fixErrors')}
             maxErrors={5}
           />
         )}
@@ -561,7 +565,7 @@ export function EncounterCreateModal({
         <div className="modal-footer">
           <div className="resource-summary">
             {getResourceCount() > 0 && (
-              <p>{getResourceCount()} resource(s) will be created with this encounter</p>
+              <p>{t('encounter.resourcesWillBeCreated', { count: getResourceCount().toString() })}</p>
             )}
           </div>
           
@@ -571,14 +575,14 @@ export function EncounterCreateModal({
               onClick={handleClose}
               disabled={state.loading}
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               className="submit-button"
               onClick={handleSubmit}
               disabled={state.loading}
             >
-              {state.loading ? <Loading size="small" /> : 'Create Encounter'}
+              {state.loading ? <Loading size="small" /> : t('encounter.createEncounter')}
             </button>
           </div>
         </div>

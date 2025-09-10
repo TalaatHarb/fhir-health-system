@@ -3,17 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { I18nProvider, useI18n, AVAILABLE_LANGUAGES } from '../../contexts/I18nContext';
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
+// Use the global localStorage mock from setup
+const localStorageMock = (globalThis as any).localStorageMock;
 
 // Mock navigator.language
 Object.defineProperty(navigator, 'language', {

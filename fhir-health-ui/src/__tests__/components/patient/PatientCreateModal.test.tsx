@@ -83,7 +83,7 @@ describe('PatientCreateModal', () => {
       />
     );
 
-    expect(screen.getByText('Create New Patient')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Create Patient' })).toBeInTheDocument();
     expect(screen.getByText('Basic Information')).toBeInTheDocument();
     expect(screen.getByText('Contact Information')).toBeInTheDocument();
     expect(screen.getByText('Address Information')).toBeInTheDocument();
@@ -92,7 +92,7 @@ describe('PatientCreateModal', () => {
     expect(screen.getByLabelText('Given Name *')).toBeInTheDocument();
     expect(screen.getByLabelText('Family Name *')).toBeInTheDocument();
     expect(screen.getByLabelText('Gender *')).toBeInTheDocument();
-    expect(screen.getByLabelText('Birth Date *')).toBeInTheDocument();
+    expect(screen.getByLabelText('Date of Birth *')).toBeInTheDocument();
 
     // Check optional fields
     expect(screen.getByLabelText('Email')).toBeInTheDocument();
@@ -105,7 +105,7 @@ describe('PatientCreateModal', () => {
 
     // Check buttons
     expect(screen.getByText('Cancel')).toBeInTheDocument();
-    expect(screen.getByText('Create Patient')).toBeInTheDocument();
+    expect(screen.getByTestId('patient-form-submit')).toBeInTheDocument();
   });
 
   it('should handle form input changes', async () => {
@@ -119,7 +119,7 @@ describe('PatientCreateModal', () => {
     const givenNameInput = screen.getByLabelText('Given Name *');
     const familyNameInput = screen.getByLabelText('Family Name *');
     const genderSelect = screen.getByLabelText('Gender *');
-    const birthDateInput = screen.getByLabelText('Birth Date *');
+    const birthDateInput = screen.getByLabelText('Date of Birth *');
     const emailInput = screen.getByLabelText('Email');
 
     await user.type(givenNameInput, 'John');
@@ -143,7 +143,7 @@ describe('PatientCreateModal', () => {
       />
     );
 
-    const submitButton = screen.getByText('Create Patient');
+    const submitButton = screen.getByTestId('patient-form-submit');
     await user.click(submitButton);
 
     // Wait for validation errors to appear
@@ -170,7 +170,7 @@ describe('PatientCreateModal', () => {
     const emailInput = screen.getByLabelText('Email');
     await user.type(emailInput, 'invalid-email');
 
-    const submitButton = screen.getByText('Create Patient');
+    const submitButton = screen.getByTestId('patient-form-submit');
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -186,14 +186,14 @@ describe('PatientCreateModal', () => {
       />
     );
 
-    const birthDateInput = screen.getByLabelText('Birth Date *');
+    const birthDateInput = screen.getByLabelText('Date of Birth *');
     const futureDate = new Date();
     futureDate.setFullYear(futureDate.getFullYear() + 1);
     const futureDateString = futureDate.toISOString().split('T')[0];
 
     await user.type(birthDateInput, futureDateString);
 
-    const submitButton = screen.getByText('Create Patient');
+    const submitButton = screen.getByTestId('patient-form-submit');
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -210,7 +210,7 @@ describe('PatientCreateModal', () => {
     );
 
     const givenNameInput = screen.getByLabelText('Given Name *');
-    const submitButton = screen.getByText('Create Patient');
+    const submitButton = screen.getByTestId('patient-form-submit');
 
     // Trigger validation error
     await user.click(submitButton);
@@ -249,7 +249,7 @@ describe('PatientCreateModal', () => {
     await user.type(screen.getByLabelText('Given Name *'), 'John');
     await user.type(screen.getByLabelText('Family Name *'), 'Doe');
     await user.selectOptions(screen.getByLabelText('Gender *'), 'male');
-    await user.type(screen.getByLabelText('Birth Date *'), '1990-01-15');
+    await user.type(screen.getByLabelText('Date of Birth *'), '1990-01-15');
 
     // Fill optional fields
     await user.type(screen.getByLabelText('Email'), 'john.doe@example.com');
@@ -259,7 +259,7 @@ describe('PatientCreateModal', () => {
     await user.type(screen.getByLabelText('State/Province'), 'NY');
     await user.type(screen.getByLabelText('Postal Code'), '10001');
 
-    const submitButton = screen.getByText('Create Patient');
+    const submitButton = screen.getByTestId('patient-form-submit');
     await user.click(submitButton);
 
     expect(mockPatientContext.createPatient).toHaveBeenCalledWith({
@@ -295,9 +295,9 @@ describe('PatientCreateModal', () => {
     await user.type(screen.getByLabelText('Given Name *'), 'Jane');
     await user.type(screen.getByLabelText('Family Name *'), 'Smith');
     await user.selectOptions(screen.getByLabelText('Gender *'), 'female');
-    await user.type(screen.getByLabelText('Birth Date *'), '1985-05-20');
+    await user.type(screen.getByLabelText('Date of Birth *'), '1985-05-20');
 
-    const submitButton = screen.getByText('Create Patient');
+    const submitButton = screen.getByTestId('patient-form-submit');
     await user.click(submitButton);
 
     expect(mockPatientContext.createPatient).toHaveBeenCalledWith({
@@ -316,7 +316,7 @@ describe('PatientCreateModal', () => {
       />
     );
 
-    const closeButton = screen.getByLabelText('Close modal');
+    const closeButton = screen.getByLabelText('Close');
     await user.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalled();
@@ -344,7 +344,7 @@ describe('PatientCreateModal', () => {
       />
     );
 
-    const overlay = screen.getByText('Create New Patient').closest('.patient-create-modal__overlay');
+    const overlay = screen.getByTestId('modal-overlay');
     await user.click(overlay!);
 
     expect(mockOnClose).toHaveBeenCalled();
@@ -393,7 +393,7 @@ describe('PatientCreateModal', () => {
       />
     );
 
-    expect(screen.getByText('Error creating patient: Failed to create patient')).toBeInTheDocument();
+    expect(screen.getByText('Failed to Create Patient: Failed to create patient')).toBeInTheDocument();
   });
 
   it('should reset form when closing', async () => {
@@ -448,9 +448,9 @@ describe('PatientCreateModal', () => {
     await user.type(screen.getByLabelText('Given Name *'), 'John');
     await user.type(screen.getByLabelText('Family Name *'), 'Doe');
     await user.selectOptions(screen.getByLabelText('Gender *'), 'male');
-    await user.type(screen.getByLabelText('Birth Date *'), '1990-01-15');
+    await user.type(screen.getByLabelText('Date of Birth *'), '1990-01-15');
 
-    const submitButton = screen.getByText('Create Patient');
+    const submitButton = screen.getByTestId('patient-form-submit');
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -483,7 +483,7 @@ describe('PatientCreateModal', () => {
     const phoneInput = screen.getByLabelText('Phone');
     await user.type(phoneInput, 'invalid-phone');
 
-    const submitButton = screen.getByText('Create Patient');
+    const submitButton = screen.getByTestId('patient-form-submit');
     await user.click(submitButton);
 
     await waitFor(() => {

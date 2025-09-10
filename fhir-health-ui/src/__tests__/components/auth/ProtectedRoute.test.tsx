@@ -39,7 +39,7 @@ describe('ProtectedRoute', () => {
         <TestComponent />
       </ProtectedRoute>,
       {
-        auth: {
+        authConfig: {
           isAuthenticated: true,
           user: {
             id: 'user-123',
@@ -49,10 +49,8 @@ describe('ProtectedRoute', () => {
             roles: ['healthcare-professional'],
           }
         },
-        routing: {
-          useMemoryRouter: true,
-          initialEntries: ['/protected']
-        }
+        useMemoryRouter: true,
+        initialRoute: '/protected'
       }
     );
 
@@ -67,14 +65,12 @@ describe('ProtectedRoute', () => {
         <TestComponent />
       </ProtectedRoute>,
       {
-        auth: {
+        authConfig: {
           isAuthenticated: false,
           user: null
         },
-        routing: {
-          useMemoryRouter: true,
-          initialEntries: ['/protected']
-        }
+        useMemoryRouter: true,
+        initialRoute: '/protected'
       }
     );
 
@@ -90,14 +86,12 @@ describe('ProtectedRoute', () => {
         <TestComponent />
       </ProtectedRoute>,
       {
-        auth: {
+        authConfig: {
           isAuthenticated: false,
           user: null
         },
-        routing: {
-          useMemoryRouter: true,
-          initialEntries: ['/protected']
-        }
+        useMemoryRouter: true,
+        initialRoute: '/protected'
       }
     );
 
@@ -113,14 +107,12 @@ describe('ProtectedRoute', () => {
         <TestComponent />
       </ProtectedRoute>,
       {
-        auth: {
+        authConfig: {
           isAuthenticated: false,
           user: null
         },
-        routing: {
-          useMemoryRouter: true,
-          initialEntries: ['/protected']
-        }
+        useMemoryRouter: true,
+        initialRoute: '/protected'
       }
     );
 
@@ -135,14 +127,12 @@ describe('ProtectedRoute', () => {
         <TestComponent />
       </ProtectedRoute>,
       {
-        auth: {
+        authConfig: {
           isAuthenticated: false,
           user: null
         },
-        routing: {
-          useMemoryRouter: true,
-          initialEntries: ['/protected']
-        }
+        useMemoryRouter: true,
+        initialRoute: '/protected'
       }
     );
 
@@ -166,7 +156,7 @@ describe('withProtectedRoute HOC', () => {
     renderWithProviders(
       <WrappedComponent />,
       {
-        auth: {
+        authConfig: {
           isAuthenticated: true,
           user: {
             id: 'user-123',
@@ -176,10 +166,8 @@ describe('withProtectedRoute HOC', () => {
             roles: ['healthcare-professional'],
           }
         },
-        routing: {
-          useMemoryRouter: true,
-          initialEntries: ['/protected']
-        }
+        useMemoryRouter: true,
+        initialRoute: '/protected'
       }
     );
 
@@ -202,7 +190,7 @@ describe('withProtectedRoute HOC', () => {
     renderWithProviders(
       <WrappedComponent message="Hello World" />,
       {
-        auth: {
+        authConfig: {
           isAuthenticated: true,
           user: {
             id: 'user-123',
@@ -212,10 +200,8 @@ describe('withProtectedRoute HOC', () => {
             roles: ['healthcare-professional'],
           }
         },
-        routing: {
-          useMemoryRouter: true,
-          initialEntries: ['/protected']
-        }
+        useMemoryRouter: true,
+        initialRoute: '/protected'
       }
     );
 
@@ -232,14 +218,12 @@ describe('withProtectedRoute HOC', () => {
     renderWithProviders(
       <WrappedComponent />,
       {
-        auth: {
+        authConfig: {
           isAuthenticated: false,
           user: null
         },
-        routing: {
-          useMemoryRouter: true,
-          initialEntries: ['/protected']
-        }
+        useMemoryRouter: true,
+        initialRoute: '/protected'
       }
     );
 
@@ -256,14 +240,12 @@ describe('withProtectedRoute HOC', () => {
     renderWithProviders(
       <WrappedComponent />,
       {
-        auth: {
+        authConfig: {
           isAuthenticated: false,
           user: null
         },
-        routing: {
-          useMemoryRouter: true,
-          initialEntries: ['/protected']
-        }
+        useMemoryRouter: true,
+        initialRoute: '/protected'
       }
     );
 

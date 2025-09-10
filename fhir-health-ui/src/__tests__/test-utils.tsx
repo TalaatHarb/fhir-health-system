@@ -2,15 +2,175 @@ import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
-import { AuthProvider } from '../contexts/AuthContext';
+import { AuthProvider, AuthContext } from '../contexts/AuthContext';
 import { OrganizationProvider } from '../contexts/OrganizationContext';
 import { PatientProvider } from '../contexts/PatientContext';
 import { NotificationProvider } from '../contexts/NotificationContext';
 import { ModalProvider } from '../contexts/ModalContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
-import { I18nProvider } from '../contexts/I18nContext';
+import { I18nProvider, I18nContext, type I18nContextType, AVAILABLE_LANGUAGES } from '../contexts/I18nContext';
 import type { User, Organization, Patient, Notification } from '../types';
 import type { Bundle, FHIRResource, Encounter, Observation, Condition, MedicationRequest } from '../types/fhir';
+
+// Import English translations for testing
+import enTranslations from '../translations/en.json';
+
+// Mock Auth Provider for testing
+export const MockAuthProvider: React.FC<{ 
+  children: React.ReactNode;
+  authConfig?: {
+    isAuthenticated?: boolean;
+    user?: User | null;
+    permissions?: string[];
+  };
+}> = ({ children, authConfig = {} }) => {
+  const {
+    isAuthenticated = false,
+    user = null,
+    permissions = []
+  } = authConfig;
+
+  const mockAuthValue = {
+    isAuthenticated,
+    user,
+    permissions,
+    login: vi.fn().mockResolvedValue(undefined),
+    logout: vi.fn(),
+    loading: false,
+    error: null,
+  };
+
+  return (
+    <AuthContext.Provider value={mockAuthValue}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+// Mock I18n Provider for testing that provides translations synchronously
+export const MockI18nProvider: React.FC<{ 
+  children: React.ReactNode;
+  initialLanguage?: string;
+}> = ({ children, initialLanguage = 'en' }) => {
+  const [currentLanguage, setCurrentLanguage] = React.useState(initialLanguage);
+
+  // Get nested value from object using dot notation
+  const getNestedValue = (obj: any, path: string): string | undefined => {
+    return path.split('.').reduce((current, key) => current?.[key], obj);
+  };
+
+  // Mock translation function that returns translations based on current language
+  const t = (key: string, params?: Record<string, string>): string => {
+    let translation: string | undefined;
+    
+    // Try to get translation from current language
+    if (currentLanguage === 'en') {
+      translation = getNestedValue(enTranslations, key);
+    } else {
+      // For other languages, return a mock translation or fallback to English
+      const mockTranslations: Record<string, any> = {
+        es: {
+          'common.save': 'Guardar',
+          'common.cancel': 'Cancelar',
+          'patient.createPatient': 'Crear Paciente'
+        },
+        fr: {
+          'common.save': 'Enregistrer',
+          'common.cancel': 'Annuler',
+          'patient.createPatient': 'Créer un Patient'
+        }
+      };
+      
+      translation = mockTranslations[currentLanguage]?.[key] || getNestedValue(enTranslations, key);
+    }
+    
+    if (!translation) {
+      // For tests, return the key itself for predictable behavior
+      return key;
+    }
+    
+    // Replace parameters if provided
+    if (params) {
+      return Object.entries(params).reduce(
+        (text, [param, value]) => text.replace(new RegExp(`{{${param}}}`, 'g'), value),
+        translation
+      );
+    }
+    
+    return translation;
+  };
+
+  const setLanguage = vi.fn().mockImplementation((lang: string) => {
+    setCurrentLanguage(lang);
+  });
+
+  const mockContextValue: I18nContextType = {
+    language: currentLanguage,
+    setLanguage,
+    t,
+    availableLanguages: AVAILABLE_LANGUAGES,
+    isLoading: false,
+    error: null,
+  };
+
+  return (
+    <I18nContext.Provider value={mockContextValue}>
+      {children}
+    </I18nContext.Provider>
+  );
+};
+
+// Custom render function that includes all necessary providers
+interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  authConfig?: {
+    isAuthenticated?: boolean;
+    user?: User | null;
+    permissions?: string[];
+  };
+  initialLanguage?: string;
+  initialRoute?: string;
+  useMemoryRouter?: boolean;
+}
+
+export const renderWithProviders = (
+  ui: React.ReactElement,
+  options: CustomRenderOptions = {}
+) => {
+  const {
+    authConfig = {},
+    initialLanguage = 'en',
+    initialRoute = '/',
+    useMemoryRouter = false,
+    ...renderOptions
+  } = options;
+
+  const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const RouterComponent = useMemoryRouter ? MemoryRouter : BrowserRouter;
+    const routerProps = useMemoryRouter ? { initialEntries: [initialRoute] } : {};
+
+    return (
+      <RouterComponent {...routerProps}>
+        <MockI18nProvider initialLanguage={initialLanguage}>
+          <MockAuthProvider authConfig={authConfig}>
+            <ThemeProvider>
+              <NotificationProvider>
+                <ModalProvider>
+                  <OrganizationProvider>
+                    <PatientProvider>
+                      {children}
+                    </PatientProvider>
+                  </OrganizationProvider>
+                </ModalProvider>
+              </NotificationProvider>
+            </ThemeProvider>
+          </MockAuthProvider>
+        </MockI18nProvider>
+      </RouterComponent>
+    );
+  };
+
+  return render(ui, { wrapper: AllTheProviders, ...renderOptions });
+};
 
 // Utility to create mock FHIR responses
 export const createMockBundle = <T extends FHIRResource>(resources: T[]): Bundle<T> => ({
@@ -260,6 +420,9 @@ export interface MockEnhancedFhirClient {
   getOrganizations: ReturnType<typeof vi.fn>;
   getOrganization: ReturnType<typeof vi.fn>;
 }
+
+// Re-export everything from testing-library
+export * from '@testing-library/react';
 
 // Import comprehensive mock data factories
 export { PatientFactory, ClinicalDataFactory, createPatientScenario, createTimelineData } from './factories';
@@ -1248,22 +1411,26 @@ function createTestWrapper(options: EnhancedTestWrapperOptions = {}) {
     const RouterComponent = routerConfig.useMemoryRouter ? MemoryRouter : BrowserRouter;
     const routerProps = routerConfig.useMemoryRouter ? { initialEntries: routerConfig.initialEntries } : {};
 
+    // Use MockAuthProvider if auth config is provided, otherwise use real AuthProvider
+    const AuthProviderComponent = authConfig.isAuthenticated !== undefined ? MockAuthProvider : AuthProvider;
+    const authProps = authConfig.isAuthenticated !== undefined ? { authConfig } : {};
+
     return (
       <RouterComponent {...routerProps}>
         <ThemeProvider>
-          <I18nProvider>
+          <MockI18nProvider>
             <NotificationProvider>
               <ModalProvider>
-                <AuthProvider>
+                <AuthProviderComponent {...authProps}>
                   <OrganizationProvider>
                     <PatientProvider>
                       {children}
                     </PatientProvider>
                   </OrganizationProvider>
-                </AuthProvider>
+                </AuthProviderComponent>
               </ModalProvider>
             </NotificationProvider>
-          </I18nProvider>
+          </MockI18nProvider>
         </ThemeProvider>
       </RouterComponent>
     );
@@ -1271,7 +1438,7 @@ function createTestWrapper(options: EnhancedTestWrapperOptions = {}) {
 }
 
 // Enhanced custom render function that includes all providers
-export function renderWithProviders(
+function renderWithEnhancedProviders(
   ui: React.ReactElement,
   options: EnhancedTestWrapperOptions = {}
 ): ReturnType<typeof render> {
@@ -1892,6 +2059,9 @@ export const asyncDebugUtils = {
 // Re-export testing library utilities with additional custom utilities
 export * from '@testing-library/react';
 export { default as userEvent } from '@testing-library/user-event';
+
+// Override the default render function to include providers
+export { renderWithProviders as render };
 
 // Export commonly used testing utilities
 export { vi } from 'vitest';

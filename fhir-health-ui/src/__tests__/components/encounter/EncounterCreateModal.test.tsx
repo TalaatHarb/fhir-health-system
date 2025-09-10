@@ -151,13 +151,13 @@ describe('EncounterCreateModal', () => {
 
   it('should not render when closed', () => {
     renderModal(false);
-    expect(screen.queryByText('Create New Encounter')).not.toBeInTheDocument();
+    expect(screen.queryByText('Create Encounter')).not.toBeInTheDocument();
   });
 
   it('should render modal when open', () => {
     renderModal();
-    expect(screen.getByText('Create New Encounter')).toBeInTheDocument();
-    expect(screen.getByText('Patient: John Doe (ID: patient-123)')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Create Encounter' })).toBeInTheDocument();
+    expect(screen.getByText('Patient Name: John Doe (Patient ID: patient-123)')).toBeInTheDocument();
   });
 
   it('should display all tabs', () => {
@@ -214,7 +214,7 @@ describe('EncounterCreateModal', () => {
     await user.clear(startDateInput);
     
     // Try to submit
-    await user.click(screen.getByText('Create Encounter'));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
     
     // Should show validation error and not call the API
     await waitFor(() => {
@@ -237,7 +237,7 @@ describe('EncounterCreateModal', () => {
     await user.type(startDateInput, '2024-01-15T10:00');
     
     // Submit
-    await user.click(screen.getByText('Create Encounter'));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
     
     await waitFor(() => {
       expect(fhirClient.createEncounter).toHaveBeenCalledWith({
@@ -278,7 +278,7 @@ describe('EncounterCreateModal', () => {
     
     // Go back to encounter details and submit
     await user.click(screen.getByText('Encounter Details'));
-    await user.click(screen.getByText('Create Encounter'));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
     
     await waitFor(() => {
       expect(fhirClient.createEncounter).toHaveBeenCalled();
@@ -293,7 +293,7 @@ describe('EncounterCreateModal', () => {
     renderModal();
     
     // Submit
-    await user.click(screen.getByText('Create Encounter'));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
     
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
@@ -314,7 +314,7 @@ describe('EncounterCreateModal', () => {
   it('should close modal when X button is clicked', async () => {
     renderModal();
     
-    await user.click(screen.getByLabelText('Close modal'));
+    await user.click(screen.getByLabelText('Close'));
     
     expect(mockOnClose).toHaveBeenCalled();
   });
@@ -325,10 +325,10 @@ describe('EncounterCreateModal', () => {
     renderModal();
     
     // Start submission (will be loading)
-    await user.click(screen.getByText('Create Encounter'));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
     
     // Try to close - should be disabled
-    const closeButton = screen.getByLabelText('Close modal');
+    const closeButton = screen.getByLabelText('Close');
     expect(closeButton).toBeDisabled();
     
     const cancelButton = screen.getByText('Cancel');
@@ -361,7 +361,7 @@ describe('EncounterCreateModal', () => {
     await user.clear(endDateInput);
     await user.type(endDateInput, '2024-01-15T09:00'); // Before start date
     
-    await user.click(screen.getByText('Create Encounter'));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
     
     await waitFor(() => {
       expect(screen.getByText(/Encounter end date must be after start date/)).toBeInTheDocument();
@@ -390,7 +390,7 @@ describe('EncounterCreateModal', () => {
   it('should populate encounter type display correctly', async () => {
     renderModal();
     
-    const typeSelect = screen.getByLabelText('Type');
+    const typeSelect = screen.getByLabelText('Encounter Type');
     await user.selectOptions(typeSelect, '185349003');
     
     // The display should be handled internally by the component
@@ -408,7 +408,7 @@ describe('EncounterCreateModal', () => {
     await user.type(reasonCodeInput, '185349003');
     await user.type(reasonTextInput, 'Annual check-up');
     
-    await user.click(screen.getByText('Create Encounter'));
+    await user.click(screen.getByRole('button', { name: 'Create Encounter' }));
     
     await waitFor(() => {
       expect(fhirClient.createEncounter).toHaveBeenCalledWith(
