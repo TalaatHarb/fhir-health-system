@@ -147,21 +147,32 @@ function themeReducer(state: ThemeState, action: ThemeAction): ThemeState {
   }
 }
 
-// Apply theme to CSS custom properties
+// Apply theme to CSS custom properties with FOUC prevention
 function applyThemeToDOM(theme: Theme): void {
   const root = document.documentElement;
   const colors = themeConfig[theme];
   
-  // Apply theme colors as CSS custom properties
-  Object.entries(colors).forEach(([key, value]) => {
-    root.style.setProperty(`--theme-${key}`, value);
+  // Prevent flash of unstyled content by applying changes in a batch
+  requestAnimationFrame(() => {
+    // Add transition class for smooth theme switching
+    root.classList.add('theme-transitioning');
+    
+    // Apply theme colors as CSS custom properties
+    Object.entries(colors).forEach(([key, value]) => {
+      root.style.setProperty(`--theme-${key}`, value);
+    });
+    
+    // Set theme attribute for CSS selectors
+    root.setAttribute('data-theme', theme);
+    
+    // Update color-scheme for better browser integration
+    root.style.setProperty('color-scheme', theme);
+    
+    // Remove transition class after animation completes
+    setTimeout(() => {
+      root.classList.remove('theme-transitioning');
+    }, 300);
   });
-  
-  // Set theme attribute for CSS selectors
-  root.setAttribute('data-theme', theme);
-  
-  // Update color-scheme for better browser integration
-  root.style.setProperty('color-scheme', theme);
 }
 
 // Create context
@@ -256,11 +267,21 @@ export function ThemeProvider({ children }: ThemeProviderProps): React.JSX.Eleme
   );
 }
 
-// Custom hook to use theme context
+// Custom hook to use theme context with graceful fallback
 export function useTheme(): ThemeContextValue {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    // Graceful fallback when theme context is not available
+    console.warn('useTheme used outside of ThemeProvider, using fallback');
+    return {
+      theme: 'light',
+      userPreference: 'light',
+      systemPreference: 'light',
+      isSystemThemeSupported: false,
+      setTheme: () => console.warn('Theme context not available'),
+      setUserPreference: () => console.warn('Theme context not available'),
+      toggleTheme: () => console.warn('Theme context not available'),
+    };
   }
   return context;
 }

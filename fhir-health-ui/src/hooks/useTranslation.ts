@@ -5,8 +5,19 @@ import { useI18n } from '../contexts/I18nContext';
  * This is a convenience hook for components that only need the translation function
  */
 export function useTranslation() {
-  const { t } = useI18n();
-  return { t };
+  try {
+    const { t } = useI18n();
+    return { t };
+  } catch (error) {
+    // Graceful fallback when I18n context is not available
+    console.warn('useTranslation used outside of I18nProvider, using fallback');
+    return {
+      t: (key: string) => {
+        console.warn(`Translation context not available, returning key: ${key}`);
+        return key;
+      }
+    };
+  }
 }
 
 /**

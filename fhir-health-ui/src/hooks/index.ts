@@ -4,6 +4,7 @@
 export { useOfflineDetection, useOfflineAwareFetch, offlineUtils } from './useOfflineDetection';
 export { useViewport, getCurrentBreakpoint, matchesBreakpoint } from './useViewport';
 export { useModalNavigation, useModalConfig, useModalPage } from './useModalNavigation';
+export { useLoadingState } from './useLoadingState';
 
 // export { useAuth } from './useAuth';
 // export { usePatient } from './usePatient';

@@ -162,17 +162,39 @@
   overflow: auto;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Enhanced responsive design for full viewport usage */
+@media (max-width: 640px) {
+  /* Mobile layout extends full width */
+  .tab-manager {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    box-sizing: border-box;
+    /* Remove any borders that interfere with full width */
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+  
   .tab-nav {
     flex-direction: column;
     align-items: stretch;
     gap: 0.5rem;
     padding: 0.5rem;
+    /* Remove borders for full width */
+    border-left: none;
+    border-right: none;
   }
   
   .tab-list {
     order: 2;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .tab-list::-webkit-scrollbar {
+    display: none;
   }
   
   .tab-actions {
@@ -187,11 +209,57 @@
   .tab-action-button {
     flex: 1;
     max-width: 150px;
+    min-height: 44px; /* Touch target size */
   }
   
   .tab-item {
     min-width: 100px;
     max-width: 150px;
+    min-height: 44px; /* Touch target size */
+  }
+  
+  .tab-content {
+    /* Enable vertical scrolling with touch optimization */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Tablet responsive adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tab-manager {
+    /* Optimize for tablet full viewport usage */
+    width: 100%;
+    box-sizing: border-box;
+    /* Remove any borders */
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+  
+  .tab-nav {
+    padding: 0.75rem 1rem;
+  }
+  
+  .tab-item {
+    min-width: 120px;
+    max-width: 180px;
+  }
+}
+
+/* Desktop responsive adjustments */
+@media (min-width: 1025px) {
+  .tab-manager {
+    /* Remove any colored borders on desktop */
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+  
+  .tab-content {
+    /* Optimize scrolling performance on desktop */
+    will-change: scroll-position;
+    transform: translateZ(0);
   }
 }
 

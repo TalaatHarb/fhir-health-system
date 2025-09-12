@@ -4,7 +4,7 @@ import { AuthProvider, OrganizationProvider, PatientProvider, ThemeProvider, I18
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ModalProvider } from './contexts/ModalContext';
 import { ProtectedRoute } from './components';
-import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { ErrorBoundary, ThemeErrorBoundary, I18nErrorBoundary, ModalErrorBoundary } from './components/common/ErrorBoundary';
 import { ToastContainer } from './components/common/Toast';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { useNotifications } from './contexts/NotificationContext';
@@ -88,13 +88,16 @@ function App(): React.JSX.Element {
         Skip to main content
       </a>
       <BrowserRouter>
-        <ThemeProvider>
-          <I18nProvider>
-            <NotificationProvider>
-              <ModalProvider>
-                <AuthProvider>
-                  <OrganizationProvider>
-                    <PatientProvider>
+        <ThemeErrorBoundary>
+          <ThemeProvider>
+            <I18nErrorBoundary>
+              <I18nProvider>
+                <NotificationProvider>
+                  <ModalErrorBoundary>
+                    <ModalProvider>
+                      <AuthProvider>
+                        <OrganizationProvider>
+                          <PatientProvider>
                 <Suspense fallback={
                   <div style={{ 
                     display: 'flex', 
@@ -120,13 +123,16 @@ function App(): React.JSX.Element {
                   </Routes>
                 </Suspense>
                 <AppNotifications />
-                    </PatientProvider>
-                  </OrganizationProvider>
-                </AuthProvider>
-              </ModalProvider>
-            </NotificationProvider>
-          </I18nProvider>
-        </ThemeProvider>
+                          </PatientProvider>
+                        </OrganizationProvider>
+                      </AuthProvider>
+                    </ModalProvider>
+                  </ModalErrorBoundary>
+                </NotificationProvider>
+              </I18nProvider>
+            </I18nErrorBoundary>
+          </ThemeProvider>
+        </ThemeErrorBoundary>
       </BrowserRouter>
     </ErrorBoundary>
   );

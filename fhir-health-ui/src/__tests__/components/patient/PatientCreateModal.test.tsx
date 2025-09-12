@@ -397,12 +397,14 @@ describe('PatientCreateModal', () => {
   });
 
   it('should reset form when closing', async () => {
-    renderWithProviders(
+    const TestComponent = ({ isOpen }: { isOpen: boolean }) => (
       <PatientCreateModal
-        isOpen={true}
+        isOpen={isOpen}
         onClose={mockOnClose}
       />
     );
+
+    const { rerender } = renderWithProviders(<TestComponent isOpen={true} />);
 
     // Fill some fields
     await user.type(screen.getByLabelText('Given Name *'), 'John');
@@ -414,15 +416,13 @@ describe('PatientCreateModal', () => {
 
     expect(mockOnClose).toHaveBeenCalled();
 
-    // Re-open modal (simulate new render)
-    renderWithProviders(
-      <PatientCreateModal
-        isOpen={true}
-        onClose={mockOnClose}
-      />
-    );
+    // Simulate closing the modal
+    rerender(<TestComponent isOpen={false} />);
 
-    // Fields should be empty
+    // Re-open modal
+    rerender(<TestComponent isOpen={true} />);
+
+    // Fields should be empty due to key reset mechanism
     expect(screen.getByLabelText('Given Name *')).toHaveValue('');
     expect(screen.getByLabelText('Email')).toHaveValue('');
   });

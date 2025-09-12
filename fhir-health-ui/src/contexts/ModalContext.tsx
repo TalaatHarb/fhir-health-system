@@ -239,11 +239,21 @@ export function ModalProvider({ children }: ModalProviderProps) {
   );
 }
 
-// Hook to use modal context
+// Hook to use modal context with graceful fallback
 export function useModal(): ModalContextType {
   const context = useContext(ModalContext);
   if (context === undefined) {
-    throw new Error('useModal must be used within a ModalProvider');
+    // Graceful fallback when modal context is not available
+    console.warn('useModal used outside of ModalProvider, using fallback');
+    return {
+      openModal: () => console.warn('Modal context not available'),
+      closeModal: () => console.warn('Modal context not available'),
+      navigateToPage: () => console.warn('Modal context not available'),
+      goBack: () => console.warn('Modal context not available'),
+      updatePageData: () => console.warn('Modal context not available'),
+      getModalState: () => undefined,
+      activeModals: new Map(),
+    };
   }
   return context;
 }

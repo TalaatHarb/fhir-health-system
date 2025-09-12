@@ -150,17 +150,36 @@
   margin-bottom: 0;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Enhanced responsive design for full viewport usage */
+@media (max-width: 640px) {
+  .patient-tab {
+    /* Mobile layout extends full width with vertical scrolling */
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    box-sizing: border-box;
+    /* Remove any borders */
+    border: none;
+    outline: none;
+    box-shadow: none;
+    /* Optimize vertical scrolling */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
   .patient-tab-header {
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
+    /* Remove borders for full width */
+    border-left: none;
+    border-right: none;
   }
   
   .close-tab-button {
     align-self: flex-end;
     margin-left: 0;
+    min-height: 44px; /* Touch target size */
+    min-width: 44px;
   }
   
   .patient-details {
@@ -170,6 +189,9 @@
   
   .patient-tab-content {
     padding: 1rem;
+    /* Enable smooth vertical scrolling */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .section-content {
@@ -184,6 +206,43 @@
   
   .contact-item strong {
     min-width: 80px;
+  }
+}
+
+/* Tablet responsive adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .patient-tab {
+    /* Optimize for tablet full viewport usage */
+    width: 100%;
+    box-sizing: border-box;
+    /* Remove any borders */
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+  
+  .patient-tab-header {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .patient-tab-content {
+    padding: 1.5rem;
+  }
+}
+
+/* Desktop responsive adjustments */
+@media (min-width: 1025px) {
+  .patient-tab {
+    /* Remove any colored borders on desktop */
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+  
+  .patient-tab-content {
+    /* Optimize scrolling performance on desktop */
+    will-change: scroll-position;
+    transform: translateZ(0);
   }
 }
 

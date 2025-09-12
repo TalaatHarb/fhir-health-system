@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import type { BaseComponentProps } from '../../types';
+import './ErrorBoundary.css';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -256,6 +257,198 @@ export class EncounterErrorBoundary extends Component<ErrorBoundaryProps, ErrorB
               type="button"
             >
               Retry Loading Encounters
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+/**
+ * Feature-specific Error Boundary for Theme system
+ */
+export class ThemeErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    };
+  }
+
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+    return {
+      hasError: true,
+      error,
+    };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    this.setState({
+      error,
+      errorInfo,
+    });
+
+    this.props.onError?.(error, errorInfo);
+
+    if (process.env.NODE_ENV === 'development') {
+      console.error('ThemeErrorBoundary caught an error:', error, errorInfo);
+    }
+  }
+
+  resetErrorBoundary = (): void => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    });
+  };
+
+  render(): ReactNode {
+    if (this.state.hasError) {
+      return (
+        <div className="theme-error-boundary">
+          <div className="theme-error-boundary__content">
+            <h3>Theme System Error</h3>
+            <p>Unable to load theme preferences. Using default light theme.</p>
+            <button 
+              onClick={this.resetErrorBoundary}
+              className="theme-error-boundary__retry-btn"
+              type="button"
+            >
+              Retry Theme Loading
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+/**
+ * Feature-specific Error Boundary for I18n system
+ */
+export class I18nErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    };
+  }
+
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+    return {
+      hasError: true,
+      error,
+    };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    this.setState({
+      error,
+      errorInfo,
+    });
+
+    this.props.onError?.(error, errorInfo);
+
+    if (process.env.NODE_ENV === 'development') {
+      console.error('I18nErrorBoundary caught an error:', error, errorInfo);
+    }
+  }
+
+  resetErrorBoundary = (): void => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    });
+  };
+
+  render(): ReactNode {
+    if (this.state.hasError) {
+      return (
+        <div className="i18n-error-boundary">
+          <div className="i18n-error-boundary__content">
+            <h3>Translation System Error</h3>
+            <p>Unable to load translations. Using default English text.</p>
+            <button 
+              onClick={this.resetErrorBoundary}
+              className="i18n-error-boundary__retry-btn"
+              type="button"
+            >
+              Retry Translation Loading
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+/**
+ * Feature-specific Error Boundary for Modal system
+ */
+export class ModalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    };
+  }
+
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+    return {
+      hasError: true,
+      error,
+    };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    this.setState({
+      error,
+      errorInfo,
+    });
+
+    this.props.onError?.(error, errorInfo);
+
+    if (process.env.NODE_ENV === 'development') {
+      console.error('ModalErrorBoundary caught an error:', error, errorInfo);
+    }
+  }
+
+  resetErrorBoundary = (): void => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    });
+  };
+
+  render(): ReactNode {
+    if (this.state.hasError) {
+      return (
+        <div className="modal-error-boundary">
+          <div className="modal-error-boundary__content">
+            <h3>Modal System Error</h3>
+            <p>Unable to display modal content. Please try again.</p>
+            <button 
+              onClick={this.resetErrorBoundary}
+              className="modal-error-boundary__retry-btn"
+              type="button"
+            >
+              Retry Modal
             </button>
           </div>
         </div>

@@ -315,25 +315,49 @@ export function I18nProvider({ children }: I18nProviderProps): React.JSX.Element
     }
   }, [state.loadedLanguages]);
 
-  // Set language function
+  // Set language function with loading state management
   const setLanguage = useCallback(async (language: string) => {
     if (!AVAILABLE_LANGUAGES.some(lang => lang.code === language)) {
       console.warn(`Unsupported language: ${language}`);
       return;
     }
 
-    // Store preference
-    storeLanguage(language);
-
-    // Update current language
+    // Set loading state
     setState(prev => ({
       ...prev,
-      currentLanguage: language,
+      isLoading: true,
+      error: null,
     }));
 
-    // Load translation if not already loaded
-    if (!state.loadedLanguages.has(language)) {
-      await loadLanguageTranslation(language);
+    try {
+      // Store preference
+      storeLanguage(language);
+
+      // Update current language
+      setState(prev => ({
+        ...prev,
+        currentLanguage: language,
+      }));
+
+      // Load translation if not already loaded
+      if (!state.loadedLanguages.has(language)) {
+        await loadLanguageTranslation(language);
+      } else {
+        // If already loaded, just clear loading state
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          error: null,
+        }));
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to change language';
+      setState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: errorMessage,
+      }));
+      console.error('Failed to change language:', error);
     }
   }, [state.loadedLanguages, loadLanguageTranslation]);
 
@@ -359,11 +383,23 @@ export function I18nProvider({ children }: I18nProviderProps): React.JSX.Element
   );
 }
 
-// Hook to use I18n context
+// Hook to use I18n context with graceful fallback
 export function useI18n(): I18nContextType {
   const context = useContext(I18nContext);
   if (context === undefined) {
-    throw new Error('useI18n must be used within an I18nProvider');
+    // Graceful fallback when I18n context is not available
+    console.warn('useI18n used outside of I18nProvider, using fallback');
+    return {
+      language: DEFAULT_LANGUAGE,
+      setLanguage: () => console.warn('I18n context not available'),
+      t: (key: string) => {
+        console.warn(`I18n context not available, returning key: ${key}`);
+        return key;
+      },
+      availableLanguages: AVAILABLE_LANGUAGES,
+      isLoading: false,
+      error: null,
+    };
   }
   return context;
 }

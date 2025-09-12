@@ -38,12 +38,58 @@ export function LanguageSelector({
     } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       setIsOpen(!isOpen);
+    } else if (event.key === 'ArrowDown' && isOpen) {
+      event.preventDefault();
+      // Focus first option
+      const firstOption = dropdownRef.current?.querySelector('.language-selector__option') as HTMLButtonElement;
+      firstOption?.focus();
+    }
+  };
+
+  // Handle keyboard navigation within options
+  const handleOptionKeyDown = (event: React.KeyboardEvent, langCode: string, index: number) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleLanguageSelect(langCode);
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      const nextOption = dropdownRef.current?.querySelectorAll('.language-selector__option')[index + 1] as HTMLButtonElement;
+      if (nextOption) {
+        nextOption.focus();
+      }
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (index === 0) {
+        // Focus back to trigger
+        const trigger = dropdownRef.current?.querySelector('.language-selector__trigger') as HTMLButtonElement;
+        trigger?.focus();
+      } else {
+        const prevOption = dropdownRef.current?.querySelectorAll('.language-selector__option')[index - 1] as HTMLButtonElement;
+        prevOption?.focus();
+      }
+    } else if (event.key === 'Escape') {
+      setIsOpen(false);
+      const trigger = dropdownRef.current?.querySelector('.language-selector__trigger') as HTMLButtonElement;
+      trigger?.focus();
     }
   };
 
   const handleLanguageSelect = async (langCode: string) => {
-    if (langCode !== language) {
-      await setLanguage(langCode);
+    if (langCode !== language && !isLoading) {
+      try {
+        await setLanguage(langCode);
+        // Announce language change to screen readers
+        const announcement = `Language changed to ${availableLanguages.find(lang => lang.code === langCode)?.nativeName}`;
+        const ariaLiveRegion = document.getElementById('language-announcements');
+        if (ariaLiveRegion) {
+          ariaLiveRegion.textContent = announcement;
+          setTimeout(() => {
+            ariaLiveRegion.textContent = '';
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Failed to change language:', error);
+      }
     }
     setIsOpen(false);
   };
@@ -132,19 +178,22 @@ export function LanguageSelector({
             role="listbox"
             aria-label={t('language.selectLanguage')}
           >
-            {availableLanguages.map((lang) => (
+            {availableLanguages.map((lang, index) => (
               <li key={lang.code} role="none">
                 <button
                   type="button"
                   className={`language-selector__option ${
                     lang.code === language ? 'language-selector__option--selected' : ''
-                  }`}
+                  } ${isLoading ? 'language-selector__option--loading' : ''}`}
                   onClick={() => handleLanguageSelect(lang.code)}
+                  onKeyDown={(e) => handleOptionKeyDown(e, lang.code, index)}
                   role="option"
                   aria-selected={lang.code === language}
+                  aria-describedby={`lang-desc-${lang.code}`}
                   disabled={isLoading}
+                  tabIndex={-1}
                 >
-                  <span className="language-selector__option-flag">
+                  <span className="language-selector__option-flag" aria-hidden="true">
                     {lang.code.toUpperCase()}
                   </span>
                   <span className="language-selector__option-content">
@@ -160,12 +209,29 @@ export function LanguageSelector({
                       ✓
                     </span>
                   )}
+                  {isLoading && lang.code === language && (
+                    <span className="language-selector__loading-spinner" aria-hidden="true">
+                      ⟳
+                    </span>
+                  )}
+                  {/* Hidden description for screen readers */}
+                  <span id={`lang-desc-${lang.code}`} className="sr-only">
+                    {lang.nativeName} ({lang.name})
+                  </span>
                 </button>
               </li>
             ))}
           </ul>
         )}
       </div>
+      
+      {/* ARIA live region for language change announcements */}
+      <div 
+        id="language-announcements" 
+        aria-live="polite" 
+        aria-atomic="true" 
+        className="sr-only"
+      ></div>
     </div>
   );
 }

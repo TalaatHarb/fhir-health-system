@@ -24,7 +24,19 @@ export { TabManager } from './patient/TabManager';
 // Encounter components
 export { EncounterTimeline } from './encounter/EncounterTimeline';
 export { EncounterTimelineItem } from './encounter/EncounterTimelineItem';
+export { EncounterCreateModal } from './encounter/EncounterCreateModal';
 // export { EncounterDetails } from './encounter/EncounterDetails';
+
+// Encounter pages (for new modal system)
+export {
+  EncounterDetailsPage,
+  ObservationsPage,
+  ConditionsPage,
+  MedicationsPage,
+  DiagnosticsPage,
+  ProceduresPage,
+  ReviewPage
+} from './encounter/pages';
 
 // Resource components
 // export { ResourceViewer } from './resource/ResourceViewer';
