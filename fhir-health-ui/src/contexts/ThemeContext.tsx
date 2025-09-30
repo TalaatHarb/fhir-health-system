@@ -22,16 +22,16 @@ export interface ThemeConfig {
 
 export const themeConfig: ThemeConfig = {
   light: {
-    primary: '#DDF4E7',
-    secondary: '#67C090',
-    accent: '#26667F',
-    dark: '#124170',
+    primary: '#E3F2FD',
+    secondary: '#90CAF9',
+    accent: '#1976D2',
+    dark: '#0D47A1',
   },
   dark: {
-    primary: '#210F37',
-    secondary: '#4F1C51',
-    accent: '#A55B4B',
-    light: '#DCA06D',
+    primary: '#212121',
+    secondary: '#424242',
+    accent: '#90CAF9',
+    light: '#E0E0E0',
   },
 };
 
